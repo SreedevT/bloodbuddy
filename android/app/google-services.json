@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "160402166542-eco2hmv72hoj3gqn2fvjht94634g7gdj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blood",
+            "certificate_hash": "c0b4271b457f1dc17843e3d057d54081baee811a"
+          }
+        },
+        {
           "client_id": "160402166542-9eup9irb9deputvjpj1osvo9ftjhmd04.apps.googleusercontent.com",
           "client_type": 3
         }
