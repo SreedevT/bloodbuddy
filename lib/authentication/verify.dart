@@ -8,6 +8,7 @@ import 'package:pinput/pinput.dart';
 class MyVerify extends StatefulWidget {
   const MyVerify({Key? key}) : super(key: key);
 
+  static String verificationId = " ";
   @override
   State<MyVerify> createState() => _MyVerifyState();
 }
@@ -16,9 +17,30 @@ class _MyVerifyState extends State<MyVerify> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   String code = '';
+
+  Future verify() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: MyPhone.phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        log(credential.toString());
+        await auth.signInWithCredential(credential);
+        log('Verification Complete!!!!!!!!!!!');
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        log(e.toString());
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        MyVerify.verificationId = verificationId;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        log(verificationId.toString());
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    
+    verify();
     // final defaultPinTheme = PinTheme(
     //   width: 56,
     //   height: 56,
@@ -114,10 +136,9 @@ class _MyVerifyState extends State<MyVerify> {
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {
                       try {
-                        
                         PhoneAuthCredential credential =
                             PhoneAuthProvider.credential(
-                                verificationId: MyPhone.verificationId,
+                                verificationId: MyVerify.verificationId,
                                 smsCode: code);
 
                         // Sign the user in (or link) with the credential
@@ -125,8 +146,10 @@ class _MyVerifyState extends State<MyVerify> {
                         // Check if widget is mounted before using context
                         if (!mounted) return;
                         Navigator.pushNamedAndRemoveUntil(
-                          //TODO: Change the route to something that makes sense!
-                            context, 'register_test', (route) => false);
+                            //TODO: Change the route to something that makes sense!
+                            context,
+                            'register_test',
+                            (route) => false);
                       } catch (e) {
                         log("Wrong OTP");
                       }
