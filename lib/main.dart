@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:blood/authentication/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,9 +24,10 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-//changes made
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
   runApp(MaterialApp(
-    initialRoute: 'phone_signup',
+    initialRoute: user != null ? 'register_test' : 'phone_signup',
     debugShowCheckedModeBanner: false,
     routes: {
       'phone_signup': (context) => MyPhone(),
