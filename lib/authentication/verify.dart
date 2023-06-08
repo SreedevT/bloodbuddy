@@ -146,7 +146,6 @@ class _MyVerifyState extends State<MyVerify> {
                         // Check if widget is mounted before using context
                         if (!mounted) return;
                         Navigator.pushNamedAndRemoveUntil(
-                            //TODO: Change the route to something that makes sense!
                             context,
                             'location_picker',
                             (route) => false);

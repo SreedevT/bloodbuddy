@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
-import 'package:geolocator/geolocator.dart';
 
 class NewInter extends StatefulWidget {
   const NewInter({super.key});
@@ -78,7 +77,6 @@ class _NewInterState extends State<NewInter> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 300,
               margin: const EdgeInsets.only(
                   top: 20, left: 20, right: 20, bottom: 20),
               decoration: BoxDecoration(
@@ -139,7 +137,23 @@ class _NewInterState extends State<NewInter> {
                         ),
                       ],
                     ),
-                    // SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          Icons.question_mark_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "The location you set will be used to show\n you blood requests.",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith(
