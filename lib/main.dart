@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:blood/authentication/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,10 +28,10 @@ Future<void> main() async {
     initialRoute: user != null ? 'location_picker' : 'phone_signup',
     debugShowCheckedModeBanner: false,
     routes: {
-      'phone_signup': (context) => MyPhone(),
-      'verify': (context) => MyVerify(),
-      'welcome_splash': (context) => WelcomeScreen(),
-      'location_picker':(context) => NewInter(),
+      'phone_signup': (context) => const MyPhone(),
+      'verify': (context) => const MyVerify(),
+      'welcome_splash': (context) => const WelcomeScreen(),
+      'location_picker':(context) => const NewInter(),
     },
   ));
 }
