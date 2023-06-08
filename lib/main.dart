@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:blood/authentication/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +33,7 @@ Future<void> main() async {
     routes: {
       'phone_signup': (context) => MyPhone(),
       'verify': (context) => MyVerify(),
-      'register_test': (context) => SignUpScreen(),
+      'register_test': (context) => WelcomeScreen(),
     },
   ));
 }
