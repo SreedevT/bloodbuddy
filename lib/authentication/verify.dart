@@ -148,7 +148,7 @@ class _MyVerifyState extends State<MyVerify> {
                         Navigator.pushNamedAndRemoveUntil(
                             //TODO: Change the route to something that makes sense!
                             context,
-                            'register_test',
+                            'location_picker',
                             (route) => false);
                       } catch (e) {
                         log("Wrong OTP");

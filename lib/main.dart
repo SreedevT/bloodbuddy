@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:blood/authentication/register.dart';
@@ -15,7 +16,6 @@ import 'authentication/verify.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
     // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
@@ -28,12 +28,13 @@ Future<void> main() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
   runApp(MaterialApp(
-    initialRoute: user != null ? 'register_test' : 'phone_signup',
+    initialRoute: user != null ? 'location_picker' : 'phone_signup',
     debugShowCheckedModeBanner: false,
     routes: {
       'phone_signup': (context) => MyPhone(),
       'verify': (context) => MyVerify(),
-      'register_test': (context) => WelcomeScreen(),
+      'welcome_splash': (context) => WelcomeScreen(),
+      'location_picker':(context) => NewInter(),
     },
   ));
 }
