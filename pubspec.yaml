@@ -38,6 +38,8 @@ dependencies:
   firebase_dynamic_links: ^5.1.1
   pinput: ^2.2.31
   firebase_app_check: ^0.1.2+2
+  open_street_map_search_and_pick: ^0.0.17
+  geolocator: ^9.0.2
 
 
   # The following adds the Cupertino Icons font to your application.
