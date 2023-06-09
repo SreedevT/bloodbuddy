@@ -34,8 +34,6 @@ Future<List<Hospital>> fetchHospitals(
 
   if (response.statusCode == 200) {
     final Map<dynamic, dynamic> data = jsonDecode(response.body);
-    var rawData = jsonDecode(response.body) as Map<dynamic, dynamic>;
-    log(rawData.toString());
     List<dynamic> hospitals = data['elements'];
     // return hospitals;
     return hospitals.map((item) {

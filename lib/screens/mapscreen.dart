@@ -15,6 +15,7 @@ class NewInter extends StatefulWidget {
 class _NewInterState extends State<NewInter> {
   LatLong? latLong;
   String location = '';
+  String area = '';
   bool _load = false;
 
   Future<void> _getCurrentLocation() async {
@@ -220,6 +221,15 @@ class _NewInterState extends State<NewInter> {
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 10),
+            Text(
+              area.isNotEmpty ? "Your are in $area" : '',
+              style: const TextStyle(
+                color: Color.fromARGB(255, 129, 36, 30),
+                fontSize: 15,
+              ),
+              textAlign: TextAlign.center,
+            ),
             // const SizedBox(height: 10,),
             // ElevatedButton(onPressed: (){}, child: Text("Next")),
           ],
@@ -240,6 +250,7 @@ class _NewInterState extends State<NewInter> {
               onPicked: (PickedData pickedData) {
                 setState(() {
                   location = pickedData.address;
+                  area = pickedData.area;
                 });
                 Navigator.pop(
                     context); // this enables  to close the bottom sheet when this button is clicked

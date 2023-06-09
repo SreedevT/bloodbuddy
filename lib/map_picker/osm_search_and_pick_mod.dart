@@ -26,7 +26,11 @@ class OpenStreetMapSearchAndPick extends StatefulWidget {
   final String buttonText;
   final String hintText;
 
+  // TODO : Hospital list is static. There may be a better way to do this
+  // ? : General area of the user and in turn the hospitals are stored in PickedData.area
+  // ? : Area is retrieved after user chooses a location
   static List<Hospital>? hospitals;
+  // static Map<String, List<Hospital>>? hospitalsByArea;
 
   static Future<LatLng> nopFunction() {
     throw Exception("");
@@ -137,7 +141,7 @@ class _OpenStreetMapSearchAndPickState
         await fetchHospitals(event.center.latitude, event.center.longitude, 5)
             .then((value) {
           OpenStreetMapSearchAndPick.hospitals = value;
-          log(value.toString());
+          log("SetNamePosInit: ${value.toString()}");
         });
         setState(() {});
       }
@@ -393,8 +397,26 @@ class _OpenStreetMapSearchAndPickState
     var decodedResponse =
         jsonDecode(utf8.decode(response.bodyBytes)) as Map<dynamic, dynamic>;
     String displayName = decodedResponse['display_name'];
-    return PickedData(center, displayName);
+    log("Reverse query: ${decodedResponse.toString()}");
+    String area = _getGeneralArea(decodedResponse);
+    return PickedData(center, displayName, area);
   }
+}
+
+/// Tryies to get the general area from the json response.
+/// General area is like a city or a village
+String _getGeneralArea(Map json) {
+  try {
+    //Some responses dont have a suburb key and some dont have a city_district key
+    String area = json['address']['suburb'] ?? json['address']['city_district'];
+    log("Area: $area");
+    // OpenStreetMapSearchAndPick.hospitalsByArea[area] =
+    //     OpenStreetMapSearchAndPick.hospitals!;
+    return area;
+  } catch (e) {
+    log(e.toString());
+    log("TypeError (address[key] is null) try another key to get the area");
+  } throw Exception("Could not get the area");
 }
 
 class OSMdata {
@@ -428,6 +450,7 @@ class LatLong {
 class PickedData {
   final LatLong latLong;
   final String address;
+  final String area;
 
-  PickedData(this.latLong, this.address);
+  PickedData(this.latLong, this.address, this.area);
 }
