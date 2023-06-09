@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
+import 'package:blood/map_picker/osm_search_and_pick_mod.dart';
+import 'package:blood/map_picker/models/hospitals.dart';
 
 class NewInter extends StatefulWidget {
   const NewInter({super.key});
@@ -157,8 +160,8 @@ class _NewInterState extends State<NewInter> {
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => Colors.white
-                            ), // by writing this instead of materialstateproperty, we can give dynamic colors
+                            (states) => Colors
+                                .white), // by writing this instead of materialstateproperty, we can give dynamic colors
                         overlayColor: MaterialStateColor.resolveWith((states) =>
                             Colors.green.withOpacity(
                                 0.3)), // like here the button color is changed, when we tap it. COOL ;)
@@ -176,9 +179,9 @@ class _NewInterState extends State<NewInter> {
                           const SizedBox(width: 10),
                           _load
                               ? const SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: CircularProgressIndicator())
+                                  height: 15,
+                                  width: 15,
+                                  child: CircularProgressIndicator())
                               : const SizedBox(
                                   height: 0,
                                   width: 0,
@@ -187,8 +190,17 @@ class _NewInterState extends State<NewInter> {
                       ),
                       onPressed: () async {
                         _setLoadingState(true);
-                        await _getCurrentLocation()
-                            .whenComplete(() => _setLoadingState(false));
+                        await _getCurrentLocation();
+
+                        await fetchHospitals(
+                                latLong!.latitude, latLong!.longitude, 5)
+                            .then((value) {
+                          OpenStreetMapSearchAndPick.hospitals = value;
+                          log(value.toString());
+                          _setLoadingState(false);
+                        }).catchError((e) {
+                          log(e.toString());
+                        });
 
                         if (!mounted) return;
                         _showModalBottomSheet(context);
