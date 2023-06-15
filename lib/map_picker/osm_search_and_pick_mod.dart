@@ -143,6 +143,7 @@ class _OpenStreetMapSearchAndPickState
           OpenStreetMapSearchAndPick.hospitals = value;
           log("SetNamePosInit: ${value.toString()}");
         });
+        if (!mounted) return;
         setState(() {});
       }
     });
@@ -408,7 +409,10 @@ class _OpenStreetMapSearchAndPickState
 String _getGeneralArea(Map json) {
   try {
     //Some responses dont have a suburb key and some dont have a city_district key
-    String area = json['address']['suburb'] ?? json['address']['city_district'];
+    String area = json['address']['town'] ??
+        json['address']['suburb'] ??
+        json['address']['city_district'];
+
     log("Area: $area");
     // OpenStreetMapSearchAndPick.hospitalsByArea[area] =
     //     OpenStreetMapSearchAndPick.hospitals!;
@@ -416,7 +420,8 @@ String _getGeneralArea(Map json) {
   } catch (e) {
     log(e.toString());
     log("TypeError (address[key] is null) try another key to get the area");
-  } throw Exception("Could not get the area");
+  }
+  throw Exception("Could not get the area");
 }
 
 class OSMdata {

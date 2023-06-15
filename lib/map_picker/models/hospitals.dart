@@ -37,9 +37,11 @@ Future<List<Hospital>> fetchHospitals(
     List<dynamic> hospitals = data['elements'];
     // return hospitals;
     return hospitals.map((item) {
+      // '??' because sometimes these values are not in the response. ?? provied value when it is null
+      // Todo Remove these values before uploading to database
       final String name = item['tags']['name'] ?? 'Unknown';
-      final double latitude = item['lat'];
-      final double longitude = item['lon'];
+      final double latitude = item['lat'] ?? 0;
+      final double longitude = item['lon'] ?? 0;
       return Hospital(name: name, position: LatLng(latitude, longitude));
     }).toList();
   } else {
