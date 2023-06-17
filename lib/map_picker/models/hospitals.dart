@@ -28,6 +28,7 @@ Future<List<Hospital>> fetchHospitals(
   ''';
 
   String encodedQuery = Uri.encodeComponent(overpassQuery);
+  log(encodedQuery);
   String url = '$apiUrl$encodedQuery';
 
   final response = await http.get(Uri.parse(url));
