@@ -1,8 +1,10 @@
+
 import 'package:blood/authentication/phone_signup.dart';
 import 'package:blood/authentication/register.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -241,5 +243,3 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 }
-
-

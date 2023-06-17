@@ -3,7 +3,6 @@ import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:blood/authentication/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +14,6 @@ import 'authentication/verify.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
     // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
@@ -25,18 +23,17 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-  final FirebaseAuth auth = FirebaseAuth.instance;  // establishes an active session
-  User? user = auth.currentUser;      // get the curret user info which is locally cached
+    final FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
   runApp(MaterialApp(
-    initialRoute: user != null ? 'register_test' : 'welcome',
+    initialRoute: user != null ? 'location_picker' : 'phone_signup',
     debugShowCheckedModeBanner: false,
     routes: {
-      'phone_signup': (context) => MyPhone(),
-      'verify': (context) => MyVerify(),
-      'register_test': (context) => SignUpScreen(),
+      'phone_signup': (context) => const MyPhone(),
+      'verify': (context) => const MyVerify(),
       'home':(context) => HomeScreen(),
-      'welcome':(context) => WelcomeScreen(),
-      'map':(context) => NewInter(),
+      'welcome': (context) => const WelcomeScreen(),
+      'location_picker':(context) => const NewInter(),
     },
   ));
 }

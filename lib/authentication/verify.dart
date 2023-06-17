@@ -146,9 +146,8 @@ class _MyVerifyState extends State<MyVerify> {
                         // Check if widget is mounted before using context
                         if (!mounted) return;
                         Navigator.pushNamedAndRemoveUntil(
-                            //TODO: Change the route to something that makes sense!
                             context,
-                            'register_test',
+                            'location_picker',
                             (route) => false);
                       } catch (e) {
                         log("Wrong OTP");
