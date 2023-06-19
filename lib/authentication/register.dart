@@ -1,8 +1,7 @@
-import 'package:blood/Models/userprofile.dart';
+import 'package:blood/Firestore/userprofile.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:blood/authentication/signin.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -22,9 +21,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   int age = 0;
   double weight = 0;
   bool isDonor = true;
+  var con;
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  late User? user;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user;
 
   @override
   void initState() {
@@ -33,6 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    con = context;
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
 
@@ -88,6 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (val!.isEmpty) {
                                 return 'Please enter your first name';
                               }
+                              return null;
                             },
                             decoration: const InputDecoration(
                               hintText: 'First Name',
@@ -149,6 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (int.tryParse(val) == null) {
                                 return 'Please enter a valid age';
                               }
+                              return null;
                             },
                             decoration: const InputDecoration(
                               hintText: 'Age',
@@ -224,11 +227,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               print(age);
                               print(weight );
                               //print(isDonor );
+                            Navigator.of(con).push(
+                        MaterialPageRoute(builder: (context) => const NewInter()));
                             }
-                             Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => NewInter()),
-                              );
+
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(

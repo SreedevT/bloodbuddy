@@ -417,6 +417,7 @@ String _getGeneralArea(Map json) {
     // OpenStreetMapSearchAndPick.hospitalsByArea[area] =
     //     OpenStreetMapSearchAndPick.hospitals!;
     return area;
+
   } catch (e) {
     log(e.toString());
     log("TypeError (address[key] is null) try another key to get the area");

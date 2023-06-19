@@ -12,18 +12,27 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user;
+  String? uid;
+  @override
+  void initState() {
+    user = _auth.currentUser;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body:  Center(
+        
         child: ElevatedButton(onPressed: () async {
           try{
             await _auth.signOut();
             
-            Navigator.pushReplacement(
+            Navigator.pushNamedAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => WelcomeScreen()),
+          'welcome',
+          (route) => false,
       );
 
           }

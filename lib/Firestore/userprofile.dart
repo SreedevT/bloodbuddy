@@ -5,7 +5,7 @@ class DataBase{
   DataBase({ required this.uid });
 
   final CollectionReference userProfile = FirebaseFirestore.instance.collection('User Profile');
-
+  final CollectionReference userLocation = FirebaseFirestore.instance.collection('User Location');
   // to update the user profile data
 
   // Future updateUserProfile(String fname, String lname, DateTime dob, DateTime lastDonated, int age, double weight, bool isDonor) async{
@@ -36,7 +36,7 @@ class DataBase{
   // to update user location
 
   Future updateUserLocation(String genArea) async {
-    return await userProfile.doc(uid).set({
+    return await userLocation.doc(uid).set({
       'General Area':genArea
     });
   }

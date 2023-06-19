@@ -1,7 +1,5 @@
 import 'dart:developer';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:blood/authentication/verify.dart';
 import 'package:flutter/material.dart';
 
 class MyPhone extends StatefulWidget {
@@ -27,6 +25,9 @@ class _MyPhoneState extends State<MyPhone> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red[900],
+      ),
       body: Container(
         margin: const EdgeInsets.only(left: 25, right: 25),
         alignment: Alignment.center,
@@ -109,13 +110,15 @@ class _MyPhoneState extends State<MyPhone> {
                 height: 45,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade600,
+                        backgroundColor: Colors.red.shade900,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () {
                       MyPhone.phoneNumber = countryController.text + phone;
                       log(MyPhone.phoneNumber);
-                      Navigator.pushNamed(context, 'verify');
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) =>const  MyVerify())
+                      );
                     },
                     child: const Text("Send the code")),
               )

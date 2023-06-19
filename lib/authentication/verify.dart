@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'phone_signup.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +38,28 @@ class _MyVerifyState extends State<MyVerify> {
     );
   }
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user;
+  var con;  // to capture the context
+
+  @override
+  void initState() {
+    super.initState();
+    user = _auth.currentUser;
+  }
+
+  Future<bool> isUserDocumentExists() async {
+    String uid = user!.uid;
+    DocumentSnapshot userSnapShot = await FirebaseFirestore.instance.collection('User Profile')
+    .doc(uid).get();
+    return userSnapShot.exists;
+  }
   @override
   Widget build(BuildContext context) {
+    con = context;  // to capture the updated context
+    //this con is used inside the onpressed which is async function
+    // since after the completetion of the async function, it will get the updated context
+    //this removes any potential error 
     verify();
     // final defaultPinTheme = PinTheme(
     //   width: 56,
@@ -68,18 +88,19 @@ class _MyVerifyState extends State<MyVerify> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            // Check if widget is mounted before using context
-            if (!mounted) return;
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios_rounded,
-            color: Colors.black,
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.red[900],
+        // leading: IconButton(
+        //   onPressed: () {
+        //     // Check if widget is mounted before using context
+        //     if (!mounted) return;
+        //     Navigator.pop(context);
+        //   },
+        //   icon: const Icon(
+        //     Icons.arrow_back_ios_rounded,
+        //     color: Colors.black,
+        //   ),
+        // ),
         elevation: 0,
       ),
       body: Container(
@@ -131,7 +152,7 @@ class _MyVerifyState extends State<MyVerify> {
                 height: 45,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade600,
+                        backgroundColor: Colors.red[900],
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {
@@ -145,10 +166,22 @@ class _MyVerifyState extends State<MyVerify> {
                         await auth.signInWithCredential(credential);
                         // Check if widget is mounted before using context
                         if (!mounted) return;
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            'location_picker',
-                            (route) => false);
+                        // ignore: unrelated_type_equality_checks
+                        bool isExist = await isUserDocumentExists();
+                        if(isExist){
+                          Navigator.pushNamedAndRemoveUntil(
+                            con,
+                            'home',
+                            (route) => false,
+                          );
+                        }
+                        else{
+                          Navigator.pushNamedAndRemoveUntil(
+                            con,
+                            'personal_info',
+                            (route) => false,
+                          );
+                        }
                       } catch (e) {
                         log("Wrong OTP");
                       }

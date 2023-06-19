@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
@@ -6,7 +5,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
+import 'authentication/register.dart';
 import 'firebase_options.dart';
 import 'authentication/phone_signup.dart';
 import 'authentication/verify.dart';
@@ -23,17 +22,18 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-    final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
   runApp(MaterialApp(
-    initialRoute: user != null ? 'location_picker' : 'phone_signup',
+    initialRoute: user != null ? 'home' : 'welcome',
     debugShowCheckedModeBanner: false,
     routes: {
       'phone_signup': (context) => const MyPhone(),
       'verify': (context) => const MyVerify(),
-      'home':(context) => HomeScreen(),
+      'home':(context) => const HomeScreen(),
       'welcome': (context) => const WelcomeScreen(),
       'location_picker':(context) => const NewInter(),
+      'personal_info':(context) => const SignUpScreen(),
     },
   ));
 }

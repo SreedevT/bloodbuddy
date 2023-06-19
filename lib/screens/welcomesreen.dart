@@ -1,10 +1,6 @@
-
-import 'package:blood/authentication/phone_signup.dart';
-import 'package:blood/authentication/register.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -14,7 +10,7 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  // to keep track on which page we are
+  // to keep track which page we are on
   final PageController _controller = PageController();
 
   @override
@@ -91,154 +87,126 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget secondView() {
     return Container(
       color: Colors.white,
-      
-        child:Stack(
-          children: [
-            Container(
-        alignment:const Alignment(0.0,0.0),
-            child:SpinKitPumpingHeart(
+      child: Stack(
+        children: [
+          Container(
+            alignment: const Alignment(0.0, 0.0),
+            child: SpinKitPumpingHeart(
               color: Colors.red[900],
-              size: 300.0, 
+              size: 300.0,
             ),
-            ),
-            Container(
-              alignment: Alignment(0,0),
-              child:RichText(
-                text: const TextSpan(
-                  //text:"One Act of Donation, Countless Lives Saved!"
-                  text:"\" One Act of ",
-                  style:TextStyle(
-                    fontSize: 15,
-                    color:Colors.white,
-                  ),
-                  children: [
-                    TextSpan(
+          ),
+          Container(
+            alignment: const Alignment(0, 0),
+            child: RichText(
+              text: const TextSpan(
+                text: "\" One Act of ",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+                children: [
+                  TextSpan(
                       text: "DONATION,\n",
-                      style:TextStyle(
-                        fontSize:20,
+                      style: TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                      )
+                      )),
+                  TextSpan(
+                    text: "Countless Lives ",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
                     ),
-                    TextSpan(
-                  text:"Countless Lives ",
-                  style:TextStyle(
-                    fontSize: 15,
-                    color:Colors.white,
-                  ),),
+                  ),
                   TextSpan(
                       text: "SAVED! \"\n",
-                      style:TextStyle(
-                        fontSize:20,
+                      style: TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                      )
-                    ),
-                  ],
-                ),
+                      )),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget thirdView() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10,vertical:150),
       color: Colors.red[900],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            alignment: Alignment.topLeft,
-            child: const Icon(Icons.bloodtype_outlined,size: 100,color: Colors.white,)),
-            const SizedBox(height:30),
-            RichText(
-            text: const TextSpan(
-              text:"\"You believe in donating blood,\nwe believe in making it easier for you to do so\".\n",
-              style: TextStyle(
-                fontSize: 17,
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
+      child: Center(
+        child: Stack(
+          alignment: const Alignment(0, 0),
+          children: [
+            Transform.rotate(
+              angle: -5.5,
+              child: Container(
+                height: 300,
+                width: 300,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
-            ),
-            const SizedBox(height:30),
-            Stack(
-              children: [
-                Transform.rotate(
-                angle: 5.5,
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const MyPhone(),
-                      ),
-                    );
-                  },
-                ),
-                ),
-              ),  
             Transform.rotate(
               angle: 5.9,
               child: Container(
-                height: 200,
-                width: 200,
+                height: 300,
+                width: 300,
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
-                ),
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const MyPhone(),
-                      ),
-                    );
-                  },
                 ),
               ),
             ),
             Transform.rotate(
               angle: 5,
               child: Container(
-                height: 200,
-                width: 200,
+                height: 300,
+                width: 300,
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const MyPhone(),
-                      ),
-                    );
-                  },
+              ),
+            ),
+            Container(
+                alignment: const Alignment(-0.5, -0.15),
+                child: const Icon(
+                  Icons.waving_hand_outlined,
+                  size: 60,
+                  color: Colors.red,
+                )),
+            RichText(
+              text: const TextSpan(
+                text: "You are one step away.\n",
+                style: TextStyle(
+                  fontSize: 17,
+                  color: Colors.red,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            RichText(
-            text: const TextSpan(
-              text:"\n\n\n\n\t\t\t\tJoin our community!\n",
-              style: TextStyle(
-                fontSize: 17,
-                color: Colors.red,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            ),
-            
-            ],
-            ),
-        ],
+            Container(
+                alignment: const Alignment(0, 0.1),
+                child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'phone_signup');
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.red[900]),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                            ),
+                    child: const Text("Join our community!"))),
+          ],
+        ),
       ),
     );
   }

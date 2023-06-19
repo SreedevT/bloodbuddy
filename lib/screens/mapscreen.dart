@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:blood/Firestore/userprofile.dart';
+import 'package:blood/screens/homescreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:blood/map_picker/osm_search_and_pick_mod.dart';
@@ -72,13 +75,26 @@ class _NewInterState extends State<NewInter> {
     });
   }
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user;
+  var con;
+
+  @override
+  void initState() {
+    super.initState();
+    user = _auth.currentUser;
+  }
+
   @override
   Widget build(BuildContext context) {
+    con = context;
     return Scaffold(
         appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 129, 36, 30),
             elevation: 0,
-            title: const Text('Search your current location')),
+            title: const Text('Search your current location'),
+            ),
+              
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -247,12 +263,14 @@ class _NewInterState extends State<NewInter> {
               center: latLong ?? LatLong(0, 0),
               buttonColor: const Color.fromARGB(255, 129, 36, 30),
               onPicked: (PickedData pickedData) {
-                setState(() {
+                setState(() async {
                   location = pickedData.address;
                   area = pickedData.area;
+                  await DataBase(uid: user!.uid).updateUserLocation( area);
+                  Navigator.pushNamedAndRemoveUntil(con, 'home', (route) => false);
                 });
-                Navigator.pop(
-                    context); // this enables  to close the bottom sheet when this button is clicked
+                 // this enables  to close the bottom sheet when this button is clicked
+
               },
             ),
           );
