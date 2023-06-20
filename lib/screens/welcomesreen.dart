@@ -9,9 +9,24 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin{
   // to keep track which page we are on
   final PageController _controller = PageController();
+
+  late final AnimationController _animationController1 = AnimationController(
+    duration: const Duration(seconds: 10),
+    vsync: this,
+  )..repeat(min: 0, max: 1);
+  late final Animation<double> _animation1 = CurvedAnimation(
+    parent: _animationController1,
+    curve: Curves.linear,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +45,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: SmoothPageIndicator(
             controller: _controller,
             count: 3,
-            effect: const WormEffect(
-              dotColor: Colors.grey,
-              activeDotColor: Colors.purple,
+            effect: WormEffect(
+              dotColor: Colors.grey.shade300,
+              activeDotColor: Colors.black,
               dotHeight: 10,
               dotWidth: 10,
             ),
@@ -46,39 +61,55 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
       color: Colors.red[900],
       child: Center(
-        child: RichText(
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 40,
-              letterSpacing: 1,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            RichText(
+              text: const TextSpan(
+                style: TextStyle(
+                  fontSize: 40,
+                  letterSpacing: 1,
+                ),
+                children: [
+                  TextSpan(
+                    text: "Welc",
+                    style: TextStyle(
+                      fontSize: 60,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "O",
+                    style: TextStyle(fontSize: 70, fontStyle: FontStyle.italic),
+                  ),
+                  TextSpan(
+                    text: "me",
+                    style: TextStyle(
+                      fontSize: 60,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            children: [
-              TextSpan(
-                text: "Welc",
+
+            const SizedBox(
+              height: 20,
+            ),
+
+            Text(
+                "\"World's largest Blood Donors mobile app\"",
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade300,
+                  fontFamily: "Poppins",
+                  fontStyle: FontStyle.italic,
+                  decoration: TextDecoration.none,
+                  fontSize: 20,
                 ),
               ),
-              TextSpan(
-                text: "O",
-                style: TextStyle(fontSize: 70, fontStyle: FontStyle.italic),
-              ),
-              TextSpan(
-                text: "me",
-                style: TextStyle(
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: "\n\"World's largest Blood Donors\n mobile app\"",
-                style: TextStyle(
-                  fontSize: 15,
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -152,8 +183,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
-            Transform.rotate(
-              angle: 5.9,
+            RotationTransition(
+              turns: _animation1,
               child: Container(
                 height: 300,
                 width: 300,
@@ -163,8 +194,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
-            Transform.rotate(
-              angle: 5,
+            RotationTransition(
+              turns: ReverseAnimation(_animation1),
               child: Container(
                 height: 300,
                 width: 300,
@@ -199,11 +230,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       Navigator.pushNamed(context, 'phone_signup');
                     },
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.red[900]),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                            ),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.red[900]),
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                    ),
                     child: const Text("Join our community!"))),
           ],
         ),
