@@ -22,15 +22,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     curve: Curves.linear,
   );
 
-  late final AnimationController _waveAnimationController = AnimationController(
-    duration: const Duration(seconds: 10),
-    vsync: this,
-  )..repeat(min: 0, max: 1);
-  late final Animation<double> _waveAnimation = CurvedAnimation(
-    parent: _animationController1,
-    curve: Curves.bounceIn,
-  );
-
   @override
   void dispose() {
     _controller.dispose();
