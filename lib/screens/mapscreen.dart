@@ -113,7 +113,7 @@ class _NewInterState extends State<NewInter> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(1.0), // here, I set opacity to maximum
-                      spreadRadius:3, // this is to specify how much spread the shadow
+                      spreadRadius:1, // this is to specify how much spread the shadow
                       blurRadius: 10, // how much blur the shadow
                       //  offset: Offset(0, 3),
                     ),

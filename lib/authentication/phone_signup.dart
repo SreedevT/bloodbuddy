@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:blood/authentication/verify.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyPhone extends StatefulWidget {
@@ -14,7 +15,31 @@ class MyPhone extends StatefulWidget {
 class _MyPhoneState extends State<MyPhone> {
   TextEditingController countryController = TextEditingController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
   String phone = "";
+
+  Future verify() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: MyPhone.phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        log("Auto verification: ${credential.toString()}");
+        await _auth.signInWithCredential(credential);
+        log('Verification Complete!!!!!!!!!!!');
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        log("Verification Failed ${e.toString()}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        MyVerify.verificationId = verificationId;
+        log("Code Sent: $verificationId");
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        log("Timeout ${verificationId.toString()}");
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -116,6 +141,7 @@ class _MyPhoneState extends State<MyPhone> {
                     onPressed: () {
                       MyPhone.phoneNumber = countryController.text + phone;
                       log(MyPhone.phoneNumber);
+                      verify();
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) =>const  MyVerify())
                       );

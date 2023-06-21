@@ -8,7 +8,7 @@ import 'package:pinput/pinput.dart';
 class MyVerify extends StatefulWidget {
   const MyVerify({Key? key}) : super(key: key);
 
-  static String verificationId = " ";
+  static String verificationId = "";
   @override
   State<MyVerify> createState() => _MyVerifyState();
 }
@@ -18,89 +18,41 @@ class _MyVerifyState extends State<MyVerify> {
 
   String code = '';
 
-  Future verify() async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: MyPhone.phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        log(credential.toString());
-        await auth.signInWithCredential(credential);
-        log('Verification Complete!!!!!!!!!!!');
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        log(e.toString());
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        MyVerify.verificationId = verificationId;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        log(verificationId.toString());
-      },
-    );
-  }
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
-  var con;  // to capture the context
+  // late BuildContext con;  // to capture the context
 
   @override
   void initState() {
     super.initState();
-    user = _auth.currentUser;
+    _auth.authStateChanges().listen((User? user) {
+      setState(() {
+        this.user = user;
+      });
+    });
   }
 
   Future<bool> isUserDocumentExists() async {
-    String uid = user!.uid;
-    DocumentSnapshot userSnapShot = await FirebaseFirestore.instance.collection('User Profile')
-    .doc(uid).get();
+    String? uid = user!.uid;
+    DocumentSnapshot userSnapShot = await FirebaseFirestore.instance
+        .collection('User Profile')
+        .doc(uid)
+        .get();
     return userSnapShot.exists;
   }
+
   @override
   Widget build(BuildContext context) {
-    con = context;  // to capture the updated context
-    //this con is used inside the onpressed which is async function
-    // since after the completetion of the async function, it will get the updated context
-    //this removes any potential error 
-    verify();
-    // final defaultPinTheme = PinTheme(
-    //   width: 56,
-    //   height: 56,
-    //   textStyle: const TextStyle(
-    //       fontSize: 20,
-    //       color: Color.fromRGBO(30, 60, 87, 1),
-    //       fontWeight: FontWeight.w600),
-    //   decoration: BoxDecoration(
-    //     border: Border.all(color: const Color.fromRGBO(234, 239, 243, 1)),
-    //     borderRadius: BorderRadius.circular(20),
-    //   ),
-    // );
-
-    // final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-    //   border: Border.all(color: const Color.fromRGBO(114, 178, 238, 1)),
-    //   borderRadius: BorderRadius.circular(8),
-    // );
-
-    // final submittedPinTheme = defaultPinTheme.copyWith(
-    //   decoration: defaultPinTheme.decoration?.copyWith(
-    //     color: const Color.fromRGBO(234, 239, 243, 1),
-    //   ),
-    // );
+    // con = context;  // to capture the updated context
+    // //this con is used inside the onpressed which is async function
+    // // since after the completetion of the async function, it will get the updated context
+    // //this removes any potential error
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.red[900],
-        // leading: IconButton(
-        //   onPressed: () {
-        //     // Check if widget is mounted before using context
-        //     if (!mounted) return;
-        //     Navigator.pop(context);
-        //   },
-        //   icon: const Icon(
-        //     Icons.arrow_back_ios_rounded,
-        //     color: Colors.black,
-        //   ),
-        // ),
         elevation: 0,
       ),
       body: Container(
@@ -164,26 +116,26 @@ class _MyVerifyState extends State<MyVerify> {
 
                         // Sign the user in (or link) with the credential
                         await auth.signInWithCredential(credential);
-                        // Check if widget is mounted before using context
-                        if (!mounted) return;
+
                         // ignore: unrelated_type_equality_checks
                         bool isExist = await isUserDocumentExists();
-                        if(isExist){
+                        if (isExist) {
+                          if (!mounted) return;
                           Navigator.pushNamedAndRemoveUntil(
-                            con,
+                            context,
                             'home',
                             (route) => false,
                           );
-                        }
-                        else{
+                        } else {
+                          if (!mounted) return;
                           Navigator.pushNamedAndRemoveUntil(
-                            con,
+                            context,
                             'personal_info',
                             (route) => false,
                           );
                         }
                       } catch (e) {
-                        log("Wrong OTP");
+                        log("Verify Error: ${e.toString()}");
                       }
                     },
                     child: const Text("Verify Phone Number")),

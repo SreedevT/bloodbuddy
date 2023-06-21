@@ -24,7 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController1.dispose();
     super.dispose();
   }
 
