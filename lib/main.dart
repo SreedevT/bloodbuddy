@@ -26,6 +26,10 @@ Future<void> main() async {
   User? user = auth.currentUser;
   runApp(
     MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        useMaterial3: true,
+      ),
       initialRoute: user != null ? 'home' : 'welcome',
       debugShowCheckedModeBanner: false,
       routes: {

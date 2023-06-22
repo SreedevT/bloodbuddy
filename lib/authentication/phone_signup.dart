@@ -17,7 +17,6 @@ class _MyPhoneState extends State<MyPhone> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
   String phone = "";
 
   Future verify() async {
@@ -134,19 +133,22 @@ class _MyPhoneState extends State<MyPhone> {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade900,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {
-                      MyPhone.phoneNumber = countryController.text + phone;
-                      log(MyPhone.phoneNumber);
-                      verify();
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) =>const  MyVerify())
-                      );
-                    },
-                    child: const Text("Send the code")),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade900,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () {
+                    MyPhone.phoneNumber = countryController.text + phone;
+                    log(MyPhone.phoneNumber);
+                    verify();
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const MyVerify()));
+                  },
+                  child: const Text(
+                    "Send the code",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               )
             ],
           ),
