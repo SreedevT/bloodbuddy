@@ -272,7 +272,7 @@ class _NewInterState extends State<NewInter> {
                 await DataBase(uid: user.uid).updateUserLocation(area);
                 Navigator.pushNamedAndRemoveUntil(
                   con,
-                  'location_picker',
+                  'home',
                   (route) => false,
                 );
                 // this enables  to close the bottom sheet when this button is clicked
