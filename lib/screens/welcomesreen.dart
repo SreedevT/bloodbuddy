@@ -17,14 +17,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     duration: const Duration(seconds: 10),
     vsync: this,
   )..repeat(min: 0, max: 1);
+
+  late final AnimationController _waveController = AnimationController(
+    duration: const Duration(seconds: 1),
+    upperBound: .1,
+    vsync: this,
+  )..repeat(reverse: true);
+
   late final Animation<double> _animation1 = CurvedAnimation(
     parent: _animationController1,
     curve: Curves.linear,
   );
 
+  late final Animation<double> _waveAnimation = CurvedAnimation(
+    parent: _waveController,
+    curve: Curves.bounceOut,
+  );
+
+
+
   @override
   void dispose() {
     _animationController1.dispose();
+    _waveController.dispose();
     super.dispose();
   }
 
@@ -207,10 +222,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
             ),
             Container(
                 alignment: const Alignment(-0.5, -0.15),
-                child: const Icon(
-                  Icons.waving_hand_outlined,
-                  size: 60,
-                  color: Colors.red,
+                child: RotationTransition(
+                  turns: _waveAnimation,
+                  child: const Icon(
+                    Icons.waving_hand_outlined,
+                    size: 60,
+                    color: Colors.red,
+                  ),
                 )),
             RichText(
               text: const TextSpan(
