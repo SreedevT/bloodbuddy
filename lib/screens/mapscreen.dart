@@ -8,7 +8,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:blood/map_picker/osm_search_and_pick_mod.dart';
 import 'package:blood/map_picker/models/hospitals.dart';
 
-
 class NewInter extends StatefulWidget {
   const NewInter({super.key});
 
@@ -17,8 +16,7 @@ class NewInter extends StatefulWidget {
 }
 
 class _NewInterState extends State<NewInter> {
-
-  LatLong? latLong;
+  LatLong latLong = LatLong(0, 0);
   String location = '';
   String area = '';
   bool _load = false;
@@ -76,13 +74,13 @@ class _NewInterState extends State<NewInter> {
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? user;
+  late User user;
   var con;
 
   @override
   void initState() {
     super.initState();
-    user = _auth.currentUser;
+    user = _auth.currentUser as User;
   }
 
   @override
@@ -90,11 +88,10 @@ class _NewInterState extends State<NewInter> {
     con = context;
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: const Color.fromARGB(255, 129, 36, 30),
-            elevation: 0,
-            title: const Text('Search your current location'),
-            ),
-              
+          backgroundColor: const Color.fromARGB(255, 129, 36, 30),
+          elevation: 0,
+          title: const Text('Search your current location'),
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -104,16 +101,20 @@ class _NewInterState extends State<NewInter> {
                   top: 30, left: 20, right: 20, bottom: 20),
               decoration: BoxDecoration(
                   // shape also can be specified like this => shape: BoxShape.circle,
-                  color: const Color.fromARGB(255, 129, 36,30), // use decoration for giving both color and radius
-                  borderRadius: BorderRadius.circular(20), // otherwise, if we give it separately, error will show up
+                  color: const Color.fromARGB(255, 129, 36,
+                      30), // use decoration for giving both color and radius
+                  borderRadius: BorderRadius.circular(
+                      20), // otherwise, if we give it separately, error will show up
                   border: Border.all(
                     color: Colors.white,
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(1.0), // here, I set opacity to maximum
-                      spreadRadius:3, // this is to specify how much spread the shadow
+                      color: Colors.black
+                          .withOpacity(1.0), // here, I set opacity to maximum
+                      spreadRadius:
+                          1, // this is to specify how much spread the shadow
                       blurRadius: 10, // how much blur the shadow
                       //  offset: Offset(0, 3),
                     ),
@@ -209,7 +210,7 @@ class _NewInterState extends State<NewInter> {
                         await _getCurrentLocation();
 
                         await fetchHospitals(
-                                latLong!.latitude, latLong!.longitude, 5)
+                                latLong.latitude, latLong.longitude, 5)
                             .then((value) {
                           OpenStreetMapSearchAndPick.hospitals = value;
                           log(value.toString());
@@ -260,17 +261,21 @@ class _NewInterState extends State<NewInter> {
           return SizedBox(
             height: 500,
             child: OpenStreetMapSearchAndPick(
-              center: latLong ?? LatLong(0, 0),
+              center: latLong,
               buttonColor: const Color.fromARGB(255, 129, 36, 30),
-              onPicked: (PickedData pickedData) {
-                setState(() async {
+              onPicked: (PickedData pickedData) async {
+                setState(() {
                   location = pickedData.address;
                   area = pickedData.area;
-                  await DataBase(uid: user!.uid).updateUserLocation( area);
-                  Navigator.pushNamedAndRemoveUntil(con, 'home', (route) => false);
                 });
-                 // this enables  to close the bottom sheet when this button is clicked
 
+                await DataBase(uid: user.uid).updateUserLocation(area);
+                Navigator.pushNamedAndRemoveUntil(
+                  con,
+                  'location_picker',
+                  (route) => false,
+                );
+                // this enables  to close the bottom sheet when this button is clicked
               },
             ),
           );

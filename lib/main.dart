@@ -24,16 +24,18 @@ Future<void> main() async {
   );
   final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
-  runApp(MaterialApp(
-    initialRoute: user != null ? 'home' : 'welcome',
-    debugShowCheckedModeBanner: false,
-    routes: {
-      'phone_signup': (context) => const MyPhone(),
-      'verify': (context) => const MyVerify(),
-      'home':(context) => const HomeScreen(),
-      'welcome': (context) => const WelcomeScreen(),
-      'location_picker':(context) => const NewInter(),
-      'personal_info':(context) => const SignUpScreen(),
-    },
-  ));
+  runApp(
+    MaterialApp(
+      initialRoute: user != null ? 'home' : 'welcome',
+      debugShowCheckedModeBanner: false,
+      routes: {
+        'phone_signup': (context) => const MyPhone(),
+        'verify': (context) => const MyVerify(),
+        'home': (context) => const HomeScreen(),
+        'welcome': (context) => const WelcomeScreen(),
+        'location_picker': (context) => const NewInter(),
+        'personal_info': (context) => const SignUpScreen(),
+      },
+    ),
+  );
 }
