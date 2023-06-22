@@ -28,6 +28,7 @@ class _QuestionCardState extends State<QuestionCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      surfaceTintColor: Colors.red,
       // Use some padding and margin for the card
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
       child: Padding(
