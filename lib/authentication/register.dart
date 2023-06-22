@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:blood/Firestore/userprofile.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,22 +70,23 @@ class _QuestionCardState extends State<QuestionCard> {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final inputDecoration = InputDecoration(
-    contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+    contentPadding:
+        const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(
+      borderSide: const BorderSide(
         width: 2,
         color: Color.fromARGB(255, 160, 40, 40),
       ),
       borderRadius: BorderRadius.circular(28.0),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(
+      borderSide: const BorderSide(
         width: 2,
         color: Color.fromARGB(255, 135, 34, 34),
       ),
       borderRadius: BorderRadius.circular(28.0),
     ),
-    prefixIcon: Icon(
+    prefixIcon: const Icon(
       Icons.person,
       size: 25,
     ),
@@ -107,7 +106,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String? selectedWillingToDonateOption;
   DateTime? lastDonated;
 
-  var con;
   TextEditingController ageController = TextEditingController();
   bool question1 = false;
   bool question2 = false;
@@ -123,48 +121,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  @override
   void initState() {
     super.initState();
     user = _auth.currentUser;
-  }
-
-  Widget questionCard(String question, bool value) {
-    return Card(
-      // Use some padding and margin for the card
-      margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        // Use a row to align the text and the switch horizontally
-        child: Row(
-          // Use mainAxisAlignment to space the widgets evenly
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                // Use a text widget with some style
-                child: Text(
-                  question,
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
-            // Use a switch widget with the state variable and an onChanged callback
-            Switch(
-              value: value,
-              onChanged: (v) {
-                // Update the state variable and call setState() to rebuild the UI
-                setState(() {
-                  value = v;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -180,10 +140,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: ListView(
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
+              const Padding(
                 padding: EdgeInsets.only(bottom: 7.0),
                 child: Text(
-                  'Fill some more details to proceed',
+                  'Complete Your Profile to Proceed',
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,
@@ -192,7 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               // Rest of the code...
 
-              SizedBox(height: 11),
+              const SizedBox(height: 11),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
@@ -209,7 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
@@ -226,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 13),
+              const SizedBox(height: 13),
               DateTimeFormField(
                 onDateSelected: (DateTime value) {
                   setState(() {
@@ -237,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 decoration: inputDecoration.copyWith(
                   labelText: 'Date of Birth',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.event_note,
                     size: 25,
                   ),
@@ -245,12 +205,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mode: DateTimeFieldPickerMode.date,
                 autovalidateMode: AutovalidateMode.always,
               ),
-              SizedBox(height: 14),
+              const SizedBox(height: 14),
               TextFormField(
                 controller: ageController,
                 decoration: inputDecoration.copyWith(
                   labelText: 'Age',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.cake,
                     size: 25,
                   ),
@@ -263,7 +223,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
@@ -273,7 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 keyboardType: TextInputType.number,
                 decoration: inputDecoration.copyWith(
                   labelText: 'Weight',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.info_outline,
                     size: 25,
                   ),
@@ -285,11 +245,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 decoration: inputDecoration.copyWith(
                   labelText: 'Select blood group',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.bloodtype,
                     size: 25,
                   ),
@@ -299,7 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     .map(
                       (item) => DropdownMenuItem<String>(
                         value: item,
-                        child: Text(item, style: TextStyle(fontSize: 18)),
+                        child: Text(item, style: const TextStyle(fontSize: 18)),
                       ),
                     )
                     .toList(),
@@ -316,11 +276,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-              SizedBox(height: 17),
+              const SizedBox(height: 17),
               DropdownButtonFormField<String>(
                 decoration: inputDecoration.copyWith(
                   labelText: 'Are you willing to donate',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.bloodtype,
                     size: 25,
                   ),
@@ -330,7 +290,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     .map(
                       (item) => DropdownMenuItem<String>(
                         value: item,
-                        child: Text(item, style: TextStyle(fontSize: 18)),
+                        child: Text(item, style: const TextStyle(fontSize: 18)),
                       ),
                     )
                     .toList(),
@@ -347,7 +307,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-              SizedBox(height: 18),
+              const SizedBox(height: 18),
               DateTimeFormField(
                 onDateSelected: (DateTime? value) {
                   setState(() {
@@ -356,7 +316,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 decoration: inputDecoration.copyWith(
                   labelText: 'Last Donated Date',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.event_note,
                     size: 25,
                   ),
@@ -364,7 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mode: DateTimeFieldPickerMode.date,
                 autovalidateMode: AutovalidateMode.always,
               ),
-              SizedBox(height: 19),
+              const SizedBox(height: 19),
 
               QuestionCard(
                 question: "Did you get tattoo in past 12 months?",
@@ -391,7 +351,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(10),
                 width: double.infinity,
@@ -415,30 +375,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         question2,
                         question3,
                       );
-
+                      if (!mounted) return;
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => NewInter(),
+                          builder: (context) => const NewInter(),
                         ),
                       );
                     } else {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text('Incomplete Form'),
-                          content: Text('Please fill all the required fields.'),
+                          title: const Text('Incomplete Form'),
+                          content: const Text(
+                              'Please fill all the required fields.'),
                           actions: [
                             ElevatedButton(
                               onPressed: () => Navigator.pop(context),
-                              child: Text('OK'),
+                              child: const Text('OK'),
                             ),
                           ],
                         ),
                       );
                     }
                   },
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'PROCEED',
                       style: TextStyle(
@@ -450,7 +411,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
