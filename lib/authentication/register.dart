@@ -133,15 +133,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 129, 36, 30),
-        title: const Center(
-          child: Text(
-            'Complete Your Profile',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+        title: const Text(
+          'Complete Your Profile',
         ),
       ),
       body: Padding(
@@ -386,7 +379,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         question3,
                       );
                       if (!mounted) return;
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const NewInter(),
