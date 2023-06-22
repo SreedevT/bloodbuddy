@@ -2,6 +2,7 @@ import 'package:blood/Firestore/userprofile.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:date_field/date_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -11,275 +12,401 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final inputDecoration = InputDecoration(
+    contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        width: 2,
+        color: Color.fromARGB(255, 160, 40, 40),
+      ),
+      borderRadius: BorderRadius.circular(28.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        width: 2,
+        color: Color.fromARGB(255, 135, 34, 34),
+      ),
+      borderRadius: BorderRadius.circular(28.0),
+    ),
+    prefixIcon: Icon(
+      Icons.person,
+      size: 25,
+    ),
+  );
+
   final _formKey = GlobalKey<FormState>();
-  double screenHeight = 0;
-  double screenWidth = 0;
+
+  List<String> items = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+  List<String> willingToDonateOptions = ['Yes', 'No'];
+
   String fname = '';
   String lname = '';
-  // DateTime dob
-  // DateTime lastDonated
+  DateTime dob = DateTime.now();
   int age = 0;
   double weight = 0;
-  bool isDonor = true;
-  var con;
+  String? selectedBloodGroup;
+  String? selectedWillingToDonateOption;
+  DateTime? lastDonated;
 
+  var con;
+  TextEditingController ageController = TextEditingController();
+  bool question1 = false;
+  bool question2 = false;
+  bool question3 = false;
+  bool isWillingToDonate = true;
+  bool isChecked = false; // Initial value of the checkbox
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
 
   @override
+  void dispose() {
+    ageController.dispose();
+    super.dispose();
+  }
+
   void initState() {
     super.initState();
     user = _auth.currentUser;
   }
+
   @override
   Widget build(BuildContext context) {
-    con = context;
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      backgroundColor: Colors.red[900],
-      body: SizedBox(
-        height: screenHeight,
-        width: screenWidth,
-        child: Stack(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 129, 36, 30),
+      ),
+      body: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(35.0),
+        child: ListView(
           children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: screenHeight / 8,
-                ),
-                child: Text(
-                  "Personal Info...",
-                  style: TextStyle(
-                    fontFamily: "Montserrat",
-                    fontSize: screenWidth / 10,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            square(-30, 0.12),
-            square(-10, 0.3),
-            square(10, 1),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: screenHeight / 2,
-                width: screenWidth,
-                color: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth / 12,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextFormField(
-                            onChanged: (val) {
-                              fname = val;
-                            },
-                            validator: (val) {
-                              if (val!.isEmpty) {
-                                return 'Please enter your first name';
-                              }
-                              return null;
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'First Name',
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                top: 14,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          TextFormField(
-                            onChanged: (val) {
-                              lname = val;
-                            },
-                            validator: (val) => val!.isEmpty
-                                ? "Please enter your last name"
-                                : null,
-                            decoration: const InputDecoration(
-                              hintText: 'Last Name',
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                top: 14,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          TextFormField(
-                            onChanged: (val) {
-                              age = int.parse(val);
-                            },
-                            validator: (val) {
-                              if (val!.isEmpty) {
-                                return 'Please enter your age';
-                              }
-                              if (int.tryParse(val) == null) {
-                                return 'Please enter a valid age';
-                              }
-                              return null;
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Age',
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                top: 14,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          TextFormField(
-                            onChanged: (val) {
-                              weight = double.parse(val);
-                            },
-                            validator: (val) {
-                              if (val!.isEmpty) {
-                                return 'Please enter your weight';
-                              }
-                              if (int.tryParse(val) == null) {
-                                return 'Not valid';
-                              }
-                              return null;
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Weight',
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.only(
-                                top: 14,
-                              ),
-                            ),
-                          ),
-                        ],
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 7.0),
+                    child: Text(
+                      'Fill some more details to proceed',
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              await DataBase(uid: user!.uid).updateUserProfile(
-                                fname,
-                                lname,
-                                age,
-                                weight,
-                                isDonor,
-                              );
-                              print(fname );
-                              print(lname );
-                              print(age);
-                              print(weight );
-                              //print(isDonor );
-                            Navigator.of(con).push(
-                        MaterialPageRoute(builder: (context) => const NewInter()));
-                            }
+                  ),
+                  // Rest of the code...
 
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.red.shade900),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                                const EdgeInsets.all(15)),
-                            textStyle: MaterialStateProperty.all<TextStyle>(
-                              const TextStyle(fontSize: 20),
-                            ),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24.0),
-                                side: const BorderSide(
-                                    color: Color.fromARGB(255, 49, 11, 8)),
-                              ),
-                            ),
-                          ),
-                          child: const Text('Next'),
-                        ),
-                        const SizedBox(height: 30.0),
-                        // Container(
-                        //   margin: const EdgeInsets.only(
-                        //     bottom: 30,
-                        //   ),
-                        //   child: GestureDetector(
-                        //     onTap: () {
-                        //       Navigator.of(context).pushReplacement(
-                        //         MaterialPageRoute(
-                        //           builder: (context) => const LoginScreen(),
-                        //         ),
-                        //       );
-                        //     },
-                        //     child: const Text(
-                        //       "Already have an account? Login",
-                        //       style: TextStyle(
-                        //         fontFamily: "Montserrat",
-                        //         color: Colors.black,
-                        //         fontSize: 12,
-                        //       ),
-                        //     ),
-                        //   ),
-                        //),
-                      ],
+                  SizedBox(height: 11),
+                  TextFormField(
+                    onChanged: (val) {
+                      setState(() {
+                        fname = val;
+                      });
+                    },
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'First Name',
                     ),
-                  ],
-                ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your first name';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  TextFormField(
+                    onChanged: (val) {
+                      setState(() {
+                        lname = val;
+                      });
+                    },
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Last Name',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your last name';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 13),
+                  DateTimeFormField(
+                    onDateSelected: (DateTime value) {
+                      setState(() {
+                        dob = value;
+                        age = _calculateAge(value);
+                        ageController.text = age.toString();
+                      });
+                    },
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Date of Birth',
+                      prefixIcon: Icon(
+                        Icons.event_note,
+                        size: 25,
+                      ),
+                    ),
+                    mode: DateTimeFieldPickerMode.date,
+                    autovalidateMode: AutovalidateMode.always,
+                  ),
+                  SizedBox(height: 14),
+                  TextFormField(
+                    controller: ageController,
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Age',
+                      prefixIcon: Icon(
+                        Icons.cake,
+                        size: 25,
+                      ),
+                    ),
+                    readOnly: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your age';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 15),
+                  TextFormField(
+                    onChanged: (val) {
+                      setState(() {
+                        weight = double.tryParse(val) ?? 0;
+                      });
+                    },
+                    keyboardType: TextInputType.number,
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Weight',
+                      prefixIcon: Icon(
+                        Icons.info_outline,
+                        size: 25,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Weight';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Select blood group',
+                      prefixIcon: Icon(
+                        Icons.bloodtype,
+                        size: 25,
+                      ),
+                    ),
+                    value: selectedBloodGroup,
+                    items: items
+                        .map(
+                          (item) => DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(item, style: TextStyle(fontSize: 18)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (item) {
+                      setState(() {
+                        selectedBloodGroup = item;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a blood group';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  SizedBox(height: 17),
+                  DropdownButtonFormField<String>(
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Are you willing to donate',
+                      prefixIcon: Icon(
+                        Icons.bloodtype,
+                        size: 25,
+                      ),
+                    ),
+                    value: selectedWillingToDonateOption,
+                    items: willingToDonateOptions
+                        .map(
+                          (item) => DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(item, style: TextStyle(fontSize: 18)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (item) {
+                      setState(() {
+                        selectedWillingToDonateOption = item;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select yes/no';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  SizedBox(height: 18),
+                  DateTimeFormField(
+                    onDateSelected: (DateTime? value) {
+                      setState(() {
+                        lastDonated = value; // Update the lastDonated variable
+                      });
+                    },
+                    decoration: inputDecoration.copyWith(
+                      labelText: 'Last Donated Date',
+                      prefixIcon: Icon(
+                        Icons.event_note,
+                        size: 25,
+                      ),
+                    ),
+                    mode: DateTimeFieldPickerMode.date,
+                    autovalidateMode: AutovalidateMode.always,
+                  ),
+                  SizedBox(height: 19),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 22.0),
+                        child: Text('Did you get tattoo\nin past 12 months?',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )),
+                      ),
+                      SizedBox(width: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: 32.0),
+                        child: Switch(
+                          value: question1,
+                          onChanged: (value) {
+                            setState(() {
+                              question1 = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Text(question1 ? 'Yes' : 'No'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 21.0),
+                        child: Text(
+                          'Have you ever tested\npositive for HIV?',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: 21.0),
+                        child: Switch(
+                          value: question2,
+                          onChanged: (value) {
+                            setState(() {
+                              question2 = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Text(question2 ? 'Yes' : 'No'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 22.0),
+                        child: Text(
+                          'Have you taken\nCovid-19 vaccine?',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Padding(
+                        padding: EdgeInsets.only(left: 37.0),
+                        child: Switch(
+                          value: question3,
+                          onChanged: (value) {
+                            setState(() {
+                              question3 = value;
+                            });
+                          },
+                        ),
+                      ),
+                      Text(question3 ? 'Yes' : 'No'),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 129, 36, 30),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: InkWell(
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await DataBase(uid: user!.uid).updateUserProfile(
+                            fname,
+                            lname,
+                            dob,
+                            age,
+                            weight,
+                            selectedBloodGroup,
+                            lastDonated,
+                            selectedWillingToDonateOption,
+                            question1,
+                            question2,
+                            question3,
+                          );
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NewInter(),
+                            ),
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Incomplete Form'),
+                              content:
+                                  Text('Please fill all the required fields.'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      child: Center(
+                        child: Text(
+                          'PROCEED',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -287,22 +414,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+}
 
-  Widget square(double y, double opacity) {
-    return Center(
-      child: Transform.translate(
-        offset: Offset(screenWidth / 30, y),
-        child: Transform.rotate(
-          angle: -0.4,
-          child: Container(
-            height: screenHeight / 3,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(opacity),
-              borderRadius: BorderRadius.circular(55),
-            ),
-          ),
-        ),
-      ),
-    );
+int _calculateAge(DateTime dob) {
+  DateTime currentDate = DateTime.now();
+  int age = currentDate.year - dob.year;
+  if (currentDate.month < dob.month ||
+      (currentDate.month == dob.month && currentDate.day < dob.day)) {
+    age--;
   }
+  return age;
 }

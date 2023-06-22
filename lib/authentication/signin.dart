@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:blood/authentication/register.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -87,23 +86,26 @@ class _LoginScreenState extends State<LoginScreen> {
                         //     ),
                         //   ),
                         // ),
-                         ElevatedButton(
-                          onPressed: ()  {
-                       
-                          },
+                        ElevatedButton(
+                          onPressed: () {},
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade900),
-                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                            padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(15)),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.red.shade900),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.all(15)),
                             textStyle: MaterialStateProperty.all<TextStyle>(
                               const TextStyle(fontSize: 20),
                             ),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24.0),
-                                side: const BorderSide(color: Color.fromARGB(255, 49, 11, 8)),
+                                side: const BorderSide(
+                                    color: Color.fromARGB(255, 49, 11, 8)),
                               ),
-                            ), 
+                            ),
                           ),
                           child: const Text('Sign Up'),
                         ),
