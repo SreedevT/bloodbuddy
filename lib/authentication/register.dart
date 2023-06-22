@@ -133,27 +133,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 129, 36, 30),
+        title: const Center(
+          child: Text(
+            'Complete Your Profile',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: Form(
           key: _formKey,
           child: ListView(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 7.0),
-                child: Text(
-                  'Complete Your Profile to Proceed',
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              // const Padding(
+              //   padding: EdgeInsets.only(bottom: 7.0),
+              //   child: Text(
+              //     'Complete Your Profile to Proceed',
+              //     style: TextStyle(
+              //       fontSize: 19,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              // ),
               // Rest of the code...
 
-              const SizedBox(height: 11),
+              const SizedBox(height: 20),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
