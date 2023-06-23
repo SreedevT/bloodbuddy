@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:blobs/blobs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -85,6 +84,18 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           children: [
             Hero(animationController1: _animationController1),
 
+            const Text(
+              "Welcome to Blood Buddy",
+              textAlign: TextAlign.center,
+              style:  TextStyle(
+                color: Colors.white,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.none,
+                fontSize: 40,
+              ),
+            ),
+
             // RichText(
             //   text: const TextSpan(
             //     style: TextStyle(
@@ -113,37 +124,21 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             //     ],
             //   ),
             // ),
-            AnimatedTextKit(
-              animatedTexts: [
-                ColorizeAnimatedText(
-                  'WELCOME',
-                  textStyle: TextStyle(
-                    fontSize: 40.0,
-                    fontFamily: 'SF',
-                  ),
-                  colors: [
-                    Colors.red,
-                    Colors.yellow,
-                    Colors.purple,
-                    Colors.blue,
-                  ],
-                ),
-              ],
-            ),
 
             const SizedBox(
               height: 20,
             ),
 
-            Text(
+            const Text(
               "\"World's largest Blood Donors mobile app\"",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.grey.shade300,
+                color: Colors.white,
                 fontFamily: "Poppins",
+                fontWeight: FontWeight.w600,
                 fontStyle: FontStyle.italic,
                 decoration: TextDecoration.none,
-                fontSize: 20,
+                fontSize: 18,
               ),
             ),
           ],
@@ -296,10 +291,10 @@ class Hero extends StatelessWidget {
       alignment: const Alignment(0, 0),
       children: [
         RotationTransition(
-          turns: _animationController1,
+          turns: _animationController1..duration = const Duration(seconds: 15),
           child: Blob.animatedRandom(
-            // id: const ['5-6-43178'],=
-            size: 400,
+            duration: Duration(seconds: 15),
+            size: 420,
             edgesCount: 7,
             minGrowth: 9,
             styles: BlobStyles(

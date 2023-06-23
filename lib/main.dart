@@ -39,6 +39,7 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
+      
       initialRoute: user != null ? 'home' : 'welcome',
       debugShowCheckedModeBanner: false,
       routes: {
