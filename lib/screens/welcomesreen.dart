@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -73,116 +73,87 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
   }
 
   Widget firstView() {
-    return Container(
-      color: Colors.red[900],
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  fontSize: 40,
-                  letterSpacing: 1,
-                ),
-                children: [
-                  TextSpan(
-                    text: "Welc",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: "O",
-                    style: TextStyle(fontSize: 70, fontStyle: FontStyle.italic),
-                  ),
-                  TextSpan(
-                    text: "me",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(
-              height: 20,
-            ),
-
-            Text(
-                "\"World's largest Blood Donors mobile app\"",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey.shade300,
-                  fontFamily: "Poppins",
-                  fontStyle: FontStyle.italic,
-                  decoration: TextDecoration.none,
-                  fontSize: 20,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget secondView() {
-    return Container(
-      color: Colors.white,
-      child: Stack(
+  return Container(
+      color: Colors.red[800],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            alignment: const Alignment(0.0, 0.0),
-            child: SpinKitPumpingHeart(
-              color: Colors.red[900],
-              size: 300.0,
-            ),
-          ),
-          Container(
-            alignment: const Alignment(0, 0),
-            child: RichText(
-              text: const TextSpan(
-                text: "\" One Act of ",
+          const SizedBox(height: 50),
+          Image.asset('assets/reqblood3.png'),
+          const SizedBox(height: 100),
+          RichText(
+            text: const TextSpan(
+                text: "\t\tEmpowering Generosity",
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w300,
                   color: Colors.white,
                 ),
                 children: [
                   TextSpan(
-                      text: "DONATION,\n",
+                    text: "\n\nSubmit a Blood Request and Inspire Donors!",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                ]),
+          ),
+        ],
+      ));
+}
+
+ Widget secondView(){
+  return Container(
+    color: Colors.red[800],
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+            Container(
+            alignment: const Alignment(0, 0),
+            child: RichText(
+              text: const TextSpan(
+                text: "Be a ",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+                children: [
+                  TextSpan(
+                      text: "Lifeline,\n",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                       )),
                   TextSpan(
-                    text: "Countless Lives ",
+                    text: "\t\t\t\t\tDonate ",
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 20,
                       color: Colors.white,
                     ),
                   ),
                   TextSpan(
-                      text: "SAVED! \"\n",
+                      text: "Blood!\n",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                       )),
                 ],
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        const SizedBox(height: 100),
+        SvgPicture.asset('assets/donblood2.svg',
+        height: 200,),
+      ],
+    ),
+  );
+}
 
   Widget thirdView() {
     return Container(
-      color: Colors.red[900],
+      color: Colors.red[800],
       child: Center(
         child: Stack(
           alignment: const Alignment(0, 0),
@@ -227,7 +198,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                   child: const Icon(
                     Icons.waving_hand_outlined,
                     size: 60,
-                    color: Colors.red,
+                    color: Color.fromARGB(255, 198, 40, 40),
                   ),
                 )),
             RichText(
@@ -235,7 +206,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                 text: "You are one step away.\n",
                 style: TextStyle(
                   fontSize: 17,
-                  color: Colors.red,
+                  color: Color.fromARGB(255, 198, 40, 40),
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.bold,
                 ),
@@ -249,7 +220,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.red[900]),
+                          MaterialStateProperty.all(Colors.red[800]),
                       foregroundColor: MaterialStateProperty.all(Colors.white),
                     ),
                     child: const Text("Join our community!"))),

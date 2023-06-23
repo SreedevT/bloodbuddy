@@ -1,5 +1,6 @@
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
+import 'package:blood/screens/Initialscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +40,7 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      initialRoute: user != null ? 'home' : 'welcome',
+      initialRoute: user != null ? 'home' : 'initial_screen',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),
@@ -48,6 +49,7 @@ Future<void> main() async {
         'welcome': (context) => const WelcomeScreen(),
         'location_picker': (context) => const NewInter(),
         'personal_info': (context) => const SignUpScreen(),
+        'initial_screen':(context) => const InitialScreen()
       },
     ),
   );
