@@ -12,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // variables to retrieve user profile data from firestore
@@ -29,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool? q2;
   bool? q3;
 
-    
   @override
   void initState() {
     user = _auth.currentUser;
@@ -39,43 +37,49 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // function to fetch user profile data from firestore
 
-fetchUserProfile() async {
-  final CollectionReference userProfile =
-      FirebaseFirestore.instance.collection('User Profile');
-  await userProfile.doc(user!.uid).get().then((DocumentSnapshot snapshot) {
-    if (snapshot.exists) {
-      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      setState(() {
-        fname  = data['First Name'];
-        lname  = data['Last Name'];
-        dob  = data['Date of Birth'].toDate();
-        age  = data['Age'];
-        weight  = data['Weight'];
-        bloodGroup  = data['Blood Group'];
-        isDonor  = data['Is donor'];
-        lastDonated  = data['Last Donated'];
-        q1  = data['tattoo'];
-        q2  = data['HIV_tested'];
-        q3  = data['Covid_vaccine'];
-        // print(fname);
+  fetchUserProfile() async {
+    final CollectionReference userProfile =
+        FirebaseFirestore.instance.collection('User Profile');
+    try {
+      await userProfile.doc(user!.uid).get().then((DocumentSnapshot snapshot) {
+        if (snapshot.exists) {
+          Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+          setState(() {
+            fname = data['First Name'];
+            lname = data['Last Name'];
+            dob = data['Date of Birth'].toDate();
+            age = data['Age'];
+            weight = data['Weight'];
+            bloodGroup = data['Blood Group'];
+            isDonor = data['Is donor'];
+            lastDonated = data['Last Donated'];
+            q1 = data['tattoo'];
+            q2 = data['HIV_tested'];
+            q3 = data['Covid_vaccine'];
+            // print(fname);
+          });
+        }
       });
+    } catch (e) {
+      print(e.toString());
     }
-  });
-}
-
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Column(
+      body: Column(
         children: [
-          const SizedBox(height: 50,),
-          const Text("Personal Info",
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold
-          ),),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 50,
+          ),
+          const Text(
+            "Personal Info",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           Text("First Name: $fname"),
           Text("Last Name: $lname"),
           Text("Date of Birth: $dob"),
@@ -87,30 +91,27 @@ fetchUserProfile() async {
           Text("tattoo: $q1"),
           Text("HIV_tested: $q2"),
           Text("Covid_vaccine: $q3"),
-          SizedBox(height: MediaQuery.of(context).size.height/2,),
-          Center(
-            
-            child: ElevatedButton(onPressed: () async {
-              try{
-                await _auth.signOut();
-                
-                Navigator.pushNamedAndRemoveUntil(
-              context,
-              'welcome',
-              (route) => false,
-          );
-
-              }
-              catch(e){
-                print(e.toString());
-              }
-              
-            }, child:const  Text("Log out"))
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 2,
           ),
+          Center(
+              child: ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await _auth.signOut();
+
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        'welcome',
+                        (route) => false,
+                      );
+                    } catch (e) {
+                      print(e.toString());
+                    }
+                  },
+                  child: const Text("Log out"))),
         ],
       ),
     );
-
-    
   }
 }
