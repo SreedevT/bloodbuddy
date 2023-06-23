@@ -8,21 +8,8 @@ class DataBase {
       FirebaseFirestore.instance.collection('User Profile');
   final CollectionReference userLocation =
       FirebaseFirestore.instance.collection('User Location');
-  // to update the user profile data
 
-  // Future updateUserProfile(String fname, String lname, DateTime dob, DateTime lastDonated, int age, double weight, bool isDonor) async{
-  //   return await userProfile.doc(uid).set(
-  //     {
-  //       'First Name': fname,
-  //       'Last Name': lname,
-  //       'Date of Birth': dob,
-  //       'Last Donated': lastDonated,
-  //       'Age': age,
-  //       'Weight': weight,
-  //       'Is Donor': isDonor,
-  //     }
-  //   );
-  // }
+  // to update the user profile data
 
   Future updateUserProfile(
     String fname,
@@ -64,4 +51,5 @@ class DataBase {
       },
     );
   }
+
 }
