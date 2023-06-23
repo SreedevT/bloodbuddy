@@ -70,12 +70,12 @@ fetchUserProfile() async {
       body:  Column(
         children: [
           const SizedBox(height: 50,),
-          Text("Personal Info",
+          const Text("Personal Info",
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold
           ),),
-          SizedBox(height: 20,),
+          const SizedBox(height: 20,),
           Text("First Name: $fname"),
           Text("Last Name: $lname"),
           Text("Date of Birth: $dob"),
