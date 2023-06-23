@@ -103,42 +103,46 @@ class _MyVerifyState extends State<MyVerify> {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[900],
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () async {
-                      try {
-                        PhoneAuthCredential credential =
-                            PhoneAuthProvider.credential(
-                                verificationId: MyVerify.verificationId,
-                                smsCode: code);
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[900],
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () async {
+                    try {
+                      PhoneAuthCredential credential =
+                          PhoneAuthProvider.credential(
+                              verificationId: MyVerify.verificationId,
+                              smsCode: code);
 
-                        // Sign the user in (or link) with the credential
-                        await auth.signInWithCredential(credential);
+                      // Sign the user in (or link) with the credential
+                      await auth.signInWithCredential(credential);
 
-                        // ignore: unrelated_type_equality_checks
-                        bool isExist = await isUserDocumentExists();
-                        if (isExist) {
-                          if (!mounted) return;
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            'home',
-                            (route) => false,
-                          );
-                        } else {
-                          if (!mounted) return;
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            'personal_info',
-                            (route) => false,
-                          );
-                        }
-                      } catch (e) {
-                        log("Verify Error: ${e.toString()}");
+                      // ignore: unrelated_type_equality_checks
+                      bool isExist = await isUserDocumentExists();
+                      if (isExist) {
+                        if (!mounted) return;
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          'home',
+                          (route) => false,
+                        );
+                      } else {
+                        if (!mounted) return;
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          'personal_info',
+                          (route) => false,
+                        );
                       }
-                    },
-                    child: const Text("Verify Phone Number")),
+                    } catch (e) {
+                      log("Verify Error: ${e.toString()}");
+                    }
+                  },
+                  child: const Text(
+                    "Verify Phone Number",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
               Row(
                 children: [

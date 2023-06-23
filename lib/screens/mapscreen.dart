@@ -90,13 +90,15 @@ class _NewInterState extends State<NewInter> {
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 129, 36, 30),
           elevation: 0,
-          title: const Text('Search your current location'),
+          title: const Text(
+            'Set your current location',
+          ),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 350,
+              // height: 350,
               margin: const EdgeInsets.only(
                   top: 30, left: 20, right: 20, bottom: 20),
               decoration: BoxDecoration(
@@ -122,7 +124,7 @@ class _NewInterState extends State<NewInter> {
               child: Center(
                 child: Column(
                   children: [
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 20),
                     const Text(
                       "Thanks for coming so far!",
                       style: TextStyle(
@@ -223,6 +225,7 @@ class _NewInterState extends State<NewInter> {
                         _showModalBottomSheet(context);
                       },
                     ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -255,6 +258,12 @@ class _NewInterState extends State<NewInter> {
   void _showModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
+        // shape and clipBehavior are used to make the sheet have rouned corners
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        isDismissible: false,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
         barrierColor: Colors.black.withOpacity(
             0.7), // so what this does is that it gives this color to main screen when the sheet pops up
         builder: (BuildContext context) {
@@ -272,7 +281,7 @@ class _NewInterState extends State<NewInter> {
                 await DataBase(uid: user.uid).updateUserLocation(area);
                 Navigator.pushNamedAndRemoveUntil(
                   con,
-                  'location_picker',
+                  'home',
                   (route) => false,
                 );
                 // this enables  to close the bottom sheet when this button is clicked

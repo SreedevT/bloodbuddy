@@ -26,6 +26,19 @@ Future<void> main() async {
   User? user = auth.currentUser;
   runApp(
     MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+      ),
       initialRoute: user != null ? 'home' : 'welcome',
       debugShowCheckedModeBanner: false,
       routes: {
