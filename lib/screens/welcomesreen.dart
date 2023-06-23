@@ -1,4 +1,8 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:blobs/blobs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -9,7 +13,8 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin{
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with TickerProviderStateMixin {
   // to keep track which page we are on
   final PageController _controller = PageController();
 
@@ -33,8 +38,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     parent: _waveController,
     curve: Curves.bounceOut,
   );
-
-
 
   @override
   void dispose() {
@@ -80,33 +83,52 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  fontSize: 40,
-                  letterSpacing: 1,
+            Hero(animationController1: _animationController1),
+
+            // RichText(
+            //   text: const TextSpan(
+            //     style: TextStyle(
+            //       fontSize: 40,
+            //       letterSpacing: 1,
+            //     ),
+            //     children: [
+            //       TextSpan(
+            //         text: "Welc",
+            //         style: TextStyle(
+            //           fontSize: 60,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //       TextSpan(
+            //         text: "O",
+            //         style: TextStyle(fontSize: 70, fontStyle: FontStyle.italic),
+            //       ),
+            //       TextSpan(
+            //         text: "me",
+            //         style: TextStyle(
+            //           fontSize: 60,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            AnimatedTextKit(
+              animatedTexts: [
+                ColorizeAnimatedText(
+                  'WELCOME',
+                  textStyle: TextStyle(
+                    fontSize: 40.0,
+                    fontFamily: 'SF',
+                  ),
+                  colors: [
+                    Colors.red,
+                    Colors.yellow,
+                    Colors.purple,
+                    Colors.blue,
+                  ],
                 ),
-                children: [
-                  TextSpan(
-                    text: "Welc",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: "O",
-                    style: TextStyle(fontSize: 70, fontStyle: FontStyle.italic),
-                  ),
-                  TextSpan(
-                    text: "me",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
 
             const SizedBox(
@@ -114,16 +136,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
             ),
 
             Text(
-                "\"World's largest Blood Donors mobile app\"",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey.shade300,
-                  fontFamily: "Poppins",
-                  fontStyle: FontStyle.italic,
-                  decoration: TextDecoration.none,
-                  fontSize: 20,
-                ),
+              "\"World's largest Blood Donors mobile app\"",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade300,
+                fontFamily: "Poppins",
+                fontStyle: FontStyle.italic,
+                decoration: TextDecoration.none,
+                fontSize: 20,
               ),
+            ),
           ],
         ),
       ),
@@ -256,6 +278,47 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
           ],
         ),
       ),
+    );
+  }
+}
+
+class Hero extends StatelessWidget {
+  const Hero({
+    super.key,
+    required AnimationController animationController1,
+  }) : _animationController1 = animationController1;
+
+  final AnimationController _animationController1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: const Alignment(0, 0),
+      children: [
+        RotationTransition(
+          turns: _animationController1,
+          child: Blob.animatedRandom(
+            // id: const ['5-6-43178'],=
+            size: 400,
+            edgesCount: 7,
+            minGrowth: 9,
+            styles: BlobStyles(
+              color: Colors.white,
+              fillType: BlobFillType.fill,
+            ),
+            loop: true,
+          ),
+        ),
+        Lottie.asset(
+          'assets/lottie/welcome_red.json',
+        ),
+        //! Cannot import svg files using Image.asset(). Needs flutter_svg package
+        SvgPicture.asset(
+          'assets/icons/logo.svg',
+          height: 125,
+          width: 125,
+        )
+      ],
     );
   }
 }
