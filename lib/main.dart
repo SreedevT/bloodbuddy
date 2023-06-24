@@ -12,6 +12,8 @@ import 'authentication/phone_signup.dart';
 import 'authentication/verify.dart';
 
 Future<void> main() async {
+  //TODO Remove delay once app actually takes some time to load
+  await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
