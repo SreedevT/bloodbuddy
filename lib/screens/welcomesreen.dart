@@ -1,3 +1,4 @@
+import 'package:blood/authentication/phone_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -80,10 +81,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
         children: [
           const SizedBox(height: 50),
           Image.asset('assets/reqblood3.png'),
-          const SizedBox(height: 100),
+          const SizedBox(height: 80),
           RichText(
             text: const TextSpan(
-                text: "\t\tEmpowering Generosity",
+                text: "\t\t\tEmpowering Generosity",
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w300,
@@ -93,8 +94,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                   TextSpan(
                     text: "\n\nSubmit a Blood Request and Inspire Donors!",
                     style: TextStyle(
-                      fontSize: 18,
                       fontStyle: FontStyle.italic,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                     ),
                   )
@@ -215,9 +216,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
             Container(
                 alignment: const Alignment(0, 0.1),
                 child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, 'phone_signup');
+                        onPressed: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => const MyPhone(),
+                    transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+                      return SlideTransition(
+                        position: Tween(
+                          begin: const Offset(1.0, 0.0), // bottom to top
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      );
                     },
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
+              },
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.red[800]),

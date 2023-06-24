@@ -15,12 +15,12 @@ class _InitialScreenState extends State<InitialScreen> {
     Future.delayed(const Duration(milliseconds: 2000), () {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(  // able to use page transition animation
-          //context is passed, previous page is not available
-          pageBuilder: (context, __, ___) => const WelcomeScreen(),
+          //context is already passed, previous page is not available
+          pageBuilder: (_, __, ___) => const WelcomeScreen(),
           transitionsBuilder:   // defines the transition animation
               // 1st parameter is the context, 2nd is the animation, 3rd is the secondary animation, 4th is the child which is the welcome screen
               // passed to the PageRouteBuilder (that is, child is the destination page)
-              (context, Animation<double> animation, __, Widget child) {
+              (_, Animation<double> animation, __, Widget child) {
             return FadeTransition(
               opacity: animation, // animation object is passed since as the transition progresses,
               // the opacity changes from 0 to 1 (transparent to opaque)
@@ -69,7 +69,6 @@ class _InitialScreenState extends State<InitialScreen> {
                     style: const TextStyle(
                       fontSize:20.0,
                       fontWeight: FontWeight.w300,
-                      fontStyle: FontStyle.italic,
                       color: Colors.white
                     ),
                     child:AnimatedTextKit(

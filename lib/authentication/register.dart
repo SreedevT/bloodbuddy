@@ -28,7 +28,9 @@ class _QuestionCardState extends State<QuestionCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      surfaceTintColor: Colors.red,
+      color: Colors.red[800],
+      shadowColor: Colors.red[800],
+      // surfaceTintColor: Colors.red[800],
       // Use some padding and margin for the card
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
       child: Padding(
@@ -46,12 +48,16 @@ class _QuestionCardState extends State<QuestionCard> {
                   widget.question,
                   style: const TextStyle(
                     fontSize: 18,
+                    color: Colors.white
                   ),
                 ),
               ),
             ),
             // Use a switch widget with the state variable and an onChanged callback
             Switch(
+              activeColor: Color.fromARGB(255, 126, 232, 130),
+              inactiveThumbColor: Colors.white,
+              inactiveTrackColor: Colors.grey,
               value: _switchValue,
               onChanged: (v) {
                 // Update the state variable and call setState() to rebuild the UI
@@ -76,14 +82,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     enabledBorder: OutlineInputBorder(
       borderSide: const BorderSide(
         width: 2,
-        color: Color.fromARGB(255, 160, 40, 40),
+        color: Colors.red,
       ),
       borderRadius: BorderRadius.circular(28.0),
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: const BorderSide(
         width: 2,
-        color: Color.fromARGB(255, 135, 34, 34),
+        color:  Color.fromARGB(255, 201, 41, 41),
       ),
       borderRadius: BorderRadius.circular(28.0),
     ),
@@ -132,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 129, 36, 30),
+        backgroundColor: const Color.fromARGB(255, 201, 41, 41),
         title: const Text(
           'Complete Your Profile',
         ),
@@ -143,19 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // const Padding(
-              //   padding: EdgeInsets.only(bottom: 7.0),
-              //   child: Text(
-              //     'Complete Your Profile to Proceed',
-              //     style: TextStyle(
-              //       fontSize: 19,
-              //       fontWeight: FontWeight.bold,
-              //     ),
-              //   ),
-              // ),
-              // Rest of the code...
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
@@ -172,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
@@ -189,7 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 13),
+              const SizedBox(height: 20),
               DateTimeFormField(
                 onDateSelected: (DateTime value) {
                   setState(() {
@@ -208,7 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mode: DateTimeFieldPickerMode.date,
                 autovalidateMode: AutovalidateMode.always,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: ageController,
                 decoration: inputDecoration.copyWith(
@@ -226,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
               TextFormField(
                 onChanged: (val) {
                   setState(() {
@@ -248,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 decoration: inputDecoration.copyWith(
                   labelText: 'Select blood group',
@@ -279,7 +273,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-              const SizedBox(height: 17),
+              const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 decoration: inputDecoration.copyWith(
                   labelText: 'Are you willing to donate',
@@ -310,7 +304,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
 
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
               DateTimeFormField(
                 onDateSelected: (DateTime? value) {
                   setState(() {
@@ -327,8 +321,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mode: DateTimeFieldPickerMode.date,
                 autovalidateMode: AutovalidateMode.always,
               ),
-              const SizedBox(height: 19),
-
+              const SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                Icon(Icons.question_answer,size:40,color: Color.fromARGB(255, 198, 40, 40),),
+                Text("\tComplete the Questionnaire",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 198, 40, 40),
+                  fontSize: 18,
+                  fontFamily: "Argentum Sans",
+                ),),
+              ],),
+              const SizedBox(height: 30),
               QuestionCard(
                 question: "Did you get tattoo in past 12 months?",
                 onChanged: (value) {
@@ -355,11 +360,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
 
               const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                Icon(Icons.info_outlined,color: Colors.grey,),
+                Text("\tInformation is collected to make meaningful",
+                style:TextStyle(color:Colors.grey)),
+              ],),
+              const Text("requests. We don't share your sensitive information with anyone!",
+              style:TextStyle(color:Colors.grey)),
+              const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(10),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 129, 36, 30),
+                  color: const  Color.fromARGB(255, 201, 41, 41),
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child: InkWell(
@@ -379,19 +394,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         question3,
                       );
                       if (!mounted) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NewInter(),
-                        ),
+                      Navigator.of(context).pushReplacement(
+                  PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => const NewInter(),
+                    transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+                      return SlideTransition(
+                        position: Tween(
+                          begin: const Offset(1.0, 0.0), // bottom to top
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
                       );
+                    },
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
                     } else {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Incomplete Form'),
+                          backgroundColor: Colors.red[800],
+                          title: const Text('Incomplete Form',
+                          style: TextStyle(color: Colors.white,
+                          fontWeight:FontWeight.bold)),
                           content: const Text(
-                              'Please fill all the required fields.'),
+                              'Please fill all the required fields.',
+                              style: TextStyle(color: Colors.white,
+                              fontWeight:FontWeight.bold
+                              ),
+                              ),
                           actions: [
                             ElevatedButton(
                               onPressed: () => Navigator.pop(context),
