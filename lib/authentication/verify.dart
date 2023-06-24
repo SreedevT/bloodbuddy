@@ -52,7 +52,7 @@ class _MyVerifyState extends State<MyVerify> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.red[900],
+        backgroundColor: Colors.red[800],
         elevation: 0,
       ),
       body: Container(
@@ -62,11 +62,11 @@ class _MyVerifyState extends State<MyVerify> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Image.asset(
-              //   'assets/img1.png',
-              //   width: 150,
-              //   height: 150,
-              // ),
+              Image.asset(
+                'assets/verify.jpg',
+                width: 150,
+                height: 150,
+              ),
               const SizedBox(
                 height: 25,
               ),
@@ -104,7 +104,7 @@ class _MyVerifyState extends State<MyVerify> {
                 height: 45,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[900],
+                      backgroundColor: Colors.red[800],
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),
                   onPressed: () async {

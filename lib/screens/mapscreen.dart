@@ -1,7 +1,5 @@
 import 'dart:developer';
-
 import 'package:blood/Firestore/userprofile.dart';
-import 'package:blood/screens/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -88,171 +86,250 @@ class _NewInterState extends State<NewInter> {
     con = context;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 129, 36, 30),
+          backgroundColor: const Color.fromARGB(255, 198, 40, 40),
           elevation: 0,
           title: const Text(
             'Set your current location',
           ),
         ),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // children: [
+          //   Container(
+          //     // height: 350,
+          //     margin: const EdgeInsets.only(
+          //         top: 30, left: 20, right: 20, bottom: 20),
+          //     decoration: BoxDecoration(
+          //         // shape also can be specified like this => shape: BoxShape.circle,
+          //         color: const Color.fromARGB(255, 129, 36,
+          //             30), // use decoration for giving both color and radius
+          //         borderRadius: BorderRadius.circular(
+          //             20), // otherwise, if we give it separately, error will show up
+          //         border: Border.all(
+          //           color: Colors.white,
+          //           width: 1,
+          //         ),
+          //         boxShadow: [
+          //           BoxShadow(
+          //             color: Colors.black
+          //                 .withOpacity(1.0), // here, I set opacity to maximum
+          //             spreadRadius:
+          //                 1, // this is to specify how much spread the shadow
+          //             blurRadius: 10, // how much blur the shadow
+          //             //  offset: Offset(0, 3),
+          //           ),
+          //         ]),
+          //     child: Center(
+          //       child: Column(
+          //         children: [
+          //           const SizedBox(height: 20),
+          //           const Text(
+          //             "Thanks for coming so far!",
+          //             style: TextStyle(
+          //               color: Colors.white,
+          //               fontSize: 20,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //           const SizedBox(height: 20),
+          //           const Text(
+          //             "Please set your location by clicking the button below.",
+          //             style: TextStyle(
+          //               color: Colors.white,
+          //               fontSize: 16,
+          //             ),
+          //             textAlign: TextAlign.center,
+          //           ),
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: const [
+          //               SizedBox(height: 100),
+          //               Icon(
+          //                 Icons.info_outline_rounded,
+          //                 color: Colors.white,
+          //               ),
+          //               SizedBox(width: 10),
+          //               Text(
+          //                 "We don't share your location with anyone.",
+          //                 style: TextStyle(
+          //                   color: Colors.white,
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: const [
+          //               Icon(
+          //                 Icons.question_mark_outlined,
+          //                 color: Colors.white,
+          //               ),
+          //               SizedBox(width: 10),
+          //               Text(
+          //                 "The location you set will be used to show\n you blood requests.",
+          //                 style: TextStyle(
+          //                   color: Colors.white,
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           const SizedBox(height: 15),
+          //           ElevatedButton(
+          //             style: ButtonStyle(
+          //               backgroundColor: MaterialStateColor.resolveWith(
+          //                   (states) => Colors
+          //                       .white), // by writing this instead of materialstateproperty, we can give dynamic colors
+          //               overlayColor: MaterialStateColor.resolveWith((states) =>
+          //                   Colors.green.withOpacity(
+          //                       0.3)), // like here the button color is changed, when we tap it. COOL ;)
+          //             ),
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               mainAxisSize: MainAxisSize.min,
+          //               children: [
+          //                 const Text(
+          //                   "Set Current Location",
+          //                   style: TextStyle(
+          //                     color: Color.fromARGB(255, 129, 36, 30),
+          //                   ),
+          //                 ),
+          //                 const SizedBox(width: 10),
+          //                 _load
+          //                     ? const SizedBox(
+          //                         height: 15,
+          //                         width: 15,
+          //                         child: CircularProgressIndicator())
+          //                     : const SizedBox(
+          //                         height: 0,
+          //                         width: 0,
+          //                       ),
+          //               ],
+          //             ),
+          //             onPressed: () async {
+          //               _setLoadingState(true);
+          //               await _getCurrentLocation();
+
+          //               await fetchHospitals(
+          //                       latLong.latitude, latLong.longitude, 5)
+          //                   .then((value) {
+          //                 OpenStreetMapSearchAndPick.hospitals = value;
+          //                 log(value.toString());
+          //                 _setLoadingState(false);
+          //               }).catchError((e) {
+          //                 log(e.toString());
+          //               });
+
+          //               if (!mounted) return;
+          //               _showModalBottomSheet(context);
+          //             },
+          //           ),
+          //           const SizedBox(height: 20),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          //   const SizedBox(height: 20),
+          //   Text(
+          //     location,
+          //     style: const TextStyle(
+          //       color: Color.fromARGB(255, 129, 36, 30),
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //     textAlign: TextAlign.center,
+          //   ),
+          //   const SizedBox(height: 10),
+          //   Text(
+          //     area.isNotEmpty ? "Your are in $area" : '',
+          //     style: const TextStyle(
+          //       color: Color.fromARGB(255, 129, 36, 30),
+          //       fontSize: 15,
+          //     ),
+          //     textAlign: TextAlign.center,
+          //   ),
+            // const SizedBox(height: 10,),
+            // ElevatedButton(onPressed: (){}, child: Text("Next")),
+          //],
+          crossAxisAlignment:CrossAxisAlignment.start,
           children: [
-            Container(
-              // height: 350,
-              margin: const EdgeInsets.only(
-                  top: 30, left: 20, right: 20, bottom: 20),
-              decoration: BoxDecoration(
-                  // shape also can be specified like this => shape: BoxShape.circle,
-                  color: const Color.fromARGB(255, 129, 36,
-                      30), // use decoration for giving both color and radius
-                  borderRadius: BorderRadius.circular(
-                      20), // otherwise, if we give it separately, error will show up
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black
-                          .withOpacity(1.0), // here, I set opacity to maximum
-                      spreadRadius:
-                          1, // this is to specify how much spread the shadow
-                      blurRadius: 10, // how much blur the shadow
-                      //  offset: Offset(0, 3),
-                    ),
-                  ]),
-              child: Center(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Thanks for coming so far!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Please set your location by clicking the button below.",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        SizedBox(height: 100),
-                        Icon(
-                          Icons.info_outline_rounded,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "We don't share your location with anyone.",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
+            const SizedBox(height: 30,),
+            Image.asset('assets/loc2.jpg'),
+            Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Icon(
                           Icons.question_mark_outlined,
-                          color: Colors.white,
+                          color: Colors.grey,
                         ),
-                        SizedBox(width: 10),
+                        SizedBox(width: 5),
                         Text(
-                          "The location you set will be used to show\n you blood requests.",
+                          "The location you set will be used to show ",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.grey,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => Colors
-                                .white), // by writing this instead of materialstateproperty, we can give dynamic colors
-                        overlayColor: MaterialStateColor.resolveWith((states) =>
-                            Colors.green.withOpacity(
-                                0.3)), // like here the button color is changed, when we tap it. COOL ;)
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            "Set Current Location",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 129, 36, 30),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          _load
-                              ? const SizedBox(
-                                  height: 15,
-                                  width: 15,
-                                  child: CircularProgressIndicator())
-                              : const SizedBox(
-                                  height: 0,
-                                  width: 0,
-                                ),
-                        ],
-                      ),
-                      onPressed: () async {
-                        _setLoadingState(true);
-                        await _getCurrentLocation();
-
-                        await fetchHospitals(
-                                latLong.latitude, latLong.longitude, 5)
-                            .then((value) {
-                          OpenStreetMapSearchAndPick.hospitals = value;
-                          log(value.toString());
-                          _setLoadingState(false);
-                        }).catchError((e) {
-                          log(e.toString());
-                        });
-
-                        if (!mounted) return;
-                        _showModalBottomSheet(context);
-                      },
+                    const Center(child:Text("will be used to show you nearby blood requests.",
+                    style: TextStyle(
+                            color: Colors.grey,)
                     ),
+                    ),
+                    const SizedBox(height: 30,),
+                        Center(
+                          child: ElevatedButton(
+                                              style: ButtonStyle(
+                          backgroundColor: MaterialStateColor.resolveWith(
+                              (states) => const Color.fromARGB(255, 198, 40, 40),), // by writing this instead of materialstateproperty, we can give dynamic colors
+                          overlayColor: MaterialStateColor.resolveWith((states) =>
+                              Colors.green.withOpacity(
+                                  0.3)), // like here the button color is changed, when we tap it. COOL ;)
+                                              ),
+                                              child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Set Current Location",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            _load
+                                ? const SizedBox(
+                                    height: 15,
+                                    width: 15,
+                                    child: CircularProgressIndicator())
+                                : const SizedBox(
+                                    height: 0,
+                                    width: 0,
+                                  ),
+                          ],
+                                              ),
+                                              onPressed: () async {
+                          _setLoadingState(true);
+                          await _getCurrentLocation();
+                        
+                          await fetchHospitals(
+                                  latLong.latitude, latLong.longitude, 5)
+                              .then((value) {
+                            OpenStreetMapSearchAndPick.hospitals = value;
+                            log(value.toString());
+                            _setLoadingState(false);
+                          }).catchError((e) {
+                            log(e.toString());
+                          });
+                        
+                          if (!mounted) return;
+                          _showModalBottomSheet(context);
+                                              },
+                                            ),
+                        ),
                     const SizedBox(height: 20),
                   ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              location,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 129, 36, 30),
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              area.isNotEmpty ? "Your are in $area" : '',
-              style: const TextStyle(
-                color: Color.fromARGB(255, 129, 36, 30),
-                fontSize: 15,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            // const SizedBox(height: 10,),
-            // ElevatedButton(onPressed: (){}, child: Text("Next")),
-          ],
-        ));
+              );
+   
   }
 
   void _showModalBottomSheet(BuildContext context) {
