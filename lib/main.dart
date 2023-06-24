@@ -12,8 +12,9 @@ import 'authentication/verify.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //TODO make app open delayed buy 2 seconds. Please remove this.
-  await Future.delayed(const Duration(seconds: 2, milliseconds: 500));
+  //TODO make app open delayed buy 1.5 seconds. Please remove this.
+  // Remove delay when actual app loading time is longer. Now it opens instantly.
+  await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
