@@ -1,5 +1,6 @@
 import 'package:blood/Firestore/userprofile.dart';
 import 'package:blood/screens/mapscreen.dart';
+import 'package:blood/widgets/info_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
@@ -28,9 +29,12 @@ class _QuestionCardState extends State<QuestionCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.red[800],
-      shadowColor: Colors.red[800],
-      // surfaceTintColor: Colors.red[800],
+      color: Colors.red.shade900,
+      // color: Colors.white,
+      // surfaceTintColor: Colors.red.shade900,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
       // Use some padding and margin for the card
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
       child: Padding(
@@ -48,16 +52,20 @@ class _QuestionCardState extends State<QuestionCard> {
                   widget.question,
                   style: const TextStyle(
                     fontSize: 18,
-                    color: Colors.white
+                    // color: Colors.black
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
             // Use a switch widget with the state variable and an onChanged callback
             Switch(
-              activeColor: Color.fromARGB(255, 126, 232, 130),
-              inactiveThumbColor: Colors.white,
-              inactiveTrackColor: Colors.grey,
+              // activeColor: Color.fromARGB(255, 126, 232, 130),
+              focusColor: Colors.white,
+              activeTrackColor: Color.fromARGB(255, 126, 232, 130),
+
+              inactiveThumbColor: Colors.grey,
+              inactiveTrackColor: Colors.white,
               value: _switchValue,
               onChanged: (v) {
                 // Update the state variable and call setState() to rebuild the UI
@@ -89,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     focusedBorder: OutlineInputBorder(
       borderSide: const BorderSide(
         width: 2,
-        color:  Color.fromARGB(255, 201, 41, 41),
+        color: Color.fromARGB(255, 201, 41, 41),
       ),
       borderRadius: BorderRadius.circular(28.0),
     ),
@@ -201,6 +209,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 mode: DateTimeFieldPickerMode.date,
                 autovalidateMode: AutovalidateMode.always,
+                lastDate: DateTime.now(),
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -272,7 +281,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 decoration: inputDecoration.copyWith(
@@ -303,7 +311,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-
               const SizedBox(height: 20),
               DateTimeFormField(
                 onDateSelected: (DateTime? value) {
@@ -320,19 +327,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 mode: DateTimeFieldPickerMode.date,
                 autovalidateMode: AutovalidateMode.always,
+                lastDate: DateTime.now(),
               ),
               const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                Icon(Icons.question_answer,size:40,color: Color.fromARGB(255, 198, 40, 40),),
-                Text("\tComplete the Questionnaire",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 198, 40, 40),
-                  fontSize: 18,
-                  fontFamily: "Argentum Sans",
-                ),),
-              ],),
+                  Icon(
+                    Icons.question_answer,
+                    size: 40,
+                    color: Color.fromARGB(255, 198, 40, 40),
+                  ),
+                  Text(
+                    "\tComplete the Questionnaire",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 198, 40, 40),
+                      fontSize: 18,
+                      fontFamily: "Argentum Sans",
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 30),
               QuestionCard(
                 question: "Did you get tattoo in past 12 months?",
@@ -358,23 +373,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   });
                 },
               ),
-
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                Icon(Icons.info_outlined,color: Colors.grey,),
-                Text("\tInformation is collected to make meaningful",
-                style:TextStyle(color:Colors.grey)),
-              ],),
-              const Text("requests. We don't share your sensitive information with anyone!",
-              style:TextStyle(color:Colors.grey)),
+              InfoBox(
+                icon: Icons.info_outline,
+                text:
+                    "Information is collected to make meaningful requests. We don't share your sensitive information with anyone!",
+                textColor: Colors.grey,
+                backgroundColor: Colors.white,
+                borderColor: Colors.grey,
+                padding: 10,
+              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: const [
+              //     Icon(
+              //       Icons.info_outlined,
+              //       color: Colors.grey,
+              //     ),
+              //     Text("\tInformation is collected to make meaningful",
+              //         style: TextStyle(color: Colors.grey)),
+              //   ],
+              // ),
+              // const Text(
+              //     "requests. We don't share your sensitive information with anyone!",
+              //     style: TextStyle(color: Colors.grey)),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(10),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const  Color.fromARGB(255, 201, 41, 41),
+                  color: const Color.fromARGB(255, 201, 41, 41),
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child: InkWell(
@@ -395,34 +423,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
                       if (!mounted) return;
                       Navigator.of(context).pushReplacement(
-                  PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => const NewInter(),
-                    transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
-                      return SlideTransition(
-                        position: Tween(
-                          begin: const Offset(1.0, 0.0), // bottom to top
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => const NewInter(),
+                          transitionsBuilder: (_, Animation<double> animation,
+                              __, Widget child) {
+                            return SlideTransition(
+                              position: Tween(
+                                begin: const Offset(1.0, 0.0), // bottom to top
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            );
+                          },
+                          transitionDuration: const Duration(milliseconds: 500),
+                        ),
                       );
-                    },
-                    transitionDuration: const Duration(milliseconds: 500),
-                  ),
-                );
                     } else {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          backgroundColor: Colors.red[800],
-                          title: const Text('Incomplete Form',
-                          style: TextStyle(color: Colors.white,
-                          fontWeight:FontWeight.bold)),
+                          title: Row(
+                            children: const [
+                              Icon(Icons.warning_amber),
+                              SizedBox(width: 10),
+                              Text(
+                                'Incomplete Form',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                           content: const Text(
-                              'Please fill all the required fields.',
-                              style: TextStyle(color: Colors.white,
-                              fontWeight:FontWeight.bold
-                              ),
-                              ),
+                            'Please fill all the required fields.',
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w500),
+                          ),
                           actions: [
                             ElevatedButton(
                               onPressed: () => Navigator.pop(context),

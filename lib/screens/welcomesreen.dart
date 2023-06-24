@@ -82,25 +82,47 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
           const SizedBox(height: 50),
           Image.asset('assets/reqblood3.png'),
           const SizedBox(height: 80),
-          RichText(
-            text: const TextSpan(
-                text: "\t\t\tEmpowering Generosity",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.white,
-                ),
-                children: [
-                  TextSpan(
-                    text: "\n\nSubmit a Blood Request and Inspire Donors!",
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ]),
+          const Text(
+            "Empowering Generosity",
+            style: TextStyle(
+              fontSize: 28,
+              fontFamily: 'Argentum Sans',
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
           ),
+          const SizedBox(height: 20),
+          const Text(
+            "Submit a Blood Request \nand Inspire Donors!",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontFamily: 'Open Sans',
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
+          ),
+          // RichText(
+          //   text: const TextSpan(
+          //       text: "\t\t\tEmpowering Generosity",
+          //       style: TextStyle(
+          //         fontSize: 30,
+          //         fontWeight: FontWeight.bold,
+          //         color: Colors.white,
+          //       ),
+          //       children: [
+          //         TextSpan(
+          //           text: "\n\nSubmit a Blood Request and Inspire Donors!",
+          //           style: TextStyle(
+          //             fontStyle: FontStyle.italic,
+          //             fontSize: 18,
+          //             fontWeight: FontWeight.w500,
+          //           ),
+          //         )
+          //       ]),
+          // ),
         ],
       ));
 }
