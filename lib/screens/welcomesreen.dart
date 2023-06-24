@@ -1,10 +1,7 @@
-import 'package:blobs/blobs.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import '../widgets/hero.dart';
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
 
@@ -76,18 +73,18 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   Widget firstView() {
     return Container(
-      color: Colors.red[900],
+      color: Colors.black,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Hero(animationController1: _animationController1),
+          children: const [
+            // HeroLogo(),
 
-            const Text(
-              "Welcome to Blood Buddy",
+            Text(
+              "WELCOME",
               textAlign: TextAlign.center,
-              style:  TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
@@ -125,11 +122,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             //   ),
             // ),
 
-            const SizedBox(
+            SizedBox(
               height: 20,
             ),
 
-            const Text(
+            Text(
               "\"World's largest Blood Donors mobile app\"",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -273,47 +270,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           ],
         ),
       ),
-    );
-  }
-}
-
-class Hero extends StatelessWidget {
-  const Hero({
-    super.key,
-    required AnimationController animationController1,
-  }) : _animationController1 = animationController1;
-
-  final AnimationController _animationController1;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: const Alignment(0, 0),
-      children: [
-        RotationTransition(
-          turns: _animationController1..duration = const Duration(seconds: 15),
-          child: Blob.animatedRandom(
-            duration: Duration(seconds: 15),
-            size: 420,
-            edgesCount: 7,
-            minGrowth: 9,
-            styles: BlobStyles(
-              color: Colors.white,
-              fillType: BlobFillType.fill,
-            ),
-            loop: true,
-          ),
-        ),
-        Lottie.asset(
-          'assets/lottie/welcome_red.json',
-        ),
-        //! Cannot import svg files using Image.asset(). Needs flutter_svg package
-        SvgPicture.asset(
-          'assets/icons/logo.svg',
-          height: 125,
-          width: 125,
-        )
-      ],
     );
   }
 }
