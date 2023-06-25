@@ -63,6 +63,11 @@ class _BloodRequestListState extends State<BloodRequestList> {
             break;
           case DocumentChangeType.modified:
             setState(() {
+              // Remove existing card
+              requests = requests.where((element) {
+                return element.id != change.doc.id;
+              }).toList();
+              // Add new card
               requests = [
                 ...requests,
                 BloodRequestCard(
