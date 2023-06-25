@@ -1,6 +1,7 @@
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/Initialscreen.dart';
+import 'package:blood/screens/requestscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +14,7 @@ import 'authentication/verify.dart';
 
 Future<void> main() async {
   //TODO Remove delay once app actually takes some time to load
-  await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
+  // await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
@@ -42,7 +43,8 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      initialRoute: user != null ? 'home' : 'initial_screen',
+      // initialRoute: user != null ? 'home' : 'initial_screen',
+      initialRoute: 'request',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),
@@ -51,7 +53,8 @@ Future<void> main() async {
         'welcome': (context) => const WelcomeScreen(),
         'location_picker': (context) => const NewInter(),
         'personal_info': (context) => const SignUpScreen(),
-        'initial_screen':(context) => const InitialScreen()
+        'initial_screen': (context) => const InitialScreen(),
+        'request': (context) => const BloodRequestList(),
       },
     ),
   );
