@@ -1,7 +1,9 @@
+
 import 'package:blood/authentication/phone_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+ 
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -42,10 +44,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     _animationController1.dispose();
     _waveController.dispose();
     super.dispose();
+ 
   }
 
   @override
   Widget build(BuildContext context) {
+ 
     return Stack(
       children: [
         PageView(
@@ -162,6 +166,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
                       )),
+ 
                 ],
               ),
             ),
@@ -261,6 +266,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                       foregroundColor: MaterialStateProperty.all(Colors.white),
                     ),
                     child: const Text("Join our community!"))),
+ 
           ],
         ),
       ),

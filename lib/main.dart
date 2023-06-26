@@ -1,3 +1,4 @@
+
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/Initialscreen.dart';
@@ -25,7 +26,7 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-  final FirebaseAuth auth = FirebaseAuth.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
   runApp(
     MaterialApp(

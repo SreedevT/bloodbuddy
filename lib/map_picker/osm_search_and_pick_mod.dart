@@ -138,14 +138,14 @@ class _OpenStreetMapSearchAndPickState
         _searchController.text = decodedResponse['display_name'];
 
         setState(() {});
-
-
+ 
         await fetchHospitals(event.center.latitude, event.center.longitude, 5)
             .then((value) {
           OpenStreetMapSearchAndPick.hospitals = value;
           log("SetNamePosInit: ${value.toString()}");
         });
         // if (!mounted) return;
+ 
       }
     });
 
@@ -418,7 +418,6 @@ String _getGeneralArea(Map json) {
     // OpenStreetMapSearchAndPick.hospitalsByArea[area] =
     //     OpenStreetMapSearchAndPick.hospitals!;
     return area;
-
   } catch (e) {
     log(e.toString());
     log("TypeError (address[key] is null) try another key to get the area");

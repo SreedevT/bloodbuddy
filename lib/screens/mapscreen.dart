@@ -329,12 +329,14 @@ class _NewInterState extends State<NewInter> {
   void _showModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
+ 
         // shape and clipBehavior are used to make the sheet have rouned corners
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         isDismissible: false,
         clipBehavior: Clip.antiAliasWithSaveLayer,
+ 
         barrierColor: Colors.black.withOpacity(
             0.7), // so what this does is that it gives this color to main screen when the sheet pops up
         builder: (BuildContext context) {
@@ -344,6 +346,7 @@ class _NewInterState extends State<NewInter> {
               center: latLong,
               buttonColor: const Color.fromARGB(255, 129, 36, 30),
               onPicked: (PickedData pickedData) async {
+ 
                 setState(() {
                   location = pickedData.address;
                   area = pickedData.area;
@@ -356,6 +359,7 @@ class _NewInterState extends State<NewInter> {
                   (route) => false,
                 );
                 // this enables  to close the bottom sheet when this button is clicked
+ 
               },
             ),
           );

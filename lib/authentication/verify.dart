@@ -121,6 +121,7 @@ class _MyVerifyState extends State<MyVerify> {
                       if (isExist) {
                         if (!mounted) return;
                         Navigator.pushNamedAndRemoveUntil(
+
                           context,
                           'home',
                           (route) => false,
