@@ -1,6 +1,6 @@
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
-import 'package:blood/screens/Initialscreen.dart';
+import 'package:blood/screens/initialscreen.dart';
 import 'package:blood/screens/requestscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -34,6 +34,7 @@ Future<void> main() async {
         primarySwatch: Colors.red,
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 201, 41, 41),
           centerTitle: true,
           titleTextStyle: TextStyle(
             fontSize: 20,
@@ -43,8 +44,8 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      // initialRoute: user != null ? 'home' : 'initial_screen',
-      initialRoute: 'request',
+      //TODO Change initial route to 'home' once app is ready
+      initialRoute: user != null ? 'home' : 'initial_screen',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),

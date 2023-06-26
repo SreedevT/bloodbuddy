@@ -74,7 +74,7 @@ class _InitialScreenState extends State<InitialScreen> {
                     child:AnimatedTextKit(
                       isRepeatingAnimation: false,
                       animatedTexts: [
-                        FadeAnimatedText('\"World\'s Largest Blood Donor\'s mobile app\"')
+                        FadeAnimatedText('"World\'s Largest Blood Donor\'s mobile app"')
                       ],
                     )
                   ),

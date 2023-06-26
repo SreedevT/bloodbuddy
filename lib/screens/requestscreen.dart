@@ -27,12 +27,6 @@ class _BloodRequestListState extends State<BloodRequestList> {
         .collection('requests')
         .where('bloodGroup', isEqualTo: 'A+')
         .where('area', isEqualTo: 'Azhikode');
-    // requestCard = const BloodRequestCard(
-    //   hospital: '0',
-    //   units: 0,
-    //   bloodGroup: '0',
-    //   name: '0',
-    // );
 
     query.snapshots().listen((event) {
       for (var change in event.docChanges) {
@@ -63,21 +57,20 @@ class _BloodRequestListState extends State<BloodRequestList> {
             break;
           case DocumentChangeType.modified:
             setState(() {
-              // Remove existing card
-              requests = requests.where((element) {
-                return element.id != change.doc.id;
-              }).toList();
-              // Add new card
-              requests = [
-                ...requests,
-                BloodRequestCard(
-                  id: change.doc.id,
-                  hospital: change.doc['hospitalName'],
-                  units: change.doc['units'],
-                  bloodGroup: change.doc['bloodGroup'],
-                  name: change.doc['senderName'],
-                )
-              ];
+              // find index of existing card
+              int i = requests.indexWhere((element) {
+                return element.id == change.doc.id;
+              });
+              // replace the card with the modified one
+              requests[i] = BloodRequestCard(
+                id: change.doc.id,
+                hospital: change.doc['hospitalName'],
+                units: change.doc['units'],
+                bloodGroup: change.doc['bloodGroup'],
+                name: change.doc['senderName'],
+              );
+              // Make new request list
+              requests = [...requests];
             });
             log("Modified City: ${change.doc.data()}");
             break;
@@ -97,6 +90,9 @@ class _BloodRequestListState extends State<BloodRequestList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Blood Requests'),
+      ),
       body: ListView(
         children: requests,
       ),

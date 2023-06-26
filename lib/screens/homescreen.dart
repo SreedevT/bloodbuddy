@@ -1,8 +1,7 @@
-import 'package:blood/Firestore/userprofile.dart';
-import 'package:blood/screens/welcomesreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -61,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 
@@ -91,25 +90,45 @@ class _HomeScreenState extends State<HomeScreen> {
           Text("tattoo: $q1"),
           Text("HIV_tested: $q2"),
           Text("Covid_vaccine: $q3"),
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 2,
+          const SizedBox(
+            height: 50,
           ),
           Center(
               child: ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      await _auth.signOut();
-
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        'welcome',
-                        (route) => false,
-                      );
-                    } catch (e) {
-                      print(e.toString());
-                    }
-                  },
-                  child: const Text("Log out"))),
+            onPressed: () async {
+              try {
+                await _auth.signOut();
+                if (!mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  'welcome',
+                  (route) => false,
+                );
+              } catch (e) {
+                log(e.toString());
+              }
+            },
+            child: const Text("Log out"),
+          )),
+          const SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[800],
+              ),
+              onPressed: () async {
+                if (!mounted) return;
+                Navigator.pushNamed(
+                  context,
+                  'request',
+                );
+              },
+              child: const Text("Requests page",
+                  style: TextStyle(color: Colors.white)),
+            ),
+          ),
         ],
       ),
     );

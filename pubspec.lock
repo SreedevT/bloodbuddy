@@ -255,7 +255,7 @@ packages:
     source: hosted
     version: "2.0.1"
   flutter_map:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_map
       sha256: "59dfd14267b691bea55760786b47d3172d47cdcc0d79ff930746a5ad123491b8"
@@ -337,7 +337,7 @@ packages:
     source: hosted
     version: "0.1.1"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
@@ -369,7 +369,7 @@ packages:
     source: hosted
     version: "0.6.5"
   latlong2:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: latlong2
       sha256: "08ef7282ba9f76e8495e49e2dc4d653015ac929dce5f92b375a415d30b407ea0"
@@ -432,14 +432,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  open_street_map_search_and_pick:
-    dependency: "direct main"
-    description:
-      name: open_street_map_search_and_pick
-      sha256: d273ea5cca71870946ff43f8787bead40959f158dcc1313018923e924d8cc3a7
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.17"
   path:
     dependency: transitive
     description:

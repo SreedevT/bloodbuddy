@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 class BloodRequestCard extends StatefulWidget {
@@ -26,6 +24,11 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
   // A boolean to track the visibility of the card
   bool _visible = false;
 
+  set visible(bool value) {
+    setState(() {
+      _visible = value;
+    });
+  }
   @override
   void initState() {
     super.initState();
@@ -43,7 +46,7 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
       // Use the _visible value to determine the opacity
       opacity: _visible ? 1.0 : 0.0,
       // Use a duration of 500 milliseconds for the animation
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 750),
       // Use a linear curve for the animation
       curve: Curves.linear,
       // The child widget is your card
