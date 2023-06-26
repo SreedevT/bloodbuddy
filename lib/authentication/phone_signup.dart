@@ -1,7 +1,6 @@
 import 'dart:developer';
-
+import 'package:blood/authentication/verify.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class MyPhone extends StatefulWidget {
@@ -16,7 +15,30 @@ class MyPhone extends StatefulWidget {
 class _MyPhoneState extends State<MyPhone> {
   TextEditingController countryController = TextEditingController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   String phone = "";
+
+  Future verify() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: MyPhone.phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        log("Auto verification: ${credential.toString()}");
+        await _auth.signInWithCredential(credential);
+        log('Verification Complete!!!!!!!!!!!');
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        log("Verification Failed ${e.toString()}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        MyVerify.verificationId = verificationId;
+        log("Code Sent: $verificationId");
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        log("Timeout ${verificationId.toString()}");
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -27,101 +49,157 @@ class _MyPhoneState extends State<MyPhone> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.only(left: 25, right: 25),
-        alignment: Alignment.center,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Image.asset(
-              //   'assets/img1.png',
-              //   width: 150,
-              //   height: 150,
-              // ),
-              const SizedBox(
-                height: 25,
+      appBar: AppBar(
+        backgroundColor: Colors.red[800],
+      ),
+      body: Stack(
+        children:[ 
+          Transform.translate(
+            offset: const Offset(100,-230),
+            child: Container(
+              height:300,
+              decoration: BoxDecoration(
+                color: Colors.red[800],
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.red[800]!.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(-2, 7), // changes position of shadow
+                  ),
+                ],
               ),
-              const Text(
-                "Phone Verification",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Transform.translate(
+            offset: const Offset(-100,-400),
+            child:Container(
+              height:470,
+              decoration: BoxDecoration(
+                color:Colors.red[800],
+                shape:BoxShape.circle,
+                boxShadow:[
+                  BoxShadow(
+                    color:Colors.red[800]!.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(2,7),
+                  )
+                ]
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "We need to register your phone without getting started!",
-                style: TextStyle(
-                  fontSize: 16,
+            )
+          ),
+          Container(
+          margin: const EdgeInsets.only(left: 25, right: 25),
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Image.asset(
+                //   'assets/img1.png',
+                //   width: 150,
+                //   height: 150,
+                // ),
+                const SizedBox(
+                  height: 25,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                height: 55,
-                decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      width: 10,
+                  children: const  [
+                    Icon(Icons.phonelink_setup_rounded),
+                    SizedBox(width:10),
+                     Text(
+                      "Phone Verification",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(
-                      width: 40,
-                      child: TextField(
-                        controller: countryController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                    const Text(
-                      "|",
-                      style: TextStyle(fontSize: 33, color: Colors.grey),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                        child: TextField(
-                      onChanged: (value) {
-                        phone = value;
-                      },
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Phone",
-                      ),
-                    ))
                   ],
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: 45,
-                child: ElevatedButton(
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  "We need to register your phone without getting started!",
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  height: 55,
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: 40,
+                        child: TextField(
+                          controller: countryController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        "|",
+                        style: TextStyle(fontSize: 33, color: Colors.grey),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                          child: TextField(
+                        onChanged: (value) {
+                          phone = value;
+                        },
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Phone",
+                        ),
+                      ))
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade600,
+                        backgroundColor: Colors.red.shade800,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () {
                       MyPhone.phoneNumber = countryController.text + phone;
                       log(MyPhone.phoneNumber);
-                      Navigator.pushNamed(context, 'verify');
+                      verify();
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const MyVerify()));
                     },
-                    child: const Text("Send the code")),
-              )
-            ],
+                    child: const Text(
+                      "Send the code",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
+        ],
       ),
     );
   }
