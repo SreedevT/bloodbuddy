@@ -84,6 +84,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
           const SizedBox(height: 80),
           const Text(
             "Empowering Generosity",
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 28,
               fontFamily: 'Argentum Sans',

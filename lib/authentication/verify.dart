@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'package:blood/authentication/phone_signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 
 class MyVerify extends StatefulWidget {
@@ -14,15 +16,65 @@ class MyVerify extends StatefulWidget {
 
 class _MyVerifyState extends State<MyVerify> {
   final FirebaseAuth auth = FirebaseAuth.instance;
+  bool _codeSent = false;
+  bool _wrongCode = false;
 
-  String code = '';
+  final TextEditingController pinController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
-  // late BuildContext con;  // to capture the context
+  final defaultPinTheme = PinTheme(
+    width: 56,
+    height: 56,
+    textStyle: const TextStyle(
+        fontSize: 20,
+        color: Color.fromRGBO(30, 60, 87, 1),
+        fontWeight: FontWeight.w600),
+    decoration: BoxDecoration(
+      border: Border.all(color: const Color.fromARGB(255, 110, 110, 110)),
+      borderRadius: BorderRadius.circular(20),
+      color: Colors.grey.shade50,
+    ),
+  );
+  late final PinTheme focusedPinTheme;
+  late final PinTheme errorPinTheme;
+
+  Future verify() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: MyPhone.phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        log("Auto verification: ${credential.toString()}");
+        pinController.setText(credential.smsCode!);
+        await _auth.signInWithCredential(credential);
+        log('Verification Complete!!!!!!!!!!!');
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        log("Verification Failed ${e.toString()}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        MyVerify.verificationId = verificationId;
+        setState(() {
+          _codeSent = true;
+        });
+        log("Code Sent: $verificationId");
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        log("Timeout ${verificationId.toString()}");
+      },
+    );
+  }
 
   @override
   void initState() {
+    verify();
+    focusedPinTheme = defaultPinTheme.copyDecorationWith(
+      border: Border.all(color: const Color.fromRGBO(114, 178, 238, 1)),
+      borderRadius: BorderRadius.circular(8),
+    );
+    errorPinTheme = defaultPinTheme.copyDecorationWith(
+      border: Border.all(color: Colors.red),
+      borderRadius: BorderRadius.circular(8),
+    );
     super.initState();
     _auth.authStateChanges().listen((User? user) {
       setState(() {
@@ -42,11 +94,6 @@ class _MyVerifyState extends State<MyVerify> {
 
   @override
   Widget build(BuildContext context) {
-    // con = context;  // to capture the updated context
-    // //this con is used inside the onpressed which is async function
-    // // since after the completetion of the async function, it will get the updated context
-    // //this removes any potential error
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -57,112 +104,124 @@ class _MyVerifyState extends State<MyVerify> {
       body: Container(
         margin: const EdgeInsets.only(left: 25, right: 25),
         alignment: Alignment.center,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/verify.png',
-                width: 150,
-                height: 150,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              const Text(
-                "Phone Verification",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "We need to register your phone without getting started!",
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Pinput(
-                length: 6,
-                pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                showCursor: true,
-                onChanged: (value) {
-                  code = value;
-                },
-                onCompleted: (pin) => log(pin),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: 45,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[800],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                  onPressed: () async {
-                    try {
-                      PhoneAuthCredential credential =
-                          PhoneAuthProvider.credential(
-                              verificationId: MyVerify.verificationId,
-                              smsCode: code);
-
-                      // Sign the user in (or link) with the credential
-                      await auth.signInWithCredential(credential);
-
-                      // ignore: unrelated_type_equality_checks
-                      bool isExist = await isUserDocumentExists();
-                      if (isExist) {
-                        if (!mounted) return;
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          'home',
-                          (route) => false,
-                        );
-                      } else {
-                        if (!mounted) return;
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          'personal_info',
-                          (route) => false,
-                        );
-                      }
-                    } catch (e) {
-                      log("Verify Error: ${e.toString()}");
-                    }
-                  },
-                  child: const Text(
-                    "Verify Phone Number",
-                    style: TextStyle(color: Colors.white),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //? Show different image based on codeSent callback of verify()
+            _codeSent
+                ? Image.asset(
+                    'assets/verify.png',
+                    width: 150,
+                    height: 150,
+                  )
+                : Lottie.asset(
+                    'assets/lottie/otpverification.json',
+                    width: 150,
+                    height: 150,
                   ),
+            const SizedBox(
+              height: 25,
+            ),
+            const Text(
+              "Enter the OTP",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Text(
+              "We need to register your phone to get started!",
+              style: TextStyle(
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Pinput(
+              defaultPinTheme: defaultPinTheme,
+              focusedPinTheme: focusedPinTheme,
+              errorPinTheme: errorPinTheme,
+              enabled: _codeSent,
+              forceErrorState: _wrongCode,
+              length: 6,
+              androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
+              controller: pinController,
+              pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+              showCursor: true,
+              onCompleted: (pin) => log(pin),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 45,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[800],
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10))),
+                onPressed: () async {
+                  try {
+                    PhoneAuthCredential credential =
+                        PhoneAuthProvider.credential(
+                            verificationId: MyVerify.verificationId,
+                            smsCode: pinController.text);
+
+                    // Sign the user in (or link) with the credential
+                    await auth.signInWithCredential(credential);
+
+                    // ignore: unrelated_type_equality_checks
+                    bool isExist = await isUserDocumentExists();
+                    if (isExist) {
+                      if (!mounted) return;
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        'home',
+                        (route) => false,
+                      );
+                    } else {
+                      if (!mounted) return;
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        'personal_info',
+                        (route) => false,
+                      );
+                    }
+                  } catch (e) {
+                    setState(() {
+                      _wrongCode = true;
+                    });
+                    log("Verify Error: ${e.toString()}, $_wrongCode");
+                  }
+                },
+                child: const Text(
+                  "Verify Phone Number",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
-              Row(
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        // Check if widget is mounted before using context
-                        if (!mounted) return;
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          'phone_signup',
-                          (route) => false,
-                        );
-                      },
-                      child: const Text(
-                        "Edit Phone Number ?",
-                        style: TextStyle(color: Colors.black),
-                      ))
-                ],
-              )
-            ],
-          ),
+            ),
+            Row(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      // Check if widget is mounted before using context
+                      if (!mounted) return;
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        'phone_signup',
+                        (route) => false,
+                      );
+                    },
+                    child: const Text(
+                      "Edit Phone Number ?",
+                      style: TextStyle(color: Colors.black),
+                    ))
+              ],
+            )
+          ],
         ),
       ),
     );
