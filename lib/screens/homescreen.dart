@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
+import '../Firestore/userprofile.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -17,17 +19,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   // variables to retrieve user profile data from firestore
   User? user;
-  String? fname;
-  String? lname;
-  DateTime? dob;
-  dynamic lastDonated;
-  int? age;
-  double? weight;
-  String? bloodGroup;
-  bool? isDonor;
-  bool? q1;
-  bool? q2;
-  bool? q3;
+  // String? fname;
+  // String? lname;
+  // DateTime? dob;
+  // dynamic lastDonated;
+  // int? age;
+  // double? weight;
+  // String? bloodGroup;
+  // bool? isDonor;
+  // bool? q1;
+  // bool? q2;
+  // bool? q3;
+  Map<String, dynamic>? data;
 
   @override
   void initState() {
@@ -45,27 +48,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 // function to fetch user profile data from firestore
 
   fetchUserProfile() async {
-    final CollectionReference userProfile =
-        FirebaseFirestore.instance.collection('User Profile');
     try {
-      await userProfile.doc(user!.uid).get().then((DocumentSnapshot snapshot) {
-        if (snapshot.exists) {
-          Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-          setState(() {
-            fname = data['First Name'];
-            lname = data['Last Name'];
-            dob = data['Date of Birth'].toDate();
-            age = data['Age'];
-            weight = data['Weight'];
-            bloodGroup = data['Blood Group'];
-            isDonor = data['Is donor'];
-            lastDonated = data['Last Donated'];
-            q1 = data['tattoo'];
-            q2 = data['HIV_tested'];
-            q3 = data['Covid_vaccine'];
-            // print(fname);
-          });
-        }
+      Map<String, dynamic> fetchedData =
+          await DataBase(uid: user!.uid).getUserProfile();
+      setState(() {
+        data = fetchedData;
       });
     } catch (e) {
       log(e.toString());
@@ -89,17 +76,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             const SizedBox(
               height: 20,
             ),
-            Text("First Name: $fname"),
-            Text("Last Name: $lname"),
-            Text("Date of Birth: $dob"),
-            Text("Age: $age"),
-            Text("Weight: $weight"),
-            Text("Blood Group: $bloodGroup"),
-            Text("Is donor: $isDonor"),
-            Text("Last Donated: $lastDonated"),
-            Text("tattoo: $q1"),
-            Text("HIV_tested: $q2"),
-            Text("Covid_vaccine: $q3"),
+            Text("First Name: ${data!['First Name']}"),
+            Text("Last Name: ${data!['Last Name']}"),
+            Text("Date of Birth: ${data!['Date of Birth'].toDate()}"),
+            Text("Age: ${data!['Age']}"),
+            Text("Weight: ${data!['Weight']}"),
+            Text("Blood Group: ${data!['Blood Group']}"),
+            Text("Is donor: ${data!['Is donor']}"),
+            Text("Last Donated: ${data!['Last Donated']}"),
+            Text("tattoo: ${data!['tattoo']}"),
+            Text("HIV_tested: ${data!['HIV_tested']}"),
+            Text("Covid_vaccine: ${data!['Covid_vaccine']}"),
             const SizedBox(
               height: 50,
             ),

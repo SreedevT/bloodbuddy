@@ -9,7 +9,7 @@ class DataBase {
   final CollectionReference userLocation =
       FirebaseFirestore.instance.collection('User Location');
 
-  // to update the user profile data
+  //Function to update the user profile data
 
   Future updateUserProfile(
     String fname,
@@ -42,6 +42,21 @@ class DataBase {
     );
   }
 
+  // Function to get the use profile data
+
+  Future getUserProfile() async {
+    try {
+      DocumentSnapshot snapshot = await userProfile.doc(uid).get();
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        return data;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return {};
+  }
+
   // to update user location
 
   Future updateUserLocation(String genArea) async {
@@ -51,5 +66,4 @@ class DataBase {
       },
     );
   }
-
 }
