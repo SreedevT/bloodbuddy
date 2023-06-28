@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
             Text("First Name: ${data!['First Name']}"),
             Text("Last Name: ${data!['Last Name']}"),
-            Text("Date of Birth: ${data!['Date of Birth'].toDate()}"),
+            // Text("Date of Birth: ${data!['Date of Birth'].toDate()}"),
             Text("Age: ${data!['Age']}"),
             Text("Weight: ${data!['Weight']}"),
             Text("Blood Group: ${data!['Blood Group']}"),
