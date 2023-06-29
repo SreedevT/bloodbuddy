@@ -1,5 +1,6 @@
 
 import 'package:blood/screens/homescreen.dart';
+import 'package:blood/screens/landingpage.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/Initialscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
@@ -43,9 +44,11 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      initialRoute: user != null ? 'home' : 'initial_screen',
+      initialRoute: 'landing',
+      //initialRoute: user != null ? 'home' : 'initial_screen',
       debugShowCheckedModeBanner: false,
       routes: {
+        'landing':(context) =>  BloodBuddyHomePage(),
         'phone_signup': (context) => const MyPhone(),
         'verify': (context) => const MyVerify(),
         'home': (context) => const HomeScreen(),
