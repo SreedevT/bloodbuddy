@@ -1,4 +1,4 @@
-import 'package:blood/models/req.dart';
+import 'package:blood/models/request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -118,7 +118,7 @@ class _RequestFormState extends State<RequestForm> {
                   Center(
                     child: ElevatedButton(onPressed: (){
                       if(_formKey.currentState!.validate()){
-                        Req().updateReq(user!.uid, name, pname,units, btype);
+                        Request(id: user!.uid, bloodGroup: btype, units: units, patientName: pname,name:name).updateRequest();
                       }
                     },
                     style: ButtonStyle(
