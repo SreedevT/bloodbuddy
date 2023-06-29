@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'package:blood/Firestore/userprofile.dart';
+import 'package:blood/widgets/confetti.dart';
 import 'package:blood/widgets/info_text.dart';
+import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:blood/map_picker/osm_search_and_pick_mod.dart';
 import 'package:blood/map_picker/models/hospitals.dart';
+import 'package:lottie/lottie.dart';
 
 class NewInter extends StatefulWidget {
   const NewInter({super.key});
@@ -19,6 +22,8 @@ class _NewInterState extends State<NewInter> {
   String location = '';
   String area = '';
   bool _load = false;
+
+  late final ConfettiController _confettiController;
 
   Future<void> _getCurrentLocation() async {
     Position position = await _determinePosition();
@@ -80,6 +85,14 @@ class _NewInterState extends State<NewInter> {
   void initState() {
     super.initState();
     user = _auth.currentUser as User;
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   @override
@@ -93,168 +106,11 @@ class _NewInterState extends State<NewInter> {
           'Set your current location',
         ),
       ),
-      body: Column(
-        // children: [
-        //   Container(
-        //     // height: 350,
-        //     margin: const EdgeInsets.only(
-        //         top: 30, left: 20, right: 20, bottom: 20),
-        //     decoration: BoxDecoration(
-        //         // shape also can be specified like this => shape: BoxShape.circle,
-        //         color: const Color.fromARGB(255, 129, 36,
-        //             30), // use decoration for giving both color and radius
-        //         borderRadius: BorderRadius.circular(
-        //             20), // otherwise, if we give it separately, error will show up
-        //         border: Border.all(
-        //           color: Colors.white,
-        //           width: 1,
-        //         ),
-        //         boxShadow: [
-        //           BoxShadow(
-        //             color: Colors.black
-        //                 .withOpacity(1.0), // here, I set opacity to maximum
-        //             spreadRadius:
-        //                 1, // this is to specify how much spread the shadow
-        //             blurRadius: 10, // how much blur the shadow
-        //             //  offset: Offset(0, 3),
-        //           ),
-        //         ]),
-        //     child: Center(
-        //       child: Column(
-        //         children: [
-        //           const SizedBox(height: 20),
-        //           const Text(
-        //             "Thanks for coming so far!",
-        //             style: TextStyle(
-        //               color: Colors.white,
-        //               fontSize: 20,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //           const SizedBox(height: 20),
-        //           const Text(
-        //             "Please set your location by clicking the button below.",
-        //             style: TextStyle(
-        //               color: Colors.white,
-        //               fontSize: 16,
-        //             ),
-        //             textAlign: TextAlign.center,
-        //           ),
-        //           Row(
-        //             mainAxisAlignment: MainAxisAlignment.center,
-        //             children: const [
-        //               SizedBox(height: 100),
-        //               Icon(
-        //                 Icons.info_outline_rounded,
-        //                 color: Colors.white,
-        //               ),
-        //               SizedBox(width: 10),
-        //               Text(
-        //                 "We don't share your location with anyone.",
-        //                 style: TextStyle(
-        //                   color: Colors.white,
-        //                 ),
-        //               ),
-        //             ],
-        //           ),
-        //           Row(
-        //             mainAxisAlignment: MainAxisAlignment.center,
-        //             children: const [
-        //               Icon(
-        //                 Icons.question_mark_outlined,
-        //                 color: Colors.white,
-        //               ),
-        //               SizedBox(width: 10),
-        //               Text(
-        //                 "The location you set will be used to show\n you blood requests.",
-        //                 style: TextStyle(
-        //                   color: Colors.white,
-        //                 ),
-        //               ),
-        //             ],
-        //           ),
-        //           const SizedBox(height: 15),
-        //           ElevatedButton(
-        //             style: ButtonStyle(
-        //               backgroundColor: MaterialStateColor.resolveWith(
-        //                   (states) => Colors
-        //                       .white), // by writing this instead of materialstateproperty, we can give dynamic colors
-        //               overlayColor: MaterialStateColor.resolveWith((states) =>
-        //                   Colors.green.withOpacity(
-        //                       0.3)), // like here the button color is changed, when we tap it. COOL ;)
-        //             ),
-        //             child: Row(
-        //               mainAxisAlignment: MainAxisAlignment.center,
-        //               mainAxisSize: MainAxisSize.min,
-        //               children: [
-        //                 const Text(
-        //                   "Set Current Location",
-        //                   style: TextStyle(
-        //                     color: Color.fromARGB(255, 129, 36, 30),
-        //                   ),
-        //                 ),
-        //                 const SizedBox(width: 10),
-        //                 _load
-        //                     ? const SizedBox(
-        //                         height: 15,
-        //                         width: 15,
-        //                         child: CircularProgressIndicator())
-        //                     : const SizedBox(
-        //                         height: 0,
-        //                         width: 0,
-        //                       ),
-        //               ],
-        //             ),
-        //             onPressed: () async {
-        //               _setLoadingState(true);
-        //               await _getCurrentLocation();
-
-        //               await fetchHospitals(
-        //                       latLong.latitude, latLong.longitude, 5)
-        //                   .then((value) {
-        //                 OpenStreetMapSearchAndPick.hospitals = value;
-        //                 log(value.toString());
-        //                 _setLoadingState(false);
-        //               }).catchError((e) {
-        //                 log(e.toString());
-        //               });
-
-        //               if (!mounted) return;
-        //               _showModalBottomSheet(context);
-        //             },
-        //           ),
-        //           const SizedBox(height: 20),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        //   const SizedBox(height: 20),
-        //   Text(
-        //     location,
-        //     style: const TextStyle(
-        //       color: Color.fromARGB(255, 129, 36, 30),
-        //       fontSize: 20,
-        //       fontWeight: FontWeight.bold,
-        //     ),
-        //     textAlign: TextAlign.center,
-        //   ),
-        //   const SizedBox(height: 10),
-        //   Text(
-        //     area.isNotEmpty ? "Your are in $area" : '',
-        //     style: const TextStyle(
-        //       color: Color.fromARGB(255, 129, 36, 30),
-        //       fontSize: 15,
-        //     ),
-        //     textAlign: TextAlign.center,
-        //   ),
-        // const SizedBox(height: 10,),
-        // ElevatedButton(onPressed: (){}, child: Text("Next")),
-        //],
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 30),
-          Image.asset('assets/loc2.jpg'),
-          const SizedBox(height: 30),
+      body: Stack(children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Lottie.asset('assets/lottie/select-location.json', width: 350),
+          // Lottie.asset('assets/lottie/location-animation.json'),
+          const SizedBox(height: 15),
           const Padding(
             padding: EdgeInsets.all(10.0),
             child: InfoBox(
@@ -267,6 +123,17 @@ class _NewInterState extends State<NewInter> {
               borderColor: Colors.grey,
             ),
           ),
+          area.isEmpty
+              ? const SizedBox()
+              : Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: InfoBox(
+                    icon: Icons.location_on_outlined,
+                    text: "You'll get requests from hospitals in $area .",
+                    textColor: Color.fromRGBO(104, 104, 104, 1),
+                    backgroundColor: Color.fromARGB(191, 200, 230, 201),
+                  ),
+                ),
           const SizedBox(
             height: 30,
           ),
@@ -295,7 +162,9 @@ class _NewInterState extends State<NewInter> {
                       ? const SizedBox(
                           height: 15,
                           width: 15,
-                          child: CircularProgressIndicator())
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ))
                       : const SizedBox(
                           height: 0,
                           width: 0,
@@ -320,9 +189,43 @@ class _NewInterState extends State<NewInter> {
               },
             ),
           ),
-          const SizedBox(height: 20),
-        ],
-      ),
+          // ElevatedButton(onPressed: () => _confettiController.play(), child: Text('Play')),
+          const Expanded(child: SizedBox(height: 20)),
+
+          area.isEmpty
+              ? const SizedBox(height: 0)
+              : InkWell(
+                  onTap: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      con,
+                      'home',
+                      (route) => false,
+                    );
+                  },
+                  onLongPress: () => _confettiController.play(),
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 198, 40, 40),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'DONE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+        ]),
+        Align(alignment: Alignment.topCenter,child: Confettie(controller: _confettiController)),
+      ]),
     );
   }
 
@@ -333,7 +236,6 @@ class _NewInterState extends State<NewInter> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        isDismissible: false,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         barrierColor: Colors.black.withOpacity(
             0.7), // so what this does is that it gives this color to main screen when the sheet pops up
@@ -350,11 +252,12 @@ class _NewInterState extends State<NewInter> {
                 });
 
                 await DataBase(uid: user.uid).updateUserLocation(area);
-                Navigator.pushNamedAndRemoveUntil(
-                  con,
-                  'home',
-                  (route) => false,
-                );
+
+                Navigator.pop(con);
+
+                await Future.delayed(const Duration(milliseconds: 200), () {
+                  _confettiController.play();
+                });
                 // this enables  to close the bottom sheet when this button is clicked
               },
             ),

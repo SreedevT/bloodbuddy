@@ -45,6 +45,7 @@ Future<void> main() async {
       ),
       //TODO Change initial route to 'home' once app is ready
       initialRoute: user != null ? 'home' : 'initial_screen',
+      // initialRoute: 'welcome',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),
