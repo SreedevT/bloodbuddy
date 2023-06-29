@@ -1,7 +1,6 @@
 import 'package:blood/models/req.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class RequestForm extends StatefulWidget {
   const RequestForm({super.key});
@@ -23,15 +22,9 @@ class _RequestFormState extends State<RequestForm> {
   void initState(){
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    generateId();
   }
 
-  String generateId(){
-    var uuid = const Uuid();
-    String id = uuid.v4();
-    return id;
-  }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,8 +118,7 @@ class _RequestFormState extends State<RequestForm> {
                   Center(
                     child: ElevatedButton(onPressed: (){
                       if(_formKey.currentState!.validate()){
-                        String uid = generateId();
-                        Req().updateReq(user!.uid,uid, name, pname,units, btype);
+                        Req().updateReq(user!.uid, name, pname,units, btype);
                       }
                     },
                     style: ButtonStyle(

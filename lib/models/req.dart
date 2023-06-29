@@ -5,13 +5,12 @@ class Req{
 
   Future updateReq(
     String useruid,
-    String requid,
     String name,
     String pname,
     int units,
     String btype,
   ) async{
-    await reqs.doc(requid).set(
+    await reqs.doc().set(
       {
         'User UID': useruid,
         'Name': name,
