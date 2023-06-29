@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum Status { pending, accepted }
 
 class Request  {
@@ -56,7 +58,7 @@ class Request  {
       units: map['units'],
       patientName: map['patientName'],
       area: map['area'],
-      expiryDate: map['expiryDate'].toDate(),
+      expiryDate: map['expiryDate'],
       isEmergency: map['isEmergency'],
       //! not sure if this will work
       status: Status.values.firstWhere((element) => element.name == map['status']),
