@@ -129,7 +129,7 @@ class _NewInterState extends State<NewInter> {
                   padding: EdgeInsets.all(10.0),
                   child: InfoBox(
                     icon: Icons.location_on_outlined,
-                    text: "You'll get requests from hospitals in $area .",
+                    text: "You'll get requests from hospitals in $area.",
                     textColor: Color.fromRGBO(104, 104, 104, 1),
                     backgroundColor: Color.fromARGB(191, 200, 230, 201),
                   ),
@@ -178,7 +178,7 @@ class _NewInterState extends State<NewInter> {
                 await fetchHospitals(latLong.latitude, latLong.longitude, 5)
                     .then((value) {
                   OpenStreetMapSearchAndPick.hospitals = value;
-                  log(value.toString());
+                  // log(value.toString());
                   _setLoadingState(false);
                 }).catchError((e) {
                   log(e.toString());

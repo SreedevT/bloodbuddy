@@ -139,7 +139,6 @@ class _OpenStreetMapSearchAndPickState
 
         setState(() {});
 
-
         await fetchHospitals(event.center.latitude, event.center.longitude, 5)
             .then((value) {
           OpenStreetMapSearchAndPick.hospitals = value;
@@ -187,17 +186,17 @@ class _OpenStreetMapSearchAndPickState
                 //   return Text("© OpenStreetMap contributors");
                 // },
               ),
-              MarkerLayer(
-                markers: OpenStreetMapSearchAndPick.hospitals!.map((hospital) {
-                  return Marker(
-                    point: hospital.position,
-                    builder: (ctx) => const Icon(
-                      Icons.local_hospital,
-                      color: Colors.red,
-                    ),
-                  );
-                }).toList(),
-              )
+              // MarkerLayer(
+              //   markers: OpenStreetMapSearchAndPick.hospitals!.map((hospital) {
+              //     return Marker(
+              //       point: hospital.position,
+              //       builder: (ctx) => const Icon(
+              //         Icons.local_hospital,
+              //         color: Colors.red,
+              //       ),
+              //     );
+              //   }).toList(),
+              // )
             ],
           )),
           Positioned(
@@ -410,15 +409,15 @@ class _OpenStreetMapSearchAndPickState
 String _getGeneralArea(Map json) {
   try {
     //Some responses dont have a suburb key and some dont have a city_district key
-    String area = json['address']['town'] ??
-        json['address']['suburb'] ??
-        json['address']['city_district'];
+    // String area = json['address']['town'] ??
+    //     json['address']['suburb'] ??
+    //     json['address']['city_district'];
 
+    String area = json['address']['county'] ?? json['address']['city'];
     log("Area: $area");
     // OpenStreetMapSearchAndPick.hospitalsByArea[area] =
     //     OpenStreetMapSearchAndPick.hospitals!;
     return area;
-
   } catch (e) {
     log(e.toString());
     log("TypeError (address[key] is null) try another key to get the area");
