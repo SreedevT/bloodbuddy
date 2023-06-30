@@ -1,4 +1,5 @@
 import 'package:blood/models/request.dart';
+import 'package:blood/widgets/info_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -115,6 +116,12 @@ class _RequestFormState extends State<RequestForm> {
                         },
                   ),
                   const SizedBox(height: 30,),
+                  InfoBox(icon: Icons.info_outline,
+                   text: "Please be careful while entering the details. Once submitted, the request cannot be edited.",
+                   borderColor: Colors.red[300],
+                   textColor: Colors.grey,
+                   ),
+                   const SizedBox(height: 30,),
                   Center(
                     child: ElevatedButton(onPressed: (){
                       if(_formKey.currentState!.validate()){

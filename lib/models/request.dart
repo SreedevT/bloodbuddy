@@ -8,13 +8,13 @@ class Request  {
   //? ID of the user making the request
   // each user can have multiple requests
   // we can identify the user by this ID
-  final String id; 
+  final String? id; 
 
   // final String hospitalName;
-  final String bloodGroup;
-  final int units;
+  final String? bloodGroup;
+  final int? units;
   //? name of the patient for whom the request is made
-  final String patientName;
+  final String? patientName;
   // final String area;
   // var requisitionForm; //? image/pdf of the requisition form
   // final DateTime expiryDate;
@@ -23,15 +23,15 @@ class Request  {
   // maybe shown in a different screen / different color / highlighted
   // final bool isEmergency;
   Status status;
-  final String name;
+  final String? name;
 
   Request({
-    required this.id,
+    this.id,
     // required this.hospitalName,
-    required this.bloodGroup,
-    required this.units,
-    required this.name,
-    required this.patientName,
+     this.bloodGroup,
+    this.units,
+    this.name,
+    this.patientName,
     // required this.area,
     // required this.expiryDate,
     // this.isEmergency = false,
@@ -103,6 +103,22 @@ class Request  {
 //       return [];
 //   }
 // }
+
+// instead of receiving snapshot,
+//receive list of request objects 
+// request list from snapshots
+
+List<Request> requestListFromSnapshot(QuerySnapshot snapshot){
+  return snapshot.docs.map((doc){
+    return Request.fromMap(doc.data() as Map<String, dynamic>);
+  }).toList();
+}
+
+// stream for this collection
+
+Stream<List<Request>> get requestupdates{
+  return reqs.snapshots().map(requestListFromSnapshot);
+}
 
 Future updateRequest() async {
   await reqs.doc().set(toMap());

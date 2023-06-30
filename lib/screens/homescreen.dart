@@ -122,10 +122,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     'reqform',
                   );
                 },
-                child: const Text("Requests page",
+                child: const Text("Requests Form",
                     style: TextStyle(color: Colors.white)),
               ),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[800],
+              ),
+              onPressed: () async {
+                  if (!mounted) return;
+                  Navigator.pushNamed(
+                    context,
+                    'request',
+                  );
+                },
+              child: const Text("Recent Requests",
+              style: TextStyle(color: Colors.white)),
+            )
           ],
         ),
       ),
