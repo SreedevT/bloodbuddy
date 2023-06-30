@@ -1,16 +1,17 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
 
 enum Status { pending, accepted }
 
-class Request  {
+class Request {
   //? ID of the user making the request
   // each user can have multiple requests
   // we can identify the user by this ID
-  final String id; 
+  final String id;
 
-  // final String hospitalName;
+  final String hospitalName;
   final String bloodGroup;
   final int units;
   //? name of the patient for whom the request is made
@@ -24,10 +25,12 @@ class Request  {
   // final bool isEmergency;
   Status status;
   final String name;
+  //? position of the hospital
+  final LatLng position;
 
   Request({
     required this.id,
-    // required this.hospitalName,
+    required this.hospitalName,
     required this.bloodGroup,
     required this.units,
     required this.name,
@@ -36,16 +39,18 @@ class Request  {
     // required this.expiryDate,
     // this.isEmergency = false,
     this.status = Status.pending,
+    required this.position,
   });
 
-  final CollectionReference reqs = FirebaseFirestore.instance.collection('Reqs');
-  
+  final CollectionReference reqs =
+      FirebaseFirestore.instance.collection('Reqs');
+
   //? convert the request object to a map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'Name' : name,
-      // 'hospitalName': hospitalName,
+      'Name': name,
+      'hospitalName': hospitalName,
       'bloodGroup': bloodGroup,
       'units': units,
       'patientName': patientName,
@@ -53,6 +58,7 @@ class Request  {
       // 'expiryDate': expiryDate,
       // 'isEmergency': isEmergency,
       'status': status.name,
+      'position': GeoPoint(position.latitude, position.longitude),
     };
   }
 
@@ -61,7 +67,7 @@ class Request  {
     return Request(
       id: map['id'],
       name: map['Name'],
-      // hospitalName: map['hospitalName'],
+      hospitalName: map['hospitalName'],
       bloodGroup: map['bloodGroup'],
       units: map['units'],
       patientName: map['patientName'],
@@ -69,7 +75,9 @@ class Request  {
       // expiryDate: map['expiryDate'],
       // isEmergency: map['isEmergency'],
       //! not sure if this will work
-      status: Status.values.firstWhere((element) => element.name == map['status']),
+      status:
+          Status.values.firstWhere((element) => element.name == map['status']),
+      position: LatLng(map['position'].latitude, map['position'].longitude),
     );
   }
 
@@ -79,7 +87,6 @@ class Request  {
 //     return '$patientName needs $units units of $bloodGroup blood at $hospitalName in $area';
 //   }
 // }
-
 
 // List<String> getCompatibleBloodGroups(String bloodType) {
 //   switch (bloodType) {
@@ -104,7 +111,7 @@ class Request  {
 //   }
 // }
 
-Future updateRequest() async {
-  await reqs.doc().set(toMap());
-}
+  Future updateRequest() async {
+    await reqs.doc().set(toMap());
+  }
 }
