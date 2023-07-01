@@ -12,6 +12,7 @@ import 'authentication/register.dart';
 import 'firebase_options.dart';
 import 'authentication/phone_signup.dart';
 import 'authentication/verify.dart';
+import 'screens/my_requests_screen.dart';
 Future<void> main() async {
   //TODO Remove delay once app actually takes some time to load
   await Future.delayed(const Duration(seconds: 1, microseconds: 500));
@@ -58,6 +59,7 @@ Future<void> main() async {
         'initial_screen': (context) => const InitialScreen(),
         'request': (context) => const BloodRequestList(),
         'reqform':(context) => const RequestForm(),
+        'my_requests': (context) => const MyRequestList(),
       },
     ),
   );

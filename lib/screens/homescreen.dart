@@ -144,6 +144,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: const Text("Donate",
                     style: TextStyle(color: Colors.white)),
               ),
+            const SizedBox(
+              height: 20,
+            ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[800],
+                ),
+                onPressed: () async {
+                  if (!mounted) return;
+                  Navigator.pushNamed(
+                    context,
+                    'my_requests',
+                  );
+                },
+                child: const Text("My Requests",
+                    style: TextStyle(color: Colors.white)),
+              ),
           ],
         ),
       ),
