@@ -126,12 +126,12 @@ class _NewInterState extends State<NewInter> {
           area.isEmpty
               ? const SizedBox()
               : Padding(
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: InfoBox(
                     icon: Icons.location_on_outlined,
                     text: "You'll get requests from hospitals in $area.",
-                    textColor: Color.fromRGBO(104, 104, 104, 1),
-                    backgroundColor: Color.fromARGB(191, 200, 230, 201),
+                    textColor: const Color.fromRGBO(104, 104, 104, 1),
+                    backgroundColor: const Color.fromARGB(191, 200, 230, 201),
                   ),
                 ),
           const SizedBox(
