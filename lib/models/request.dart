@@ -88,28 +88,28 @@ class Request {
 //   }
 // }
 
-// List<String> getCompatibleBloodGroups(String bloodType) {
-//   switch (bloodType) {
-//     case 'A+':
-//       return ['A+', 'A-', 'O+', 'O-'];
-//     case 'A-':
-//       return ['A-', 'O-'];
-//     case 'B+':
-//       return ['B+', 'B-', 'O+', 'O-'];
-//     case 'B-':
-//       return ['B-', 'O-'];
-//     case 'AB+':
-//       return ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-//     case 'AB-':
-//       return ['A-', 'B-', 'AB-', 'O-'];
-//     case 'O+':
-//       return ['O+', 'O-'];
-//     case 'O-':
-//       return ['O-'];
-//     default:
-//       return [];
-//   }
-// }
+List<String> getCompatibleBloodGroups(String bloodType) {
+  switch (bloodType) {
+    case 'A+':
+      return ['A+', 'AB+'];
+    case 'A-':
+      return ['A+', 'A-', 'AB+', 'AB-'];
+    case 'B+':
+      return ['B+', 'AB+'];
+    case 'B-':
+      return ['B+', 'B-', 'AB+', 'AB-'];
+    case 'AB+':
+      return [ 'AB+'];
+    case 'AB-':
+      return ['AB+', 'AB-', 'A-', 'B-', 'O-', 'O+', 'A+', 'B+'];
+    case 'O+':
+      return ['O+', 'A+', 'B+', 'AB+'];
+    case 'O-':
+      return ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+    default:
+      return [];
+  }
+}
 
   Future updateRequest() async {
     await reqs.doc().set(toMap());
