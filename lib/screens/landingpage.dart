@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
 class BloodBuddyHomePage extends StatefulWidget {
   @override
   _BloodBuddyHomePageState createState() => _BloodBuddyHomePageState();
@@ -9,7 +7,35 @@ class BloodBuddyHomePage extends StatefulWidget {
 
 class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
     with SingleTickerProviderStateMixin {
-  int _currentIndex = 0;
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Home',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: Business',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: School',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 3: Settings',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -33,29 +59,84 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          color: Colors.black,
-          onPressed: (
-
-            
-          ) {
-            // Handle menu button press
-          },
+        leading: Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.menu),
+                color: Colors.black,
+                onPressed: () {
+                  _scaffoldKey.currentState!.openDrawer(); // Handle menu button press
+                },
+              );
+            }
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
             color: Colors.black,
             onPressed: () {
-              // Handle search button press
+              Scaffold.of(context).openDrawer(); // Handle search button press
             },
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: Container(color: Colors.white,
+          child: ListView(
+            
+            padding: EdgeInsets.zero,
+            children: [
+              
+              DrawerHeader(
+                padding: EdgeInsets.fromLTRB(60, 35, 0, 0),
+                decoration: BoxDecoration(
+                  color: Colors.red[800],
+                ),
+                child: Text(
+                  'Blood buddy',
+                  style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                tileColor: Color.fromARGB(255, 255, 255, 255),
+                title: Text('F&Q'),
+                onTap: () {
+                  // Handle item 1 tap
+                },
+              ),
+              ListTile(
+                tileColor: Color.fromARGB(255, 255, 255, 255),
+                title: Text('Help'),
+                
+                onTap: () {
+                  // Handle item 2 tap
+                },
+              ),
+              ListTile(
+                tileColor: Color.fromARGB(255, 254, 254, 254),
+                title: Text('Support'),
+                onTap: () {
+                  // Handle item 1 tap
+                },
+              ),
+              ListTile(
+                tileColor: Color.fromARGB(255, 255, 255, 255),
+                title: Text('Log out'),
+                onTap: () {
+                  // Handle item 1 tap
+                },
+              ),
+            ],
+          ),
+        ),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -68,7 +149,7 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
               height: 160.0,
               padding: EdgeInsets.all(16.0),
               margin:
-                  new EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
+              new EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
               decoration: BoxDecoration(
                   color: Colors.black, borderRadius: BorderRadius.circular(20)),
               child: Column(
@@ -98,12 +179,10 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
                                 color: const Color.fromARGB(255, 255, 254, 254),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 22)),
-                                SizedBox(width: 150),
+                        SizedBox(width: 150),
                         Image.asset(
                           'assets/images/blood.png',
-                        scale: 1,
-                          
-                          
+                          scale: 1,
                           height: 300,
                         ),
                       ],
@@ -134,7 +213,7 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
             Container(
               margin: EdgeInsets.fromLTRB(0, 0, 80, 0),
               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: const Text('Rescent Donation',
+              child: const Text('Recent Donation',
                   style: TextStyle(
                       color: Color.fromARGB(255, 0, 0, 0),
                       fontWeight: FontWeight.bold,
@@ -144,34 +223,36 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
               height: 20,
             ),
             Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
-                width: 350,
-                height: 100,
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(212, 231, 231, 231),
-                    borderRadius: BorderRadius.circular(20)),
-                child: const Text('Sony donated to shaf......................',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 5, 0, 0),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15))),
+              padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
+              width: 350,
+              height: 100,
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(212, 231, 231, 231),
+                  borderRadius: BorderRadius.circular(20)),
+              child: const Text('Sony donated to shaf......................',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 5, 0, 0),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15)),
+            ),
             SizedBox(
               height: 10,
             ),
             Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
-                width: 350,
-                height: 100,
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(212, 231, 231, 231),
-                    borderRadius: BorderRadius.circular(20)),
-                child: const Text('Sony donated to shaf......................',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 5, 0, 0),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15))),
+              padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
+              width: 350,
+              height: 100,
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(212, 231, 231, 231),
+                  borderRadius: BorderRadius.circular(20)),
+              child: const Text('Sony donated to shaf......................',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 5, 0, 0),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15)),
+            ),
             SizedBox(
               height: 1,
             ),
@@ -191,37 +272,57 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
             Container(
                 padding: EdgeInsets.fromLTRB(50, 1, 50, 0),
                 color: Color.fromARGB(211, 255, 255, 255),
-                child: const Text('Thanku For donating to save a life',
+                child: const Text('Thank you For donating to save a life',
                     style: TextStyle(
                         color: Color.fromARGB(255, 5, 0, 0), fontSize: 15))),
           ],
         ),
       ),
-       floatingActionButton:FloatingActionButton( //Floating action button on Scaffold
-      onPressed: (){
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
           //code to execute on button press
-      },
-      child: Icon(Icons.send,),backgroundColor: Colors.white,elevation: 2.0,//icon inside button
-  ),
-
-  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-  //floating action button position to center
-
-  bottomNavigationBar: BottomAppBar( //bottom navigation bar on scaffold
-    color:const Color.fromARGB(255, 255, 255, 255),
-    shape: CircularNotchedRectangle(), //shape of notch
-    notchMargin: 5, //notche margin between floating button and bottom appbar
-    child: Row( //children inside bottom appbar
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        IconButton(icon: Icon(Icons.home, color: const Color.fromARGB(255, 8, 0, 0),), onPressed: () {},),
-        IconButton(icon: Icon(Icons.search, color: const Color.fromARGB(255, 13, 0, 0),), onPressed: () {},),
-        IconButton(icon: Icon(Icons.print, color: const Color.fromARGB(255, 0, 0, 0),), onPressed: () {},),
-        IconButton(icon: Icon(Icons.person_outlined, color: const Color.fromARGB(255, 5, 0, 0),), onPressed: () {},),
-      ],
-    ),
-  ),
+        },
+        child: Icon(
+          Icons.send,
+        ),
+        backgroundColor: const Color.fromARGB(255, 254, 253, 253),
+        elevation: 2.0,
+        //icon inside button
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      //floating action button position to center
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+             icon: ImageIcon(
+            AssetImage("assets/images/donation.png"),
+            color: Colors.red,
+            size: 24,
+          ),
+            label: 'Donation',
+          ),
+          BottomNavigationBarItem(
+                        icon: ImageIcon(
+            AssetImage("assets/images/blood.png"),
+            color: Colors.red,
+            size: 24,
+          ),
+            label: '  Request Blood',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_2_outlined),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.red[800],
+        unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
