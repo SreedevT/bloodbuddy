@@ -28,7 +28,7 @@ class Request {
   //? position of the hospital
   final LatLng position;
 
-  static List<String>  getDonorBloodGroups(String bloodType) {
+  static List<String> getDonorBloodGroups(String bloodType) {
     switch (bloodType) {
       case 'A+':
         return ['A+', 'A-', 'O+', 'O-'];
@@ -50,24 +50,25 @@ class Request {
         return [];
     }
   }
-  static List<String>  getRecipientBloodGroups(String bloodType) {
+
+  static List<String> getRecipientBloodGroups(String bloodType) {
     switch (bloodType) {
       case 'A+':
-        return ['A+', 'A-', 'O+', 'O-'];
+        return ['A+', 'AB+'];
       case 'A-':
-        return ['A-', 'O-'];
+        return ['A+', 'A-', 'AB+', 'AB-'];
       case 'B+':
-        return ['B+', 'B-', 'O+', 'O-'];
+        return ['B+', 'AB+'];
       case 'B-':
-        return ['B-', 'O-'];
+        return ['B+', 'B-', 'AB+', 'AB-'];
       case 'AB+':
-        return ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+        return ['AB+'];
       case 'AB-':
-        return ['A-', 'B-', 'AB-', 'O-'];
+        return ['AB+', 'AB-'];
       case 'O+':
-        return ['O+', 'O-'];
+        return ['O+', 'A+', 'B+', 'AB+'];
       case 'O-':
-        return ['O-'];
+        return ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
       default:
         return [];
     }
@@ -132,7 +133,6 @@ class Request {
 //     return '$patientName needs $units units of $bloodGroup blood at $hospitalName in $area';
 //   }
 // }
-
 
   Future updateRequest() async {
     await reqs.doc().set(toMap());

@@ -43,7 +43,7 @@ class _BloodRequestListState extends State<BloodRequestList> {
   Future _getReq() async {
     final query = db
         .collection('Reqs')
-        .where('bloodGroup', whereIn: Request.getCompatibleBloodGroups(profile['Blood Group']))
+        .where('bloodGroup', whereIn: Request.getRecipientBloodGroups(profile['Blood Group']))
         .where('area', isEqualTo: profile['area']);
 
     queryListner = query.snapshots().listen((event) {
