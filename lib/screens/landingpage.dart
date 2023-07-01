@@ -40,7 +40,10 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
         leading: IconButton(
           icon: Icon(Icons.menu),
           color: Colors.black,
-          onPressed: () {
+          onPressed: (
+
+            
+          ) {
             // Handle menu button press
           },
         ),
@@ -107,7 +110,7 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
                     ),
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 8,
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
@@ -117,7 +120,7 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
                           'User id',
                           style: TextStyle(
                               color: Color.fromARGB(255, 170, 168, 168),
-                              fontSize: 15),
+                              fontSize: 14),
                         ),
                       ],
                     ),
@@ -194,56 +197,31 @@ class _BloodBuddyHomePageState extends State<BloodBuddyHomePage>
           ],
         ),
       ),
-      floatingActionButton: Positioned(
-        bottom: 64.0,
-        right: 16.0,
-        child: FloatingActionButton(
-          onPressed: () {
-            // Handle floating action button press
-          },
-          backgroundColor: Colors.red,
-          child: Icon(
-            Icons.local_hospital,
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        backgroundColor: Colors.red,
-        selectedItemColor: const Color.fromARGB(255, 7, 0, 0),
-        unselectedItemColor:
-            const Color.fromARGB(255, 6, 0, 0).withOpacity(0.6),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/donationlogo.png'),
-              size: 25,
-            ),
-            label: 'Donation',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(
-              AssetImage('assets/images/donationlogo.png'),
-              size: 25,
-            ),
-            label: 'Request',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
+       floatingActionButton:FloatingActionButton( //Floating action button on Scaffold
+      onPressed: (){
+          //code to execute on button press
+      },
+      child: Icon(Icons.send,),backgroundColor: Colors.white,elevation: 2.0,//icon inside button
+  ),
+
+  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+  //floating action button position to center
+
+  bottomNavigationBar: BottomAppBar( //bottom navigation bar on scaffold
+    color:const Color.fromARGB(255, 255, 255, 255),
+    shape: CircularNotchedRectangle(), //shape of notch
+    notchMargin: 5, //notche margin between floating button and bottom appbar
+    child: Row( //children inside bottom appbar
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        IconButton(icon: Icon(Icons.home, color: const Color.fromARGB(255, 8, 0, 0),), onPressed: () {},),
+        IconButton(icon: Icon(Icons.search, color: const Color.fromARGB(255, 13, 0, 0),), onPressed: () {},),
+        IconButton(icon: Icon(Icons.print, color: const Color.fromARGB(255, 0, 0, 0),), onPressed: () {},),
+        IconButton(icon: Icon(Icons.person_outlined, color: const Color.fromARGB(255, 5, 0, 0),), onPressed: () {},),
+      ],
+    ),
+  ),
     );
   }
 }
