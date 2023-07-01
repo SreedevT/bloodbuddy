@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       opacity: _animation,
       child: Scaffold(
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(
               height: 50,
@@ -126,6 +127,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     style: TextStyle(color: Colors.white)),
               ),
             ),
+            const SizedBox(
+              height: 20,
+            ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[800],
+                ),
+                onPressed: () async {
+                  if (!mounted) return;
+                  Navigator.pushNamed(
+                    context,
+                    'request',
+                  );
+                },
+                child: const Text("Donate",
+                    style: TextStyle(color: Colors.white)),
+              ),
           ],
         ),
       ),

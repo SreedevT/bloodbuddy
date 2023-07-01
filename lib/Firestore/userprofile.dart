@@ -44,7 +44,7 @@ class DataBase {
 
   // Function to get the use profile data
 
-  Future getUserProfile() async {
+  Future<Map<String, dynamic>> getUserProfile() async {
     try {
       DocumentSnapshot snapshot = await userProfile.doc(uid).get();
       if (snapshot.exists) {
