@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,37 +24,65 @@ class BloodRequestCard extends StatefulWidget {
 }
 
 class _BloodRequestCardState extends State<BloodRequestCard> {
-  // A boolean to track the visibility of the card
   bool _visible = false;
-  bool _intrested = false;
-
-  set visible(bool value) {
-    setState(() {
-      _visible = value;
-    });
-  }
+  bool _interested = false;
+  late String user;
+  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> subscription;
 
   @override
   void initState() {
     super.initState();
-    // Set the visibility to true after a small delay
+    user = FirebaseAuth.instance.currentUser!.uid;
     Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
         _visible = true;
       });
     });
+    isInterestShown();
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  void isInterestShown() {
+    final DocumentReference<Map<String,dynamic>> interestedRef = FirebaseFirestore.instance
+        .collection('Reqs')
+        .doc(widget.id)
+        .collection('Interested')
+        .doc(user);
+        subscription = interestedRef.snapshots().listen((snapshot) {
+      setState(() {
+        // means the user has already shown interest
+        _interested = snapshot.exists;
+      });
+    });
+  }
+
+  void updateInterest() {
+    final interestedRef = FirebaseFirestore.instance
+        .collection('Reqs')
+        .doc(widget.id)
+        .collection('Interested')
+        .doc(user);
+    if (_interested) {
+      // no need to update anything
+      // this is required otherwise, everytime the button is pressed, the time will be overwritten.
+    } else {
+      interestedRef.set({
+        'time': DateTime.now(),
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
-      // Use the _visible value to determine the opacity
       opacity: _visible ? 1.0 : 0.0,
-      // Use a duration of 500 milliseconds for the animation
       duration: const Duration(milliseconds: 750),
-      // Use a linear curve for the animation
       curve: Curves.linear,
-      // The child widget is your card
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -84,38 +111,22 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  intrestedButton(),
+                  ElevatedButton.icon(
+                    onPressed: updateInterest,
+                    icon: _interested
+                        ? const Icon(Icons.check_circle_outline)
+                        : const Icon(Icons.add_circle_outline),
+                    label: _interested ? const Text("Added") : const Text("Interested"),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  ElevatedButton intrestedButton() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        // Add user to subcollection with time he said yes
-        FirebaseFirestore.instance
-            .collection('Reqs')
-            .doc(widget.id)
-            .collection('Interested')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .set({
-          'time': DateTime.now(),
-        });
-        setState(() {
-          _intrested = true;
-        });
-        log("Added user to interested list");
-      },
-      icon: _intrested ? const Icon(Icons.check_circle_outline) : const Icon(Icons.add_circle_outline),
-      label: _intrested ? const Text("Added") : const Text("Intrested"),
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
