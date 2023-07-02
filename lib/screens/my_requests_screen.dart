@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/request_card.dart';
+import '../widgets/my_request_card.dart';
 
 class MyRequestList extends StatefulWidget {
   const MyRequestList({super.key});
@@ -18,7 +18,7 @@ class _MyRequestListState extends State<MyRequestList> {
   final String? uid = FirebaseAuth.instance.currentUser!.uid;
   late final Query query;
 
-  List<BloodRequestCard> requests = [];
+  List<MyRequestCard> requests = [];
 
   @override
   void initState() {
@@ -78,13 +78,19 @@ class _MyRequestListState extends State<MyRequestList> {
                 log("added: $data");
                 //TODO add a delete button, a way to update request fields,
                 //TODO and a way to see who has is intrested in the request
-                requests.add(BloodRequestCard(
-                  interestButton: false,
-                  id: data['id'],
+                requests.add(MyRequestCard(
+                  id: doc.id,
                   hospital: data['hospitalName'],
                   units: data['units'],
                   bloodGroup: data['bloodGroup'],
                   name: data['patientName'],
+                  onDelete: () {
+                    //? This is a callback method
+                    // when widget is deleted ,it calls this method
+                    // and setState is invoked in the parent widget(ListView)
+                    // this reloads the page and deleted widget is removed.
+                    setState(() {});
+                  },
                 ));
               }
 

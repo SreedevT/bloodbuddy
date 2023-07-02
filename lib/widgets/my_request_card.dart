@@ -1,33 +1,34 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class BloodRequestCard extends StatefulWidget {
+class MyRequestCard extends StatefulWidget {
   final String id;
   final String hospital;
   final int units;
   final String bloodGroup;
   final String name;
-
+  final Function onDelete;
 
   //TODO in the final version, this card must take in a request object
-  const BloodRequestCard({
+  const MyRequestCard({
     Key? key,
     required this.id,
     required this.hospital,
     required this.units,
     required this.bloodGroup,
     required this.name,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
-  _BloodRequestCardState createState() => _BloodRequestCardState();
+  _MyRequestCardState createState() => _MyRequestCardState();
 }
 
-class _BloodRequestCardState extends State<BloodRequestCard> {
+class _MyRequestCardState extends State<MyRequestCard> {
   bool _visible = false;
-  bool _interested = false;
   late String user;
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> subscription;
 
@@ -40,43 +41,6 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
         _visible = true;
       });
     });
-    isInterestShown();
-  }
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
-  }
-
-  void isInterestShown() {
-    final DocumentReference<Map<String,dynamic>> interestedRef = FirebaseFirestore.instance
-        .collection('Reqs')
-        .doc(widget.id)
-        .collection('Interested')
-        .doc(user);
-        subscription = interestedRef.snapshots().listen((snapshot) {
-      setState(() {
-        // means the user has already shown interest
-        _interested = snapshot.exists;
-      });
-    });
-  }
-
-  void updateInterest() {
-    final interestedRef = FirebaseFirestore.instance
-        .collection('Reqs')
-        .doc(widget.id)
-        .collection('Interested')
-        .doc(user);
-    if (_interested) {
-      // no need to update anything
-      // this is required otherwise, everytime the button is pressed, the time will be overwritten.
-    } else {
-      interestedRef.set({
-        'time': DateTime.now(),
-      });
-    }
   }
 
   @override
@@ -85,6 +49,8 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
       opacity: _visible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 750),
       curve: Curves.linear,
+      //TODO: using expansion_tile_card package, add edit and delete buttons
+      //so that they are hidden and only shown when the card is expanded
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -111,20 +77,29 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
               ),
               const SizedBox(height: 4),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: updateInterest,
-                    icon: _interested
-                        ? const Icon(Icons.check_circle_outline)
-                        : const Icon(Icons.add_circle_outline),
-                    label: _interested ? const Text("Added") : const Text("Interested"),
+                    //TODO Implement edit function
+                    onPressed: () {},
+                    icon: const Icon(Icons.edit),
+                    label: const Text("Edit"),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
+                  ElevatedButton.icon(
+                    onPressed: () => deleteRequest(),
+                    icon: const Icon(Icons.delete_forever),
+                    label: const Text('Delete'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ],
@@ -132,5 +107,15 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
         ),
       ),
     );
+  }
+
+  Future<void> deleteRequest() async {
+    log("Deleting request ${widget.id}");
+    await FirebaseFirestore.instance
+        .collection('Reqs')
+        .doc(widget.id)
+        .delete();
+
+    widget.onDelete();
   }
 }
