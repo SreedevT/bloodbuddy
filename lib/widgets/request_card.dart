@@ -9,6 +9,7 @@ class BloodRequestCard extends StatefulWidget {
   final int units;
   final String bloodGroup;
   final String name;
+  final bool interestButton;
 
 
   //TODO in the final version, this card must take in a request object
@@ -19,6 +20,7 @@ class BloodRequestCard extends StatefulWidget {
     required this.units,
     required this.bloodGroup,
     required this.name,
+    this.interestButton = true,
   }) : super(key: key);
 
   @override
@@ -110,6 +112,7 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
                 ),
               ),
               const SizedBox(height: 4),
+              if(widget.interestButton)
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:blood/widgets/intlist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,10 +76,10 @@ class _MyRequestListState extends State<MyRequestList> {
               for (var doc in snapshot.data!.docs) {
                 var data = doc.data() as Map<String, dynamic>;
                 log("added: $data");
-                //TODO remove intrested button
                 //TODO add a delete button, a way to update request fields,
                 //TODO and a way to see who has is intrested in the request
                 requests.add(BloodRequestCard(
+                  interestButton: false,
                   id: data['id'],
                   hospital: data['hospitalName'],
                   units: data['units'],
@@ -90,7 +91,13 @@ class _MyRequestListState extends State<MyRequestList> {
               return ListView.builder(
                 itemCount: requests.length,
                 itemBuilder: (context, index) {
-                  return requests[index];
+                  return GestureDetector(
+                    onTap: ((){
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => InterestedUsers(reqid: requests[index].id) )
+                      );
+                    }),
+                    child: requests[index]);
                 },
               );
             }
