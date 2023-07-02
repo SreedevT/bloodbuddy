@@ -10,6 +10,8 @@ class BloodRequestCard extends StatefulWidget {
   final String bloodGroup;
   final String name;
 
+
+  //TODO in the final version, this card must take in a request object
   const BloodRequestCard({
     Key? key,
     required this.id,
