@@ -1,4 +1,3 @@
-
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/landingpage.dart';
 import 'package:blood/screens/mapscreen.dart';
@@ -27,7 +26,7 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-    final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
   runApp(
     MaterialApp(
@@ -44,18 +43,18 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      initialRoute: 'landing',
-      //initialRoute: user != null ? 'home' : 'initial_screen',
+      // initialRoute: 'landing',
+      initialRoute: user != null ? 'home' : 'initial_screen',
       debugShowCheckedModeBanner: false,
       routes: {
-        'landing':(context) =>  BloodBuddyHomePage(),
+        'home': (context) => HomeScreen(),
         'phone_signup': (context) => const MyPhone(),
         'verify': (context) => const MyVerify(),
-        'home': (context) => const HomeScreen(),
+        'landing': (context) => const TestHomeScreen(),
         'welcome': (context) => const WelcomeScreen(),
         'location_picker': (context) => const NewInter(),
         'personal_info': (context) => const SignUpScreen(),
-        'initial_screen':(context) => const InitialScreen()
+        'initial_screen': (context) => const InitialScreen()
       },
     ),
   );
