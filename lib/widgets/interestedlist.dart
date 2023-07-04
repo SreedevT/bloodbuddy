@@ -8,7 +8,7 @@ class InterestedUsers extends StatefulWidget {
   const InterestedUsers({Key? key, required this.reqid}) : super(key: key);
 
   @override
-  _InterestedUsersState createState() => _InterestedUsersState();
+  State<InterestedUsers> createState() => _InterestedUsersState();
 }
 
 class _InterestedUsersState extends State<InterestedUsers> {

@@ -2,33 +2,16 @@ import 'package:blood/Firestore/userprofile.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/widgets/info_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:blood/Firestore/userprofile.dart';
-import 'package:blood/screens/mapscreen.dart';
-import 'package:blood/widgets/info_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
-import 'package:date_field/date_field.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
-  @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
-}
 
-class QuestionCard extends StatefulWidget {
-  final String question;
-  //? fuction onChanged is called when the switch is toggled
-  // it is a callback fuction that is used to update the question bool variables
-  final Function(bool) onChanged;
-  const QuestionCard(
-      {super.key, required this.question, required this.onChanged});
 class QuestionCard extends StatefulWidget {
   final String question;
   //? fuction onChanged is called when the switch is toggled

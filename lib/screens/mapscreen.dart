@@ -79,6 +79,7 @@ class _NewInterState extends State<NewInter> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late User user;
+  // ignore: prefer_typing_uninitialized_variables
   var con;
 
   @override

@@ -10,7 +10,7 @@ class Listee extends StatefulWidget {
   const Listee({Key? key, required this.ids}) : super(key: key);
 
   @override
-  _ListeeState createState() => _ListeeState();
+  State<Listee> createState() => _ListeeState();
 }
 
 class _ListeeState extends State<Listee> {
@@ -23,24 +23,22 @@ class _ListeeState extends State<Listee> {
     fetchData();
   }
 
-void fetchData() async {
-  userDataList.clear();
-  for (String id in widget.ids) {
-    try {
-      Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
-      print(data);
-      if (data.isNotEmpty) {
-        setState(() {
-          userDataList.add(data);
-        });
+  void fetchData() async {
+    userDataList.clear();
+    for (String id in widget.ids) {
+      try {
+        Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
+        log("fetchData failed: ${data.toString()}");
+        if (data.isNotEmpty) {
+          setState(() {
+            userDataList.add(data);
+          });
+        }
+      } catch (e) {
+        log(e.toString());
       }
-    } catch (e) {
-      log(e.toString());
     }
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +48,10 @@ void fetchData() async {
         Map<String, dynamic> userData = userDataList[index];
         return Card(
           child: ListTile(
-            title: Text("DETAILS\n\nFirst Name: ${userData['First Name'] ?? 'loading...'}\nBlood Group: ${userData['Blood Group'] ?? 'loading...'}"),
-            subtitle: Text("\nAdditonal Info\n\n Area : ${userData['General Area']??'loading...'}\nAge: ${userData['Age']??'loading...'}\nDate of birth: ${userData['Date of Birth'].toDate()??'loading...'}\nWeight: ${userData['Weight']??'loading...'}"),
+            title: Text(
+                "DETAILS\n\nFirst Name: ${userData['First Name'] ?? 'loading...'}\nBlood Group: ${userData['Blood Group'] ?? 'loading...'}"),
+            subtitle: Text(
+                "\nAdditonal Info\n\n Area : ${userData['General Area'] ?? 'loading...'}\nAge: ${userData['Age'] ?? 'loading...'}\nDate of birth: ${userData['Date of Birth'].toDate() ?? 'loading...'}\nWeight: ${userData['Weight'] ?? 'loading...'}"),
           ),
         );
       },

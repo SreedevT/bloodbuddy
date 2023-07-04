@@ -1,7 +1,5 @@
 import 'dart:developer';
 import 'package:blood/authentication/verify.dart';
-import 'package:blood/authentication/verify.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,12 +15,7 @@ class MyPhone extends StatefulWidget {
 class _MyPhoneState extends State<MyPhone> {
   TextEditingController countryController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String phone = "";
-
 
   @override
   void initState() {
@@ -161,7 +154,6 @@ class _MyPhoneState extends State<MyPhone> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red.shade800,
-                        backgroundColor: Colors.red.shade800,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () {
@@ -170,18 +162,6 @@ class _MyPhoneState extends State<MyPhone> {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => const MyVerify()));
                     },
-                    child: const Text(
-                      "Send the code",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        ],
-      ),
                     child: const Text(
                       "Send the code",
                       style: TextStyle(color: Colors.white),

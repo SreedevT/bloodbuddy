@@ -13,6 +13,7 @@ import 'firebase_options.dart';
 import 'authentication/phone_signup.dart';
 import 'authentication/verify.dart';
 import 'screens/my_requests_screen.dart';
+import 'screens/landingpage.dart';
 Future<void> main() async {
   //TODO Remove delay once app actually takes some time to load
   await Future.delayed(const Duration(seconds: 1, microseconds: 500));
@@ -45,9 +46,8 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      //TODO Change initial route to 'home' once app is ready
-      initialRoute: user != null ? 'home' : 'initial_screen',
-      // initialRoute: 'welcome',
+      // initialRoute: user != null ? 'home' : 'initial_screen',
+      initialRoute: 'test_profile',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),
@@ -60,7 +60,7 @@ Future<void> main() async {
         'request': (context) => const BloodRequestList(),
         'reqform':(context) => const RequestForm(),
         'my_requests': (context) => const MyRequestList(),
-        'landing':(context) => const TestHomeScreen(),
+        'test_profile':(context) => const TestHomeScreen(),
       },
     ),
   );

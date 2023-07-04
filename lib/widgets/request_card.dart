@@ -22,7 +22,7 @@ class BloodRequestCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BloodRequestCardState createState() => _BloodRequestCardState();
+  State<BloodRequestCard> createState() => _BloodRequestCardState();
 }
 
 class _BloodRequestCardState extends State<BloodRequestCard> {

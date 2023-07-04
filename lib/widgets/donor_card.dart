@@ -1,5 +1,3 @@
-import 'package:blood/Firestore/userprofile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -45,8 +43,8 @@ class _DonorCardState extends State<DonorCard> {
           const SizedBox(height: 5),
           Row(
             children: [
-              Text('Name',
-                  style: const TextStyle(
+              const Text('Name',
+                  style: TextStyle(
                       color: Color.fromARGB(255, 255, 254, 254),
                       fontWeight: FontWeight.bold,
                       fontSize: 22)),

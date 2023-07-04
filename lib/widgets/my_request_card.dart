@@ -24,7 +24,7 @@ class MyRequestCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MyRequestCardState createState() => _MyRequestCardState();
+  State<MyRequestCard> createState() => _MyRequestCardState();
 }
 
 class _MyRequestCardState extends State<MyRequestCard> {

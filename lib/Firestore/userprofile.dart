@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DataBase {
@@ -42,6 +44,20 @@ class DataBase {
     );
   }
 
+  // Function to get the use profile data
+
+  Future<Map<String, dynamic>> getUserProfile() async {
+    try {
+      DocumentSnapshot snapshot = await userProfile.doc(uid).get();
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        return data;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return {};
+  }
   // to update user location
 
   Future updateUserLocation(String genArea) async {

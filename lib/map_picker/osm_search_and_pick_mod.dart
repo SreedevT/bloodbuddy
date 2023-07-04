@@ -25,7 +25,7 @@ class OpenStreetMapSearchAndPick extends StatefulWidget {
   final String buttonText;
   final String hintText;
 
-  // TODO : Hospital list is static. There may be a better way to do this
+  // Hospital list is static. There may be a better way to do this
   // ? : General area of the user and in turn the hospitals are stored in PickedData.area
   // ? : Area is retrieved after user chooses a location
   static List<Hospital>? hospitals;

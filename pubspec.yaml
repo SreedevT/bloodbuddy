@@ -40,12 +40,6 @@ dependencies:
   geolocator: ^9.0.2
   smooth_page_indicator: ^1.1.0
   flutter_spinkit: ^5.2.0
-  uuid: ^3.0.7
-  open_street_map_search_and_pick: ^0.0.17
-  geolocator: ^9.0.2
- 
-  smooth_page_indicator: ^1.1.0
-  flutter_spinkit: ^5.2.0
  
 
 
@@ -61,10 +55,6 @@ dependencies:
   latlong2: ^0.8.2
   lottie: ^2.3.2
   confetti: ^0.7.0
-  date_field: ^3.0.5
-  dropdown_textfield: ^1.0.8
-  flutter_svg: ^2.0.5
-  animated_text_kit: ^4.2.2
 
 dev_dependencies:
   flutter_test:

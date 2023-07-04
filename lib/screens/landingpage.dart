@@ -1,12 +1,12 @@
-import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/donor_card.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen>
@@ -147,10 +147,10 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             Container(
                 padding: const EdgeInsets.fromLTRB(150, 0, 0, 0),
-                child: new InkWell(
-                  child: new Text(
+                child: const InkWell(
+                  child: Text(
                     'Click here for more donation Details',
-                    style: const TextStyle(fontSize: 9),
+                    style: TextStyle(fontSize: 9),
                   ),
                 )),
             Image.asset(
@@ -171,11 +171,11 @@ class _HomeScreenState extends State<HomeScreen>
         onPressed: () {
           //code to execute on button press
         },
+        backgroundColor: const Color.fromARGB(255, 254, 253, 253),
+        elevation: 2.0,
         child: const Icon(
           Icons.send,
         ),
-        backgroundColor: const Color.fromARGB(255, 254, 253, 253),
-        elevation: 2.0,
         //icon inside button
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
