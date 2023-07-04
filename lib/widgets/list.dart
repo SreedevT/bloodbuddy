@@ -27,21 +27,28 @@ class _ListeeState extends State<Listee> {
     fetchData();
   }
 
-///Fetches data from interested user's profile, the interested subcollection and parent request
-///
-///Returns a combined map with key values respecting firestore document structure
+  ///Fetches data from interested user's profile, the interested subcollection and parent request
+  ///
+  ///Returns a combined map with key values respecting firestore document structure
   void fetchData() async {
     userDataList.clear();
     for (String id in widget.ids) {
       try {
+        //? Get data from user profile
         Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
+
+        //? Get data from interested subcollection
         Map<String, dynamic> interestedData = await getInterestedDoc(id);
-        Map<String, dynamic> requestData =
-            await getReqData(widget.reqid); //? Get the request data
+
+        //? Get the request data
+        Map<String, dynamic> requestData = await getReqData(widget.reqid);
+
+        //? Combine all data
         data
           ..addAll(interestedData)
           ..addAll(requestData);
         log("Intersted users: ${data.toString()}");
+
         if (data.isNotEmpty) {
           setState(() {
             userDataList.add(data);
@@ -86,7 +93,7 @@ Additonal Info
     );
   }
 
-///Function for getting interesterd users phone number and time of interest
+  ///Function for getting interesterd users phone number and time of interest
   Future<Map<String, dynamic>> getInterestedDoc(String uid) async {
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -105,9 +112,9 @@ Additonal Info
     return {};
   }
 
-///Function for getting hospital name and location
-///
-//TODO location may be used for sending google map link
+  ///Function for getting hospital name and location
+  ///
+  ///Returns a map with key values respecting firestore document structure
   Future<Map<String, dynamic>> getReqData(String uid) async {
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -128,7 +135,7 @@ Additonal Info
     return {};
   }
 
-  void sendWhatsappMsg(Map<String, dynamic> userData) async{
+  void sendWhatsappMsg(Map<String, dynamic> userData) async {
     //TODO maybe reword msg template
     //? Solution from: https://stackoverflow.com/questions/55892495/how-to-send-a-message-directly-from-my-flutter-app-to-whatsapp-using-urllauncher
     String phone = userData['phone'].toString().replaceAll('+', '');
