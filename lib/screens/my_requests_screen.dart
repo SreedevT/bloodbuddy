@@ -77,7 +77,6 @@ class _MyRequestListState extends State<MyRequestList> {
                 var data = doc.data() as Map<String, dynamic>;
                 log("added: $data");
                 //TODO add a delete button, a way to update request fields,
-                //TODO and a way to see who has is intrested in the request
                 requests.add(MyRequestCard(
                   id: doc.id,
                   hospital: data['hospitalName'],

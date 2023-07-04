@@ -1,9 +1,7 @@
-import 'dart:developer';
 import 'package:blood/widgets/info_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:blood/widgets/list.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../Firestore/userprofile.dart';
 
 class InterestedUsers extends StatefulWidget {
   final String reqid;
@@ -35,30 +33,33 @@ class _InterestedUsersState extends State<InterestedUsers> {
         centerTitle: false,
       ),
       body: FutureBuilder(
-          future: interestedCollection.get(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-               if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) 
-              {
-                return const Center(child: Text("Something went wrong"));
+        future: interestedCollection.get(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return const Center(child: Text("Something went wrong"));
+            } else if (snapshot.hasData) {
+              for (var doc in snapshot.data!.docs) {
+                ids.add(doc.id);
               }
-               else if (snapshot.hasData) {
-                for(var doc in snapshot.data!.docs){
-                  //ids.add(doc.id);
-                print(doc.id);
-                }
-              } 
-              else {
-                return const Center(child: Text("No interested users"));
+              if (ids.isEmpty) {
+                return const Center(child: InfoBox(icon: Icons.info_outline, text: "No one is interested yet! Please wait",
+                backgroundColor: Color.fromARGB(255, 232, 245, 233),
+                padding: 30,
+                borderColor: Colors.white,),);
+              } else {
+                return Listee(ids: ids);
               }
+            } else {
+              return const Center(child: Text("Something went wrong"));
             }
-            return const Align(
-              alignment: Alignment.topCenter,
-              child: RefreshProgressIndicator(),
-            );
-          }),
+          }
+          return const Align(
+            alignment: Alignment.topCenter,
+            child: RefreshProgressIndicator(),
+          );
+        },
+      ),
     );
   }
 }
-
