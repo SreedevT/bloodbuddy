@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "160402166542-p1o25s926npha5ha3lsh5f1vi5pkgqaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blood",
+            "certificate_hash": "a78a5bb0d3bfee7819ae1fc862d88bbf1e632a6f"
+          }
+        },
+        {
           "client_id": "160402166542-9eup9irb9deputvjpj1osvo9ftjhmd04.apps.googleusercontent.com",
           "client_type": 3
         }

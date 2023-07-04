@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:blood/authentication/verify.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class MyPhone extends StatefulWidget {
   const MyPhone({Key? key}) : super(key: key);
@@ -15,30 +15,7 @@ class MyPhone extends StatefulWidget {
 class _MyPhoneState extends State<MyPhone> {
   TextEditingController countryController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String phone = "";
-
-  Future verify() async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: MyPhone.phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        log("Auto verification: ${credential.toString()}");
-        await _auth.signInWithCredential(credential);
-        log('Verification Complete!!!!!!!!!!!');
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        log("Verification Failed ${e.toString()}");
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        MyVerify.verificationId = verificationId;
-        log("Code Sent: $verificationId");
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        log("Timeout ${verificationId.toString()}");
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -95,16 +72,13 @@ class _MyPhoneState extends State<MyPhone> {
           alignment: Alignment.center,
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Image.asset(
-                //   'assets/img1.png',
-                //   width: 150,
-                //   height: 150,
-                // ),
-                const SizedBox(
-                  height: 25,
+                Lottie.asset(
+                  'assets/lottie/otp.json',
+                  width: 350,
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const  [
@@ -120,7 +94,7 @@ class _MyPhoneState extends State<MyPhone> {
                   height: 10,
                 ),
                 const Text(
-                  "We need to register your phone without getting started!",
+                  "We need to register your phone to get started!",
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -185,7 +159,6 @@ class _MyPhoneState extends State<MyPhone> {
                     onPressed: () {
                       MyPhone.phoneNumber = countryController.text + phone;
                       log(MyPhone.phoneNumber);
-                      verify();
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => const MyVerify()));
                     },

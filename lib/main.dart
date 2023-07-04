@@ -1,7 +1,8 @@
-
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
-import 'package:blood/screens/Initialscreen.dart';
+import 'package:blood/screens/initialscreen.dart';
+import 'package:blood/screens/requestform.dart';
+import 'package:blood/screens/requestscreen.dart';
 import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,10 +12,11 @@ import 'authentication/register.dart';
 import 'firebase_options.dart';
 import 'authentication/phone_signup.dart';
 import 'authentication/verify.dart';
-
+import 'screens/my_requests_screen.dart';
+import 'screens/landingpage.dart';
 Future<void> main() async {
   //TODO Remove delay once app actually takes some time to load
-  await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
+  await Future.delayed(const Duration(seconds: 1, microseconds: 500));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
@@ -26,7 +28,7 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-    final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
   runApp(
     MaterialApp(
@@ -34,6 +36,7 @@ Future<void> main() async {
         primarySwatch: Colors.red,
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 201, 41, 41),
           centerTitle: true,
           titleTextStyle: TextStyle(
             fontSize: 20,
@@ -43,7 +46,8 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      initialRoute: user != null ? 'home' : 'initial_screen',
+      // initialRoute: user != null ? 'home' : 'initial_screen',
+      initialRoute: 'test_profile',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),
@@ -52,8 +56,13 @@ Future<void> main() async {
         'welcome': (context) => const WelcomeScreen(),
         'location_picker': (context) => const NewInter(),
         'personal_info': (context) => const SignUpScreen(),
-        'initial_screen':(context) => const InitialScreen()
+        'initial_screen': (context) => const InitialScreen(),
+        'request': (context) => const BloodRequestList(),
+        'reqform':(context) => const RequestForm(),
+        'my_requests': (context) => const MyRequestList(),
+        'test_profile':(context) => const TestHomeScreen(),
       },
     ),
   );
 }
+

@@ -25,7 +25,7 @@ class OpenStreetMapSearchAndPick extends StatefulWidget {
   final String buttonText;
   final String hintText;
 
-  // TODO : Hospital list is static. There may be a better way to do this
+  // Hospital list is static. There may be a better way to do this
   // ? : General area of the user and in turn the hospitals are stored in PickedData.area
   // ? : Area is retrieved after user chooses a location
   static List<Hospital>? hospitals;
@@ -138,14 +138,12 @@ class _OpenStreetMapSearchAndPickState
         _searchController.text = decodedResponse['display_name'];
 
         setState(() {});
- 
         await fetchHospitals(event.center.latitude, event.center.longitude, 5)
             .then((value) {
           OpenStreetMapSearchAndPick.hospitals = value;
           log("SetNamePosInit: ${value.toString()}");
         });
         // if (!mounted) return;
- 
       }
     });
 
@@ -187,17 +185,17 @@ class _OpenStreetMapSearchAndPickState
                 //   return Text("© OpenStreetMap contributors");
                 // },
               ),
-              MarkerLayer(
-                markers: OpenStreetMapSearchAndPick.hospitals!.map((hospital) {
-                  return Marker(
-                    point: hospital.position,
-                    builder: (ctx) => const Icon(
-                      Icons.local_hospital,
-                      color: Colors.red,
-                    ),
-                  );
-                }).toList(),
-              )
+              // MarkerLayer(
+              //   markers: OpenStreetMapSearchAndPick.hospitals!.map((hospital) {
+              //     return Marker(
+              //       point: hospital.position,
+              //       builder: (ctx) => const Icon(
+              //         Icons.local_hospital,
+              //         color: Colors.red,
+              //       ),
+              //     );
+              //   }).toList(),
+              // )
             ],
           )),
           Positioned(
@@ -410,10 +408,11 @@ class _OpenStreetMapSearchAndPickState
 String _getGeneralArea(Map json) {
   try {
     //Some responses dont have a suburb key and some dont have a city_district key
-    String area = json['address']['town'] ??
-        json['address']['suburb'] ??
-        json['address']['city_district'];
+    // String area = json['address']['town'] ??
+    //     json['address']['suburb'] ??
+    //     json['address']['city_district'];
 
+    String area = json['address']['county'] ?? json['address']['city'];
     log("Area: $area");
     // OpenStreetMapSearchAndPick.hospitalsByArea[area] =
     //     OpenStreetMapSearchAndPick.hospitals!;

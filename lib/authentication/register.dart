@@ -62,7 +62,7 @@ class _QuestionCardState extends State<QuestionCard> {
             Switch(
               // activeColor: Color.fromARGB(255, 126, 232, 130),
               focusColor: Colors.white,
-              activeTrackColor: Color.fromARGB(255, 126, 232, 130),
+              activeTrackColor: const Color.fromARGB(255, 126, 232, 130),
 
               inactiveThumbColor: Colors.grey,
               inactiveTrackColor: Colors.white,
@@ -374,7 +374,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              InfoBox(
+              const InfoBox(
                 icon: Icons.info_outline,
                 text:
                     "Information is collected to make meaningful requests. We don't share your sensitive information with anyone!",
