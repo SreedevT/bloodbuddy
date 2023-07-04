@@ -58,7 +58,8 @@ class _InterestedUsersState extends State<InterestedUsers> {
                   ),
                 );
               } else {
-                return Listee(ids: ids);
+                //? Returns a list of interested users, and the request id
+                return Listee(ids: ids, reqid: widget.reqid);
               }
             } else {
               return const Center(child: Text("Something went wrong"));

@@ -26,6 +26,8 @@ class BloodRequestCard extends StatefulWidget {
 }
 
 class _BloodRequestCardState extends State<BloodRequestCard> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _visible = false;
   bool _interested = false;
   late String user;
@@ -50,7 +52,7 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
   }
 
   void isInterestShown() {
-    final DocumentReference<Map<String,dynamic>> interestedRef = FirebaseFirestore.instance
+    final DocumentReference<Map<String,dynamic>> interestedRef = _firestore
         .collection('Reqs')
         .doc(widget.id)
         .collection('Interested')
@@ -63,8 +65,11 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
     });
   }
 
+/// Updates the interested subcollection of the request
+//TODO: Inform user that they will share their phone number with the requester
+//Can be an info box on top
   void updateInterest() {
-    final interestedRef = FirebaseFirestore.instance
+    final interestedRef = _firestore
         .collection('Reqs')
         .doc(widget.id)
         .collection('Interested')
@@ -75,6 +80,7 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
     } else {
       interestedRef.set({
         'time': DateTime.now(),
+        'phone': _auth.currentUser!.phoneNumber,
       });
     }
   }
