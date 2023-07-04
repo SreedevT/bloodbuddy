@@ -28,7 +28,7 @@ class _ListeeState extends State<Listee> {
     for (String id in widget.ids) {
       try {
         Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
-        log("fetchData failed: ${data.toString()}");
+        log("Intersted users: ${data.toString()}");
         if (data.isNotEmpty) {
           setState(() {
             userDataList.add(data);
@@ -48,10 +48,17 @@ class _ListeeState extends State<Listee> {
         Map<String, dynamic> userData = userDataList[index];
         return Card(
           child: ListTile(
-            title: Text(
-                "DETAILS\n\nFirst Name: ${userData['First Name'] ?? 'loading...'}\nBlood Group: ${userData['Blood Group'] ?? 'loading...'}"),
-            subtitle: Text(
-                "\nAdditonal Info\n\n Area : ${userData['General Area'] ?? 'loading...'}\nAge: ${userData['Age'] ?? 'loading...'}\nDate of birth: ${userData['Date of Birth'].toDate() ?? 'loading...'}\nWeight: ${userData['Weight'] ?? 'loading...'}"),
+            title: Text("""DETAILS
+                
+First Name: ${userData['First Name'] ?? 'loading...'}
+Blood Group: ${userData['Blood Group'] ?? 'loading...'}"""),
+            subtitle: Text("""
+Additonal Info
+
+ Area : ${userData['General Area'] ?? 'loading...'}
+ Age: ${userData['Age'] ?? 'loading...'}
+ Date of birth: ${userData['Date of Birth'].toDate() ?? 'loading...'}
+ Weight: ${userData['Weight'] ?? 'loading...'}"""),
           ),
         );
       },
