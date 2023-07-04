@@ -24,7 +24,7 @@ class Request {
   Status status;
   final String name;
   //? position of the hospital
-  final LatLng position;
+  final LatLng hospitalLocation;
 
   static List<String> getDonorBloodGroups(String bloodType) {
     switch (bloodType) {
@@ -83,7 +83,7 @@ class Request {
     // required this.expiryDate,
     // this.isEmergency = false,
     this.status = Status.pending,
-    required this.position,
+    required this.hospitalLocation,
   });
 
   final CollectionReference reqs =
@@ -102,7 +102,7 @@ class Request {
       // 'expiryDate': expiryDate,
       // 'isEmergency': isEmergency,
       'status': status.name,
-      'position': GeoPoint(position.latitude, position.longitude),
+      'position': GeoPoint(hospitalLocation.latitude, hospitalLocation.longitude),
     };
   }
 
@@ -121,7 +121,7 @@ class Request {
       //! not sure if this will work
       status:
           Status.values.firstWhere((element) => element.name == map['status']),
-      position: LatLng(map['position'].latitude, map['position'].longitude),
+      hospitalLocation: LatLng(map['position'].latitude, map['position'].longitude),
     );
   }
 

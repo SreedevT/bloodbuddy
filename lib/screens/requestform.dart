@@ -23,7 +23,8 @@ class _RequestFormState extends State<RequestForm> {
   late int units;
   late String area;
   String? hospitalName;
-  LatLong latLong = LatLong(0, 0);
+  LatLong userLocation = LatLong(0, 0);
+  LatLong hospitalLocation = LatLong(0, 0);
   User? user;
 
   List<String> bloodGroups = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
@@ -37,7 +38,7 @@ class _RequestFormState extends State<RequestForm> {
     Position position = await _determinePosition();
 
     setState(() {
-      latLong = LatLong(position.latitude, position.longitude);
+      userLocation = LatLong(position.latitude, position.longitude);
     });
   }
 
@@ -201,8 +202,8 @@ class _RequestFormState extends State<RequestForm> {
                                 patientName: pname,
                                 name: name,
                                 hospitalName: hospitalName!,
-                                position:
-                                    LatLng(latLong.latitude, latLong.longitude),
+                                hospitalLocation:
+                                    LatLng(hospitalLocation.latitude, hospitalLocation.longitude),
                                 area: area,
                               ).updateRequest();
                             }
@@ -241,12 +242,13 @@ class _RequestFormState extends State<RequestForm> {
           return SizedBox(
             height: 500,
             child: OpenStreetMapSearchAndPick(
-              center: latLong,
+              center: userLocation,
               buttonColor: const Color.fromARGB(255, 129, 36, 30),
               onPicked: (PickedData pickedData) async {
                 setState(() {
                   hospitalName = _getBuildingName(pickedData.address);
                   area = pickedData.area;
+                  hospitalLocation = pickedData.latLong;
                 });
 
                 if (!mounted) return;
