@@ -39,14 +39,24 @@ class _InterestedUsersState extends State<InterestedUsers> {
             if (snapshot.hasError) {
               return const Center(child: Text("Something went wrong"));
             } else if (snapshot.hasData) {
+              //? Not clearing leads to duplication of data
+              ids.clear();
               for (var doc in snapshot.data!.docs) {
                 ids.add(doc.id);
               }
               if (ids.isEmpty) {
-                return const Center(child: InfoBox(icon: Icons.info_outline, text: "No one is interested yet! Please wait",
-                backgroundColor: Color.fromARGB(255, 232, 245, 233),
-                padding: 30,
-                borderColor: Colors.white,),);
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: InfoBox(
+                      icon: Icons.info_outline,
+                      text: "No one is interested yet! Please wait",
+                      backgroundColor: Color.fromARGB(255, 232, 245, 245),
+                      padding: 30,
+                      borderColor: Colors.white,
+                    ),
+                  ),
+                );
               } else {
                 return Listee(ids: ids);
               }
