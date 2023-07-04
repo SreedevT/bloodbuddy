@@ -203,6 +203,7 @@ class _RequestFormState extends State<RequestForm> {
                                 hospitalName: hospitalName!,
                                 position:
                                     LatLng(latLong.latitude, latLong.longitude),
+                                area: area,
                               ).updateRequest();
                             }
                           },

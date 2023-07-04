@@ -14,7 +14,7 @@ class Request {
   final int units;
   //? name of the patient for whom the request is made
   final String patientName;
-  // final String area;
+  final String area;
   // var requisitionForm; //? image/pdf of the requisition form
   // final DateTime expiryDate;
 
@@ -79,7 +79,7 @@ class Request {
     required this.units,
     required this.name,
     required this.patientName,
-    // required this.area,
+    required this.area,
     // required this.expiryDate,
     // this.isEmergency = false,
     this.status = Status.pending,
@@ -98,7 +98,7 @@ class Request {
       'bloodGroup': bloodGroup,
       'units': units,
       'patientName': patientName,
-      // 'area': area,
+      'area': area,
       // 'expiryDate': expiryDate,
       // 'isEmergency': isEmergency,
       'status': status.name,
@@ -115,7 +115,7 @@ class Request {
       bloodGroup: map['bloodGroup'],
       units: map['units'],
       patientName: map['patientName'],
-      // area: map['area'],
+      area: map['area'],
       // expiryDate: map['expiryDate'],
       // isEmergency: map['isEmergency'],
       //! not sure if this will work

@@ -41,10 +41,12 @@ class _BloodRequestListState extends State<BloodRequestList> {
   }
 
   Future _getReq() async {
+    //TODO maybe filter out requests that belong to user.
+    //although requester can also donate blood to the patient and that can be counted as donation.
     final query = db
         .collection('Reqs')
         .where('bloodGroup', whereIn: Request.getRecipientBloodGroups(profile['Blood Group']))
-        .where('area', isEqualTo: profile['area']);
+        .where('area', isEqualTo: profile['General Area']);
 
     queryListner = query.snapshots().listen((event) {
       for (var change in event.docChanges) {
