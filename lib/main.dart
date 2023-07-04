@@ -60,6 +60,7 @@ Future<void> main() async {
         'request': (context) => const BloodRequestList(),
         'reqform':(context) => const RequestForm(),
         'my_requests': (context) => const MyRequestList(),
+        'landing':(context) => const TestHomeScreen(),
       },
     ),
   );

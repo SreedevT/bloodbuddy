@@ -448,6 +448,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  open_street_map_search_and_pick:
+    dependency: "direct main"
+    description:
+      name: open_street_map_search_and_pick
+      sha256: d273ea5cca71870946ff43f8787bead40959f158dcc1313018923e924d8cc3a7
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.17"
   path:
     dependency: transitive
     description:

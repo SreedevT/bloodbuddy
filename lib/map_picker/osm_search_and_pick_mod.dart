@@ -138,7 +138,6 @@ class _OpenStreetMapSearchAndPickState
         _searchController.text = decodedResponse['display_name'];
 
         setState(() {});
-
         await fetchHospitals(event.center.latitude, event.center.longitude, 5)
             .then((value) {
           OpenStreetMapSearchAndPick.hospitals = value;

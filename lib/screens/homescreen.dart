@@ -1,18 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
 import '../Firestore/userprofile.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class TestHomeScreen extends StatefulWidget {
+  const TestHomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<TestHomeScreen> createState() => _TestHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _TestHomeScreenState extends State<TestHomeScreen> with TickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late AnimationController _animationController;
   late Animation<double> _animation;

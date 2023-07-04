@@ -10,6 +10,7 @@ class MyVerify extends StatefulWidget {
   const MyVerify({Key? key}) : super(key: key);
 
   static String verificationId = "";
+  static String verificationId = "";
   @override
   State<MyVerify> createState() => _MyVerifyState();
 }
@@ -97,6 +98,8 @@ class _MyVerifyState extends State<MyVerify> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.red[800],
         automaticallyImplyLeading: false,
         backgroundColor: Colors.red[800],
         elevation: 0,
