@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:blood/widgets/interestedlist.dart';
+import 'package:blood/screens/interested_users_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

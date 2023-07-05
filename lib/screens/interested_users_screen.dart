@@ -1,5 +1,5 @@
 import 'package:blood/widgets/info_text.dart';
-import 'package:blood/widgets/list.dart';
+import 'package:blood/widgets/interested_users_list.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
