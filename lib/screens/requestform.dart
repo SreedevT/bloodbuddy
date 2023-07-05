@@ -1,12 +1,13 @@
 import 'dart:developer';
-
-import 'package:blood/models/request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../map_picker/osm_search_and_pick_mod.dart';
+import '../models/request.dart';
 
 class RequestForm extends StatefulWidget {
   const RequestForm({super.key});
@@ -26,8 +27,17 @@ class _RequestFormState extends State<RequestForm> {
   LatLong userLocation = LatLong(0, 0);
   LatLong hospitalLocation = LatLong(0, 0);
   User? user;
+  String? _selectedBloodType;
+  String? _selectedDate;
+  String? _selectedTime;
+  TextEditingController _requesterController = TextEditingController();
+  TextEditingController _patientNameController = TextEditingController();
+  TextEditingController _unitsController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _hospitalController = TextEditingController();
 
-  List<String> bloodGroups = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+  String? _uploadedFileName;
+  final List<String> _bloodTypes = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   @override
   void initState() {
     super.initState();
@@ -81,151 +91,301 @@ class _RequestFormState extends State<RequestForm> {
   }
 
   @override
+  void dispose() {
+    _requesterController.dispose();
+    _patientNameController.dispose();
+    _unitsController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      // All fields are valid, submit the form
+      String requester = _requesterController.text;
+      String patientName = _patientNameController.text;
+      // int units = _unitsController.text;
+      String phone = _phoneController.text;
+
+      print('Requester: $requester');
+      print("Patient's Name: $patientName");
+      print('Blood Type: $_selectedBloodType');
+      print('Units of Blood: $units');
+      print('Date: $_selectedDate');
+      print('Time: $_selectedTime');
+      print('Phone: $phone');
+      print('Uploaded File Name: $_uploadedFileName');
+
+      Request(
+      id: user!.uid,
+      bloodGroup: btype,
+      units: units,
+      patientName: pname,
+      name: name,
+      hospitalName: hospitalName!,
+      hospitalLocation: LatLng(hospitalLocation.latitude, hospitalLocation.longitude),
+      area: area,
+      ).updateRequest();
+    }
+  }
+
+  void _uploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        _uploadedFileName = result.files.single.name;
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate != null
+          ? DateTime.parse(_selectedDate!)
+          : DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime != null
+          ? TimeOfDay.fromDateTime(DateTime.parse(_selectedTime!))
+          : TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedTime = picked.format(context);
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Request Form"),
+      appBar: AppBar(
+        centerTitle: false,
+        title: const Text(
+          'Request Form',
+          style: TextStyle(
+            fontSize: 22,
+          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-          child: Column(
-            children: [
-              Row(
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ElevatedButton(
-                    child: const Icon(Icons.search),
-                    onPressed: () async {
+                  const SizedBox(height: 3),
+                  TextFormField(
+                    controller: _hospitalController,
+                    onTap:() async {
                       await _getCurrentLocation();
                       if (!mounted) return;
                       _showModalBottomSheet(context);
                     },
+                    decoration: const InputDecoration(
+                      labelText: 'Select Hospital Location',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select current hospital location';
+                      }
+                      return null;
+                    },
                   ),
-                  Expanded(
-                      child: Container(
-                    child: Text(hospitalName ?? 'Select a Hospital'),
-                  ))
-                ],
-              ),
-              Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 11),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Your name',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty ) {
+                        return 'Please enter your name';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 11),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Patient's Name",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter the patient's name";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 11),
+                  DropdownButtonFormField<String>(
+                    value: _selectedBloodType,
+                    decoration: const InputDecoration(
+                      labelText: 'Blood Type',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _bloodTypes.map((type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _selectedBloodType = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a blood type';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 11),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Units of Blood',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty || int.tryParse(value) == null || int.tryParse(value)! > 10) {
+                        return 'Please enter the units of blood';
+                      }
+                      units = int.parse(value);
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 11),
+                  Row(
                     children: [
-                      TextFormField(
-                        validator: (val) {
-                          if (val!.isEmpty) {
-                            return "Please enter your name";
-                          }
-                          name = val;
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.person_2_outlined),
-                          hintText: "Your Name",
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      TextFormField(
-                        validator: (val) {
-                          if (val!.isEmpty) {
-                            return "Please enter the patient's name";
-                          }
-                          pname = val;
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.person),
-                          hintText: "Patient's Name",
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        validator: (val) {
-                          if (val!.isEmpty) {
-                            return "Please enter the number of units required";
-                          } else if (int.tryParse(val) == null) {
-                            return "Please enter units in number";
-                          }
-                          units = int.parse(val);
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.bloodtype_rounded),
-                          hintText: "Units",
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      DropdownButtonFormField(
-                        validator: (val) {
-                          if (val == null) {
-                            return "Please select a blood group";
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.bloodtype_outlined),
-                          hintText: "Blood Group",
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                        items: [
-                          for (var bGroups in bloodGroups)
-                            DropdownMenuItem(
-                              value: bGroups,
-                              child: Text(bGroups),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => _selectDate(context),
+                          child: IgnorePointer(
+                            child: TextFormField(
+                              decoration:const  InputDecoration(
+                                labelText: 'Date',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: _selectedDate,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a date';
+                                }
+                                return null;
+                              },
                             ),
-                        ],
-                        onChanged: (val) {
-                          setState(() {
-                            btype = val.toString();
-                          });
-                        },
+                          ),
+                        ),
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Request(
-                                id: user!.uid,
-                                bloodGroup: btype,
-                                units: units,
-                                patientName: pname,
-                                name: name,
-                                hospitalName: hospitalName!,
-                                hospitalLocation:
-                                    LatLng(hospitalLocation.latitude, hospitalLocation.longitude),
-                                area: area,
-                              ).updateRequest();
-                            }
-                          },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  const Color.fromARGB(255, 80, 131, 82))),
-                          child: const Text(
-                            "Submit",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => _selectTime(context),
+                          child: IgnorePointer(
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                labelText: 'Time',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: _selectedTime,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a time';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                         ),
                       ),
                     ],
-                  )),
-            ],
+                  ),
+                  const SizedBox(height: 11),
+                  TextFormField(
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'Phone',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a phone number';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 11),
+                  ElevatedButton.icon(
+                    onPressed: _uploadFile,
+                    icon: const Icon(
+                      Icons.file_upload,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      'Upload Requisition Form',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 198, 40, 40)),
+                    ),
+                  ),
+                  const SizedBox(height: 11),
+                  if (_uploadedFileName != null)
+                    Text(
+                      'Uploaded File: $_uploadedFileName',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  const SizedBox(height: 5),
+                  ElevatedButton(
+                    onPressed: _submitForm,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 198, 40, 40),
+                      ), // Change the button color to blue
+                    ),
+                    child: const Text(
+                      'SUBMIT',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   void _showModalBottomSheet(BuildContext context) {
