@@ -46,8 +46,8 @@ Future<void> main() async {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      // initialRoute: user != null ? 'home' : 'initial_screen',
-      initialRoute: 'test_profile',
+      initialRoute: user != null ? 'home' : 'initial_screen',
+      // initialRoute: 'test_profile',
       debugShowCheckedModeBanner: false,
       routes: {
         'phone_signup': (context) => const MyPhone(),
