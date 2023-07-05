@@ -57,6 +57,7 @@ dependencies:
   confetti: ^0.7.0
   url_launcher: ^6.1.11
   expansion_tile_card: ^3.0.0
+  file_picker: ^5.3.1
 
 dev_dependencies:
   flutter_test:
