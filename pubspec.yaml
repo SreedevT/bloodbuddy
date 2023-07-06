@@ -57,6 +57,11 @@ dependencies:
   lottie: ^2.3.2
   confetti: ^0.7.0
   url_launcher: ^6.1.11
+<<<<<<< HEAD
+=======
+  expansion_tile_card: ^3.0.0
+  file_picker: ^5.3.1
+>>>>>>> request
 
 dev_dependencies:
   flutter_test:
