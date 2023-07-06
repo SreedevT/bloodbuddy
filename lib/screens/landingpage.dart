@@ -166,17 +166,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //code to execute on button press
-        },
-        backgroundColor: const Color.fromARGB(255, 254, 253, 253),
-        elevation: 2.0,
-        child: const Icon(
-          Icons.send,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
         items: const <BottomNavigationBarItem>[
