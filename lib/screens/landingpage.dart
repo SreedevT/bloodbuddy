@@ -42,6 +42,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     if (index == 2) {
     Navigator.pushNamed(context, 'my_requests');
     }
+    if(index == 3){
+      Navigator.pushNamed(context,'profile');
+    }
   }
 
 
@@ -259,8 +262,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
               onTap: () {
-                Navigator.pop(context);
                 FirebaseAuth.instance.signOut();
+                Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => false);
               },
             ),
           ],
