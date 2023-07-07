@@ -138,6 +138,7 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTileCard(
+      // ignore: prefer_const_constructors
       contentPadding: EdgeInsets.all(10),
       baseColor:
           widget.userData['isDonor'] ? Colors.green[200] : Colors.cyan[100],
@@ -147,7 +148,7 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
         children: [
           Text(
             "${widget.userData['First Name']} ${widget.userData['Last Name']}",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Text(
             "${widget.userData['Blood Group']}",

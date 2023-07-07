@@ -101,9 +101,8 @@ class _TestRequestFormState extends State<TestRequestForm> {
                     },
                   ),
                   Expanded(
-                      child: Container(
                     child: Text(hospitalName ?? 'Select a Hospital'),
-                  ))
+                  )
                 ],
               ),
               Form(
@@ -202,8 +201,9 @@ class _TestRequestFormState extends State<TestRequestForm> {
                                 patientName: pname,
                                 name: name,
                                 hospitalName: hospitalName!,
-                                hospitalLocation:
-                                    LatLng(hospitalLocation.latitude, hospitalLocation.longitude),
+                                hospitalLocation: LatLng(
+                                    hospitalLocation.latitude,
+                                    hospitalLocation.longitude),
                                 area: area,
                               ).updateRequest();
                             }
