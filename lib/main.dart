@@ -1,3 +1,5 @@
+import 'package:blood/screens/Faq.dart';
+import 'package:blood/screens/RequestPage.dart';
 import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/initialscreen.dart';
@@ -58,11 +60,13 @@ Future<void> main() async {
         'location_picker': (context) => const NewInter(),
         'personal_info': (context) => const SignUpScreen(),
         'initial_screen': (context) => const InitialScreen(),
-        'donate': (context) => const BloodRequestList(),
+        'donate': (context) => RequestPage(),
         'reqform':(context) => const TestRequestForm(),
         'my_requests': (context) => const MyRequestList(),
         'test_profile':(context) => const TestHomeScreen(),
         'req_form':(context) => const RequestForm(),
+        'faq':(context) => FAQPage(),
+         'donate_test': (context) => TestBloodRequestList(),
       },
     ),
   );
