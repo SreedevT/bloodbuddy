@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:date_field/date_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,10 +27,13 @@ class _RequestFormState extends State<RequestForm> {
   String? hospitalName;
   LatLong userLocation = LatLong(0, 0);
   LatLong hospitalLocation = LatLong(0, 0);
-  User? user;
   String? _selectedBloodType;
+  DateTime? _selectedDateTime;
+  bool isEmergency = false;
   String? _selectedDate;
   String? _selectedTime;
+  User? user;
+
   final TextEditingController _requesterController = TextEditingController();
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _unitsController = TextEditingController();
@@ -38,8 +42,8 @@ class _RequestFormState extends State<RequestForm> {
 
   ButtonStyle buttonStyle = ButtonStyle(
     splashFactory: InkSplash.splashFactory,
-    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 22)),
+    padding:
+        MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(17)),
     elevation: MaterialStateProperty.all<double>(0),
     shape: MaterialStateProperty.all<OutlinedBorder>(
       RoundedRectangleBorder(
@@ -51,6 +55,10 @@ class _RequestFormState extends State<RequestForm> {
       ),
     ),
   );
+  TextStyle formEntryTextStyle = const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
 
   bool _load = false;
   void _setLoadingState(bool load) {
@@ -60,7 +68,16 @@ class _RequestFormState extends State<RequestForm> {
   }
 
   String? _uploadedFileName;
-  final List<String> _bloodTypes = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+  final List<String> _bloodTypes = [
+    'A+',
+    'B+',
+    'A-',
+    'B-',
+    'O+',
+    'O-',
+    'AB+',
+    'AB-'
+  ];
   @override
   void initState() {
     super.initState();
@@ -183,11 +200,14 @@ class _RequestFormState extends State<RequestForm> {
                         },
                         child: _load
                             ? const SizedBox(
-                                height: 25,
-                                width: 25,
+                                height: 30,
+                                width: 30,
                                 child: CircularProgressIndicator())
-                            : const Icon(Icons.search)),
-                    const SizedBox(width: 16),
+                            : const Icon(
+                                Icons.search,
+                                size: 30,
+                              )),
+                    const SizedBox(width: 11),
                     Expanded(
                       child: TextFormField(
                         controller: _hospitalController,
@@ -196,6 +216,7 @@ class _RequestFormState extends State<RequestForm> {
                           labelText: 'Search Hospital',
                           border: OutlineInputBorder(),
                         ),
+                        style: formEntryTextStyle,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please select current hospital location';
@@ -212,6 +233,7 @@ class _RequestFormState extends State<RequestForm> {
                     labelText: "Bystander's name",
                     border: OutlineInputBorder(),
                   ),
+                  style: formEntryTextStyle,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter the bystander's name";
@@ -225,6 +247,7 @@ class _RequestFormState extends State<RequestForm> {
                     labelText: "Patient's Name",
                     border: OutlineInputBorder(),
                   ),
+                  style: formEntryTextStyle,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter the patient's name";
@@ -269,6 +292,7 @@ class _RequestFormState extends State<RequestForm> {
                           labelText: 'Units of Blood',
                           border: OutlineInputBorder(),
                         ),
+                        style: formEntryTextStyle,
                         validator: (value) {
                           if (value == null ||
                               value.isEmpty ||
@@ -284,47 +308,62 @@ class _RequestFormState extends State<RequestForm> {
                   ],
                 ),
                 const SizedBox(height: 11),
+                //DateTime field
                 Row(
                   children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => _selectDate(context),
-                        child: IgnorePointer(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Date',
-                              border: OutlineInputBorder(),
-                            ),
-                            initialValue: _selectedDate,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a date';
-                              }
-                              return null;
-                            },
+                    Flexible(
+                      flex: 3,
+                      //TODO: Fix bug where time isnt set in emergency
+                      child: DateTimeFormField(
+                        initialValue: _selectedDateTime,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 30)),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select a date and time';
+                          }
+                          if (value.isBefore(DateTime.now())) {
+                            return 'Please select a date and time in the future';
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Expiration Date and Time',
+                          border: OutlineInputBorder(),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
                           ),
                         ),
+                        dateFormat: DateFormat('dd/mm/yyyy hh:mm a'),
+                        dateTextStyle: formEntryTextStyle,
+                        onDateSelected: (value) {
+                          setState(() {
+                            _selectedDateTime = value;
+                          });
+                        },
+                        enabled: !isEmergency,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => _selectTime(context),
-                        child: IgnorePointer(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Time',
-                              border: OutlineInputBorder(),
-                            ),
-                            initialValue: _selectedTime,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a time';
-                              }
-                              return null;
+                    SizedBox(width: 10),
+                    Flexible(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          Text("Emergency", style: formEntryTextStyle),
+                          Switch(
+                            value: isEmergency,
+                            onChanged: (value) {
+                              setState(() {
+                                isEmergency = value;
+                                if (isEmergency) {
+                                  _selectedDateTime = DateTime.now()
+                                      .add(const Duration(hours: 12));
+                                }
+                              });
+                              log("Emergency: $isEmergency");
                             },
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ],
@@ -336,6 +375,7 @@ class _RequestFormState extends State<RequestForm> {
                     labelText: 'Phone',
                     border: OutlineInputBorder(),
                   ),
+                  style: formEntryTextStyle,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a phone number';
