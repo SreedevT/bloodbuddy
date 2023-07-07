@@ -58,7 +58,7 @@ Future<void> main() async {
         'location_picker': (context) => const NewInter(),
         'personal_info': (context) => const SignUpScreen(),
         'initial_screen': (context) => const InitialScreen(),
-        'request': (context) => const BloodRequestList(),
+        'donate': (context) => const BloodRequestList(),
         'reqform':(context) => const TestRequestForm(),
         'my_requests': (context) => const MyRequestList(),
         'test_profile':(context) => const TestHomeScreen(),

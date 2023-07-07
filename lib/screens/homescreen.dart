@@ -137,7 +137,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> with TickerProviderStat
                   if (!mounted) return;
                   Navigator.pushNamed(
                     context,
-                    'request',
+                    'donate',
                   );
                 },
                 child: const Text("Donate",

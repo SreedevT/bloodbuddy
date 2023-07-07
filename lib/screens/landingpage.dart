@@ -33,8 +33,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   void _onItemTapped(int index) {
+    if (index == 0 && ModalRoute.of(context)!.settings.name != 'home') {
+      Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+    }
+    if (index == 1) {
+      Navigator.pushNamed(context, 'donate');
+    }
     if (index == 2) {
-    Navigator.pushNamed(context, 'req_form');
+    Navigator.pushNamed(context, 'my_requests');
     }
   }
 
