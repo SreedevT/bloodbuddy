@@ -2,6 +2,7 @@ import 'package:blood/screens/homescreen.dart';
 import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/screens/initialscreen.dart';
 import 'package:blood/screens/dummyrequestform.dart';
+import 'package:blood/screens/profile.dart';
 import 'package:blood/screens/requestform.dart';
 import 'package:blood/screens/donate_screen.dart';
 import 'package:blood/screens/welcomesreen.dart';
@@ -63,6 +64,7 @@ Future<void> main() async {
         'my_requests': (context) => const MyRequestList(),
         'test_profile':(context) => const TestHomeScreen(),
         'req_form':(context) => const RequestForm(),
+        'profile':(context) => const UserProfile(),
       },
     ),
   );
