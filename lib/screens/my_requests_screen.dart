@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/my_request_card.dart';
+import 'requestform.dart';
 
 class MyRequestList extends StatefulWidget {
   const MyRequestList({super.key});
@@ -59,6 +60,19 @@ class _MyRequestListState extends State<MyRequestList> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('My Requests'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RequestForm(),
+                    ));
+              },
+              tooltip: 'Add Request',
+              icon: const Icon(Icons.add),
+            )
+          ],
         ),
         body: FutureBuilder<QuerySnapshot>(
           future: query.get(),
@@ -97,12 +111,14 @@ class _MyRequestListState extends State<MyRequestList> {
                 itemCount: requests.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: ((){
-                      Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => InterestedUsers(reqid: requests[index].id) )
-                      );
-                    }),
-                    child: requests[index]);
+                      onTap: (() {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => InterestedUsers(
+                                    reqid: requests[index].id)));
+                      }),
+                      child: requests[index]);
                 },
               );
             }

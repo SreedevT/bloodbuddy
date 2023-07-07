@@ -75,12 +75,14 @@ class _BloodRequestCardState extends State<BloodRequestCard> {
         .collection('Interested')
         .doc(user);
     if (_interested) {
+      //TODO: maybe add option to remove interest
       // no need to update anything
       // this is required otherwise, everytime the button is pressed, the time will be overwritten.
     } else {
       interestedRef.set({
         'time': DateTime.now(),
         'phone': _auth.currentUser!.phoneNumber,
+        'isDonor': false,
       });
     }
   }
