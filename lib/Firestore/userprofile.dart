@@ -35,6 +35,8 @@ class DataBase {
         'Age': age,
         'Weight': weight,
         'Blood Group': selectedBloodGroup,
+        //TODO: change 'Is donor' to 'canDonate'
+        //TODO: Function to check if user can donate using questionaire, age, weight, ect.
         'Is donor': selectedWillingToDonateOption == 'Yes',
         'Last Donated': lastDonated,
         'tattoo': question1,

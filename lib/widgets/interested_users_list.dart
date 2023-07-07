@@ -46,11 +46,13 @@ class _ListeeState extends State<Listee> {
 
         //? Combine all data
         data
+          ..addAll({'id': id})
           ..addAll(interestedData)
           ..addAll(requestData);
         log("Intersted users: ${data.toString()}");
 
         if (data.isNotEmpty) {
+          log("USER DATA: $data");
           setState(() {
             userDataList.add(data);
           });
@@ -67,32 +69,10 @@ class _ListeeState extends State<Listee> {
       itemCount: userDataList.length,
       itemBuilder: (BuildContext context, int index) {
         Map<String, dynamic> userData = userDataList[index];
-//         return Card(
-//           child: ListTile(
-//             title: Text("""DETAILS
-
-// First Name: ${userData['First Name'] ?? 'loading...'}
-// Blood Group: ${userData['Blood Group'] ?? 'loading...'}"""),
-//             subtitle: Text("""
-// Additonal Info
-
-//  Area : ${userData['General Area'] ?? 'loading...'}
-//  Age: ${userData['Age'] ?? 'loading...'}
-//  Date of birth: ${userData['Date of Birth'].toDate() ?? 'loading...'}
-//  Weight: ${userData['Weight'] ?? 'loading...'}"""),
-//             trailing: ElevatedButton.icon(
-//               onPressed: () {
-//                 log('Chat button pressed');
-//                 sendWhatsappMsg(userData);
-//               },
-//               icon: SvgPicture.asset('assets/icons/whatsapp_icon.svg'),
-//               label: const Text('Chat'),
-//             ),
-//           ),
-//         );
         return Padding(
           padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child: InterestedUserCard(userData: userData),
+          //TODO: Maybe use stream or something. Update on card does not work realtime
+          child: InterestedUserCard(userData: userData, reqid: widget.reqid),
         );
       },
     );
@@ -143,8 +123,12 @@ class _ListeeState extends State<Listee> {
 
 class InterestedUserCard extends StatefulWidget {
   final Map<String, dynamic> userData;
+  final String reqid;
 
-  const InterestedUserCard({Key? key, required this.userData})
+  const InterestedUserCard(
+      {Key? key,
+      required this.userData,
+      required this.reqid,})
       : super(key: key);
   @override
   State<InterestedUserCard> createState() => _InterestedUserCardState();
@@ -155,7 +139,8 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
   Widget build(BuildContext context) {
     return ExpansionTileCard(
       contentPadding: EdgeInsets.all(10),
-      baseColor: Colors.cyan[50],
+      baseColor:
+          widget.userData['isDonor'] ? Colors.green[200] : Colors.cyan[100],
       expandedColor: Colors.red[50],
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,22 +157,6 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
       ),
       subtitle: Text(
           "Age: ${widget.userData['Age']} | Place: ${widget.userData['General Area']}"),
-      // trailing: Row(
-      //   children: [
-      //     // Use an Expanded widget to wrap the Icon widget
-      //     Icon(
-      //       Icons.expand_more,
-      //       size: 30.0,
-      //     ),
-      //     Text(
-      //       "${widget.userData['Blood Group']}",
-      //       style: TextStyle(
-      //         fontSize: 18.0,
-      //         fontWeight: FontWeight.bold,
-      //       ),
-      //     ),
-      //   ],
-      // ),
       children: [
         const Divider(
           thickness: 1.0,
@@ -241,31 +210,72 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
                 ],
               ),
             ),
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                ),
-              ),
-              onPressed: () {
-                //TODO confirm user
-                log("Confirm pressed");
-              },
-              child: Column(
-                children: const [
-                  Icon(Icons.check),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                  ),
-                  Text('Confirm'),
-                ],
-              ),
-            ),
+            widget.userData['isDonor']
+                ? removeDonorButton()
+                : confirmDonorButton(),
           ],
         ),
       ],
+    );
+  }
+
+  TextButton confirmDonorButton() {
+    return TextButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+        ),
+      ),
+      onPressed: () async {
+        log("Confirm pressed");
+        await FirebaseFirestore.instance
+            .collection("Reqs")
+            .doc(widget.reqid)
+            .collection("Interested")
+            .doc(widget.userData['id'])
+            .update({'isDonor': true});
+      },
+      child: Column(
+        children: const [
+          Icon(Icons.check),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 2.0),
+          ),
+          Text('Confirm'),
+        ],
+      ),
+    );
+  }
+
+  TextButton removeDonorButton() {
+    return TextButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+        ),
+      ),
+      onPressed: () async {
+        log("Remove pressed");
+        await FirebaseFirestore.instance
+            .collection("Reqs")
+            .doc(widget.reqid)
+            .collection("Interested")
+            .doc(widget.userData['id'])
+            .update({'isDonor': false});
+      },
+      child: Column(
+        children: const [
+          Icon(Icons.delete_forever),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 2.0),
+          ),
+          Text('Remove'),
+        ],
+      ),
     );
   }
 
