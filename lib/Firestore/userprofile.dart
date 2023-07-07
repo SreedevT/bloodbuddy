@@ -13,7 +13,7 @@ class DataBase {
 
   // to update the user profile data
 
-  Future updateUserProfile(
+  Future setUserProfile(
     String fname,
     String lname,
     DateTime dob,
@@ -38,6 +38,25 @@ class DataBase {
         //TODO: change 'Is donor' to 'canDonate'
         //TODO: Function to check if user can donate using questionaire, age, weight, ect.
         'Is donor': selectedWillingToDonateOption == 'Yes',
+        'Last Donated': lastDonated,
+        'tattoo': question1,
+        'HIV_tested': question2,
+        'Covid_vaccine': question3,
+      },
+    );
+  }
+
+  Future updateUserProfile(
+      double weight,
+      String isWillingToDonate,
+      DateTime? lastDonated,
+      bool question1,
+      bool question2,
+      bool question3) async {
+    return await userProfile.doc(uid).update(
+      {
+        'Weight': weight,
+        'Is donor': isWillingToDonate,
         'Last Donated': lastDonated,
         'tattoo': question1,
         'HIV_tested': question2,

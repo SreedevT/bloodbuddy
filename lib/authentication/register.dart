@@ -408,7 +408,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: InkWell(
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
-                      await DataBase(uid: user!.uid).updateUserProfile(
+                      await DataBase(uid: user!.uid).setUserProfile(
                         fname,
                         lname,
                         dob,
