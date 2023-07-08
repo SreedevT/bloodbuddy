@@ -82,7 +82,7 @@ class DataBase {
   // to update user location
 
   Future updateUserLocation(String genArea) async {
-    return await userLocation.doc(uid).set(
+    return await userProfile.doc(uid).update(
       {
         'General Area': genArea,
       },
