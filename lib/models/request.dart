@@ -116,6 +116,7 @@ class Request {
       units: map['units'],
       patientName: map['patientName'],
       area: map['area'],
+      //TODO Deal with time being timestamp
       // expiryDate: map['expiryDate'],
       // isEmergency: map['isEmergency'],
       //! not sure if this will work

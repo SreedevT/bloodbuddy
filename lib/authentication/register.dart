@@ -1,9 +1,9 @@
-import 'package:blood/Firestore/userprofile.dart';
-import 'package:blood/screens/mapscreen.dart';
-import 'package:blood/widgets/info_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
+import '../Firestore/userprofile.dart';
+import '../screens/mapscreen.dart';
+import '../widgets/info_text.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
