@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'circle_button_with_tooltip.dart';
-
 class MyRequestCard extends StatefulWidget {
   final String id;
   final String hospital;
@@ -90,15 +88,39 @@ class _MyRequestCardState extends State<MyRequestCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     //TODO: add edit functionality
-                    CricularIconButtonWithTooltip(
-                        tooltipMessage: 'Edit units',
+                    Tooltip(
+                      message: 'Edit units',
+                      child: ElevatedButton(
                         onPressed: () {},
-                        icon: Icons.edit),
+                        style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(
+                              side: BorderSide(
+                                color: Colors.grey.shade400,
+                                width: 1,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(10)),
+                        child: const Icon(Icons.edit),
+                      ),
+                    ),
                     const SizedBox(height: 10),
-                    CricularIconButtonWithTooltip(
-                        tooltipMessage: 'Delete request',
-                        onPressed: deleteRequest,
-                        icon: Icons.delete_forever, iconColor: Colors.red[400]),
+                    Tooltip(
+                      message: 'Delete request',
+                      child: ElevatedButton(
+                          onPressed: () => deleteRequest(),
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(
+                                side: BorderSide(
+                                  color: Colors.grey.shade400,
+                                  width: 1,
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(10)),
+                          child: Icon(
+                            Icons.delete_forever,
+                            color: Colors.red[400],
+                          )),
+                    ),
                   ],
                 ),
               ),

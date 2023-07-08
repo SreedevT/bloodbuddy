@@ -193,7 +193,7 @@ class _RequestFormState extends State<RequestForm> {
                   children: [
                     Container(
                       padding: const EdgeInsets.only(left: 5),
-                      child: Text(
+                      child: const Text(
                         'Emergency ',
                         style: TextStyle(
                           fontSize: 17,
@@ -202,7 +202,7 @@ class _RequestFormState extends State<RequestForm> {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: 50,
                       height: 30,
                       child: Transform.scale(
@@ -366,7 +366,7 @@ class _RequestFormState extends State<RequestForm> {
                           onTap: () => _selectDate(context),
                           controller:
                               TextEditingController(text: _selectedDate ?? ''),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Date',
                             border: OutlineInputBorder(),
                           ),
@@ -389,7 +389,7 @@ class _RequestFormState extends State<RequestForm> {
                           onTap: () => _selectTime(context),
                           controller:
                               TextEditingController(text: _selectedTime ?? ''),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Time',
                             border: OutlineInputBorder(),
                           ),

@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../models/request.dart';
-
 class RequestCard extends StatefulWidget {
   final String reqId;
   final String hospitalAddress;

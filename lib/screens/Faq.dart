@@ -1,6 +1,7 @@
 //import 'package:blood_buddy/BottomNavBar.dart';
 import 'package:flutter/material.dart';
 class FAQPage extends StatefulWidget {
+  const FAQPage({super.key});
   @override
   State<FAQPage> createState() => _FAQPageState();
 }

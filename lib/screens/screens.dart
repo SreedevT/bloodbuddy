@@ -1,5 +1,7 @@
 export 'donate_screen.dart';
+export 'dummy_donate_screen.dart';
 export 'dummyrequestform.dart';
+export 'faq.dart';
 export 'homescreen.dart';
 export 'initialscreen.dart';
 export 'interested_users_screen.dart';
