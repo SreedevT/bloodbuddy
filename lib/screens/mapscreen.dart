@@ -1,14 +1,16 @@
 import 'dart:developer';
-import 'package:blood/Firestore/userprofile.dart';
-import 'package:blood/widgets/confetti.dart';
-import 'package:blood/widgets/info_text.dart';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:blood/map_picker/osm_search_and_pick_mod.dart';
-import 'package:blood/map_picker/models/hospitals.dart';
+
 import 'package:lottie/lottie.dart';
+
+import '../Firestore/userprofile.dart';
+import '../map_picker/osm_search_and_pick_mod.dart';
+import '../map_picker/models/hospitals.dart';
+import '../widgets/confetti.dart';
+import '../widgets/info_text.dart';
 
 class NewInter extends StatefulWidget {
   const NewInter({super.key});

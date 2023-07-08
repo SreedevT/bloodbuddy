@@ -1,23 +1,15 @@
-import 'package:blood/models/profile.dart';
-import 'package:blood/screens/homescreen.dart';
-import 'package:blood/screens/mapscreen.dart';
-import 'package:blood/screens/initialscreen.dart';
-import 'package:blood/screens/dummyrequestform.dart';
-import 'package:blood/screens/profile.dart';
-import 'package:blood/screens/requestform.dart';
-import 'package:blood/screens/donate_screen.dart';
-import 'package:blood/screens/welcomesreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'authentication/register.dart';
+
 import 'firebase_options.dart';
-import 'authentication/phone_signup.dart';
-import 'authentication/verify.dart';
-import 'screens/my_requests_screen.dart';
-import 'screens/landingpage.dart';
+
+import 'authentication/authentication.dart';
+import 'models/profile.dart';
+import 'screens/screens.dart';
+
 Future<void> main() async {
   //TODO Remove delay once app actually takes some time to load
   await Future.delayed(const Duration(seconds: 1, microseconds: 500));
@@ -66,14 +58,13 @@ Future<void> main() async {
           'personal_info': (context) => const SignUpScreen(),
           'initial_screen': (context) => const InitialScreen(),
           'donate': (context) => const BloodRequestList(),
-          'reqform':(context) => const TestRequestForm(),
+          'reqform': (context) => const TestRequestForm(),
           'my_requests': (context) => const MyRequestList(),
-          'test_profile':(context) => const TestHomeScreen(),
-          'req_form':(context) => const RequestForm(),
-          'profile':(context) => const UserProfile(),
+          'test_profile': (context) => const TestHomeScreen(),
+          'req_form': (context) => const RequestForm(),
+          'profile': (context) => const UserProfile(),
         },
       ),
     ),
   );
 }
-
