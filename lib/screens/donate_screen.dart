@@ -124,7 +124,6 @@ class _RequestPageState extends State<RequestPage> {
       body: Container(
         decoration: const BoxDecoration(
           color: Color.fromARGB(255, 231, 231, 231),
-          // ),
         ),
         child: ListView(
           children: requests,

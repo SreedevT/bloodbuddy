@@ -30,30 +30,6 @@ class _MyRequestListState extends State<MyRequestList> {
     super.initState();
   }
 
-//TODO do this whole thing with FutureBuilder
-//THIS IS PAIN
-  // Future _getMyReq() async {
-  //   final query = FirebaseFirestore.instance
-  //       .collection('Reqs')
-  //       .where('id', isEqualTo: uid);
-  //   await query.get().then((snapshot) {
-  //     for (var doc in snapshot.docs) {
-  //       var data = doc.data();
-  //       log("added: $data");
-  //       requests.add(BloodRequestCard(
-  //         id: data['id'],
-  //         hospital: data['hospitalName'],
-  //         units: data['units'],
-  //         bloodGroup: data['bloodGroup'],
-  //         name: data['patientName'],
-  //       ));
-  //     }
-  //     setState(() {
-  //       requests = [...requests];
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     requests.clear();
@@ -107,19 +83,24 @@ class _MyRequestListState extends State<MyRequestList> {
                 ));
               }
 
-              return ListView.builder(
-                itemCount: requests.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                      onTap: (() {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => InterestedUsers(
-                                    reqid: requests[index].id)));
-                      }),
-                      child: requests[index]);
-                },
+              return Container(
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 231, 231, 231),
+                ),
+                child: ListView.builder(
+                  itemCount: requests.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                        onTap: (() {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InterestedUsers(
+                                      reqid: requests[index].id)));
+                        }),
+                        child: requests[index]);
+                  },
+                ),
               );
             }
 

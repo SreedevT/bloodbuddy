@@ -98,6 +98,7 @@ class _RequestCardState extends State<RequestCard> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
+        color: Colors.white,
         child: ListTile(
           leading: const Icon(
             Icons.bloodtype_sharp,
@@ -177,9 +178,13 @@ class _RequestCardState extends State<RequestCard> {
               ],
             ),
           ),
-          trailing: Text(
-            widget.bloodGroup,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          trailing: Column(
+            children: [
+              Text(
+                widget.bloodGroup,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ],
           ),
         ),
       ),
