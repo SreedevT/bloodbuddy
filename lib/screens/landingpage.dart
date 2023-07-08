@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
+    // _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
     _animationController.forward();
   }
 

@@ -1,4 +1,3 @@
-import 'package:blood/Firestore/userprofile.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,9 @@ import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
-import 'authentication/authentication.dart';
-import 'models/profile.dart';
-import 'screens/screens.dart';
+import '../authentication/authentication.dart';
+import '../models/profile.dart';
+import '../screens/screens.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,12 +52,15 @@ Future<void> main() async {
           'location_picker': (context) => const NewInter(),
           'personal_info': (context) => const SignUpScreen(),
           'initial_screen': (context) => const InitialScreen(),
-          'donate': (context) => const BloodRequestList(),
+          'donate': (context) => const RequestList(),
           'reqform': (context) => const TestRequestForm(),
           'my_requests': (context) => const MyRequestList(),
           'test_profile': (context) => const TestHomeScreen(),
           'req_form': (context) => const RequestForm(),
+          'faq':(context) => FAQPage(),
           'profile': (context) => const UserProfile(),
+          'donate_test': (context) => const TestBloodRequestList(),
+
         },
       ),
     ),

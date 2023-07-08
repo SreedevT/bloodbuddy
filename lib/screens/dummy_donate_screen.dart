@@ -1,25 +1,26 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:blood/Firestore/userprofile.dart';
+import 'package:blood/widgets/dummy_request_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../Firestore/userprofile.dart';
-import '../models/request.dart';
-import '../widgets/request_card.dart';
 
-class RequestPage extends StatefulWidget {
-  const RequestPage({super.key});
+import '../models/request.dart';
+
+class TestBloodRequestList extends StatefulWidget {
+  const TestBloodRequestList({super.key});
 
   @override
-  State<RequestPage> createState() => _RequestPageState();
+  State<TestBloodRequestList> createState() => _TestBloodRequestListState();
 }
 
-class _RequestPageState extends State<RequestPage> {
+class _TestBloodRequestListState extends State<TestBloodRequestList> {
   final db = FirebaseFirestore.instance;
   final String? user = FirebaseAuth.instance.currentUser!.uid;
   late final Map<String, dynamic> profile;
-  late List<RequestCard> requests = [];
+  late List<BloodRequestCard> requests = [];
   late StreamSubscription queryListner;
 
   @override
@@ -44,8 +45,7 @@ class _RequestPageState extends State<RequestPage> {
     //although requester can also donate blood to the patient and that can be counted as donation.
     final query = db
         .collection('Reqs')
-        .where('bloodGroup',
-            whereIn: Request.getRecipientBloodGroups(profile['Blood Group']))
+        .where('bloodGroup', whereIn: Request.getRecipientBloodGroups(profile['Blood Group']))
         .where('area', isEqualTo: profile['General Area']);
 
     queryListner = query.snapshots().listen((event) {
@@ -57,7 +57,7 @@ class _RequestPageState extends State<RequestPage> {
             //create blood request card
             setState(() {
               // ! Request .add() will not cause a rebuild
-              // requests.add(RequestCard(
+              // requests.add(BloodRequestCard(
               //   hospital: change.doc['hospitalName'],
               //   units: change.doc['units'],
               //   bloodGroup: change.doc['bloodGroup'],
@@ -65,12 +65,12 @@ class _RequestPageState extends State<RequestPage> {
               // ));
               requests = [
                 ...requests,
-                RequestCard(
-                  reqId: change.doc.id,
-                  hospitalAddress: change.doc['hospitalName'],
+                BloodRequestCard(
+                  id: change.doc.id,
+                  hospital: change.doc['hospitalName'],
                   units: change.doc['units'],
                   bloodGroup: change.doc['bloodGroup'],
-                  patientName: change.doc['patientName'],
+                  name: change.doc['patientName'],
                 )
               ];
             });
@@ -82,15 +82,15 @@ class _RequestPageState extends State<RequestPage> {
             setState(() {
               // find index of existing card
               int i = requests.indexWhere((element) {
-                return element.reqId == change.doc.id;
+                return element.id == change.doc.id;
               });
               // replace the card with the modified one
-              requests[i] = RequestCard(
-                reqId: change.doc.id,
-                hospitalAddress: change.doc['hospitalName'],
+              requests[i] = BloodRequestCard(
+                id: change.doc.id,
+                hospital: change.doc['hospitalName'],
                 units: change.doc['units'],
                 bloodGroup: change.doc['bloodGroup'],
-                patientName: change.doc['patientName'],
+                name: change.doc['patientName'],
               );
               // Make new request list
               requests = [...requests];
@@ -100,7 +100,7 @@ class _RequestPageState extends State<RequestPage> {
           case DocumentChangeType.removed:
             setState(() {
               requests = requests.where((element) {
-                return element.reqId != change.doc.id;
+                return element.id != change.doc.id;
               }).toList();
             });
             log("Removed City: ${change.doc.data()}");
@@ -113,21 +113,11 @@ class _RequestPageState extends State<RequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
       appBar: AppBar(
-        toolbarHeight: 60.0,
-        elevation: 0,
-        title: const Text(
-          "Requests",
-        ),
+        title: const Text('Blood Requests'),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 231, 231, 231),
-        ),
-        child: ListView(
-          children: requests,
-        ),
+      body: ListView(
+        children: requests,
       ),
     );
   }

@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'circle_button_with_tooltip.dart';
+
 class MyRequestCard extends StatefulWidget {
   final String id;
   final String hospital;
@@ -53,54 +55,52 @@ class _MyRequestCardState extends State<MyRequestCard> {
       //so that they are hidden and only shown when the card is expanded
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(20),
         ),
-        color: Colors.red[100],
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+        color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
             children: [
-              Text(
-                widget.hospital,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${widget.units} units of ${widget.bloodGroup} blood needed for ${widget.name}',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton.icon(
-                    //TODO Implement edit function
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
-                    label: const Text("Edit"),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+              Expanded(
+                flex: 6,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.hospital,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () => deleteRequest(),
-                    icon: const Icon(Icons.delete_forever),
-                    label: const Text('Delete'),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${widget.units} units of ${widget.bloodGroup} blood needed for ${widget.name}',
+                      style: const TextStyle(
+                        fontSize: 16,
                       ),
                     ),
-                  )
-                ],
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    //TODO: add edit functionality
+                    CricularIconButtonWithTooltip(
+                        tooltipMessage: 'Edit units',
+                        onPressed: () {},
+                        icon: Icons.edit),
+                    const SizedBox(height: 10),
+                    CricularIconButtonWithTooltip(
+                        tooltipMessage: 'Delete request',
+                        onPressed: deleteRequest,
+                        icon: Icons.delete_forever, iconColor: Colors.red[400]),
+                  ],
+                ),
               ),
             ],
           ),
@@ -111,10 +111,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
 
   Future<void> deleteRequest() async {
     log("Deleting request ${widget.id}");
-    await FirebaseFirestore.instance
-        .collection('Reqs')
-        .doc(widget.id)
-        .delete();
+    await FirebaseFirestore.instance.collection('Reqs').doc(widget.id).delete();
 
     widget.onDelete();
   }
