@@ -21,7 +21,6 @@ class _RequestFormState extends State<RequestForm> {
   final _formKey = GlobalKey<FormState>();
   late String name;
   late String pname;
-  late String btype;
   late int units;
   late String area;
   String? hospitalName;
@@ -112,7 +111,7 @@ class _RequestFormState extends State<RequestForm> {
 
       Request(
         id: user!.uid,
-        bloodGroup: btype,
+        bloodGroup: _selectedBloodType!,
         units: units,
         patientName: pname,
         name: name,

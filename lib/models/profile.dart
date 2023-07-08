@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class Profile extends ChangeNotifier{
+class Profile extends ChangeNotifier {
   String? id;
   String? firstName;
   String? lastName;
@@ -13,8 +13,9 @@ class Profile extends ChangeNotifier{
   bool? tattoo;
   bool? hivTested;
   bool? covidVaccine;
+  String? area;
 
-  void setAllFieldsFromJson(Map<String, dynamic> json)  {
+  void setAllFieldsFromJson(Map<String, dynamic> json) {
     id = json['id'];
     firstName = json['First Name'];
     lastName = json['Last Name'];
@@ -27,6 +28,7 @@ class Profile extends ChangeNotifier{
     tattoo = json['tattoo'];
     hivTested = json['HIV_tested'];
     covidVaccine = json['Covid_vaccine'];
+    area = json['General Area'];
   }
 
   Profile({
@@ -42,8 +44,8 @@ class Profile extends ChangeNotifier{
     this.tattoo,
     this.hivTested,
     this.covidVaccine,
+    this.area,
   });
-
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -58,6 +60,7 @@ class Profile extends ChangeNotifier{
         'tattoo': tattoo,
         'HIV_tested': hivTested,
         'Covid_vaccine': covidVaccine,
+        'General Area': area,
       };
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -74,6 +77,7 @@ class Profile extends ChangeNotifier{
       tattoo: json['tattoo'],
       hivTested: json['HIV_tested'],
       covidVaccine: json['Covid_vaccine'],
+      area: json['General Area'],
     );
   }
 }

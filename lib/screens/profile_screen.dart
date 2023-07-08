@@ -48,12 +48,7 @@ class _UserProfileState extends State<UserProfile> {
   // String? selectedWillingToDonateOption;
   DateTime? lastDonated;
 
-  TextEditingController _ageController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
-  bool question1 = false;
-  bool question2 = false;
-  bool question3 = false;
-  bool isWillingToDonate = true;
   bool isChecked = false; // Initial value of the checkbox
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
@@ -61,7 +56,6 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   void dispose() {
-    _ageController.dispose();
     _weightController.dispose();
     super.dispose();
   }
@@ -69,31 +63,8 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void initState() {
     user = _auth.currentUser;
-    fetchUserProfile();
 
     super.initState();
-  }
-
-  fetchUserProfile() async {
-    try {
-      await DataBase(uid: user!.uid).getUserProfile().then((data) {
-        // log("Data: $data");
-
-        Provider.of<Profile>(context, listen: false).setAllFieldsFromJson(data);
-        log("Profile: ${Provider.of<Profile>(context, listen: false).toJson()}");
-      });
-      // setState(() {
-      //   data = fetchedData;
-      //   log("$data");
-      // });
-      // Provider.of<Profile>(context, listen: false).setProfile(data!);
-
-      // log('question1: $question1');
-      // log('question2: $question2');
-      // log('question3: $question3');
-    } catch (e) {
-      log(e.toString());
-    }
   }
 
   @override
@@ -145,7 +116,7 @@ class _UserProfileState extends State<UserProfile> {
                     Expanded(
                       flex: 3,
                       child: DateTimeFormField(
-                        initialValue: data.dateOfBirth ?? DateTime.now(),
+                        initialValue: data.dateOfBirth,
                         enabled: false,
                         decoration: inputDecoration.copyWith(
                           labelText: 'Date of Birth',
@@ -157,10 +128,9 @@ class _UserProfileState extends State<UserProfile> {
                     Expanded(
                       child: TextFormField(
                         textAlign: TextAlign.center,
-                        controller: _ageController
-                          ..text = data.age == null
-                              ? 'loading...'
-                              : data.age.toString(),
+                        initialValue: data.age == null
+                            ? 'loading...'
+                            : data.age.toString(),
                         decoration: inputDecoration.copyWith(
                             labelText: 'Age',
                             labelStyle: const TextStyle(color: Colors.grey)),
@@ -171,7 +141,9 @@ class _UserProfileState extends State<UserProfile> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  initialValue:  data.weight!.toString(),
+                  initialValue: data.weight == null
+                      ? 'loading...'
+                      : data.weight.toString(),
                   keyboardType: TextInputType.number,
                   decoration: inputDecoration.copyWith(
                     labelText: 'Weight',
@@ -188,7 +160,7 @@ class _UserProfileState extends State<UserProfile> {
                     return null;
                   },
                   onChanged: (value) {
-                    if(value.isNotEmpty){
+                    if (value.isNotEmpty) {
                       data.weight = double.parse(value);
                     }
                   },
@@ -243,7 +215,7 @@ class _UserProfileState extends State<UserProfile> {
                 DateTimeFormField(
                   initialValue: data.lastDonated,
                   onDateSelected: (DateTime? value) {
-                      data.lastDonated = value; // Update the lastDonated variable
+                    data.lastDonated = value; // Update the lastDonated variable
                   },
                   decoration: inputDecoration.copyWith(
                     labelText: 'Last Donated Date',
@@ -287,14 +259,14 @@ class _UserProfileState extends State<UserProfile> {
                 QuestionCard(
                   question: "Have you ever tested positive for HIV?",
                   onChanged: (value) {
-                      data.hivTested = value;
+                    data.hivTested = value;
                   },
                   initialValue: data.hivTested ?? false,
                 ),
                 QuestionCard(
                   question: "Have you taken Covid-19 vaccine?",
                   onChanged: (value) {
-                      data.covidVaccine = value;
+                    data.covidVaccine = value;
                   },
                   initialValue: data.covidVaccine ?? false,
                 ),

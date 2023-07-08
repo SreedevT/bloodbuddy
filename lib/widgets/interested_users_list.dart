@@ -2,10 +2,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 
-import '../Firestore/userprofile.dart';
+import '../models/profile.dart';
 
 class Listee extends StatefulWidget {
   final List<String> ids;
@@ -36,7 +37,9 @@ class _ListeeState extends State<Listee> {
     for (String id in widget.ids) {
       try {
         //? Get data from user profile
-        Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
+        Map<String, dynamic> data =
+            Provider.of<Profile>(context, listen: false).toJson();
+        log("Profile DATA: $data\n");
 
         //? Get data from interested subcollection
         Map<String, dynamic> interestedData = await getInterestedDoc(id);
@@ -49,7 +52,6 @@ class _ListeeState extends State<Listee> {
           ..addAll({'id': id})
           ..addAll(interestedData)
           ..addAll(requestData);
-        log("Intersted users: ${data.toString()}");
 
         if (data.isNotEmpty) {
           log("USER DATA: $data");
@@ -125,11 +127,11 @@ class InterestedUserCard extends StatefulWidget {
   final Map<String, dynamic> userData;
   final String reqid;
 
-  const InterestedUserCard(
-      {Key? key,
-      required this.userData,
-      required this.reqid,})
-      : super(key: key);
+  const InterestedUserCard({
+    Key? key,
+    required this.userData,
+    required this.reqid,
+  }) : super(key: key);
   @override
   State<InterestedUserCard> createState() => _InterestedUserCardState();
 }

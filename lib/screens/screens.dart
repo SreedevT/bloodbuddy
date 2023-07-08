@@ -6,6 +6,6 @@ export 'interested_users_screen.dart';
 export 'landingpage.dart';
 export 'mapscreen.dart';
 export 'my_requests_screen.dart';
-export 'profile.dart';
+export 'profile_screen.dart';
 export 'requestform.dart';
 export 'welcomesreen.dart';

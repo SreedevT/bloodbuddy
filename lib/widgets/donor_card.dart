@@ -2,6 +2,9 @@ import 'dart:developer';
 import 'package:blood/Firestore/userprofile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/profile.dart';
 
 class DonorCard extends StatefulWidget {
   const DonorCard({
@@ -23,13 +26,16 @@ class _DonorCardState extends State<DonorCard> {
 
   fetchUserProfile() async {
     try {
-      Map<String, dynamic> fetchedData =
-          await DataBase(uid: uid).getUserProfile();
-      setState(() {
-        data = fetchedData;
+      await DataBase(uid: uid).getUserProfile().then((json) {
+        json.addAll({'id': uid});
+        Provider.of<Profile>(context, listen: false).setAllFieldsFromJson(json);
+        setState(() {
+          data = json;
+        });
+        log("Profile donor_card: $data");
       });
     } catch (e) {
-      log(e.toString());
+      log("Fetch profile of donor_card: ${e.toString()}");
     }
   }
 
@@ -41,9 +47,9 @@ class _DonorCardState extends State<DonorCard> {
       padding: const EdgeInsets.all(16.0),
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 25.0),
       decoration: BoxDecoration(
-          color: Colors.red[800], borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.black, width: 2)
-          ),
+          color: Colors.red[800],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black, width: 2)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
