@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:date_field/date_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,10 +27,10 @@ class _RequestFormState extends State<RequestForm> {
   LatLong userLocation = LatLong(0, 0);
   LatLong hospitalLocation = LatLong(0, 0);
   String? _selectedBloodType;
-  DateTime? _selectedDateTime;
   bool isEmergency = false;
   String? _selectedDate;
   String? _selectedTime;
+  DateTime? _selectedDateTime;
   User? user;
 
   final TextEditingController _requesterController = TextEditingController();
@@ -137,15 +136,13 @@ class _RequestFormState extends State<RequestForm> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate != null
-          ? DateTime.parse(_selectedDate!)
-          : DateTime.now(),
+      initialDate: _selectedDateTime ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+        _selectedDate = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
@@ -153,13 +150,21 @@ class _RequestFormState extends State<RequestForm> {
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: _selectedTime != null
-          ? TimeOfDay.fromDateTime(DateTime.parse(_selectedTime!))
+      initialTime: _selectedDateTime != null
+          ? TimeOfDay.fromDateTime(_selectedDateTime!)
           : TimeOfDay.now(),
     );
     if (picked != null) {
       setState(() {
-        _selectedTime = picked.format(context);
+        _selectedTime = DateFormat('hh:mm a').format(
+          DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+            picked.hour,
+            picked.minute,
+          ),
+        );
       });
     }
   }
@@ -177,7 +182,7 @@ class _RequestFormState extends State<RequestForm> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(20),
         color: Colors.white,
         child: Form(
           key: _formKey,
@@ -185,28 +190,70 @@ class _RequestFormState extends State<RequestForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 3),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        'Emergency ',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 50,
+                      height: 30,
+                      child: Transform.scale(
+                        scale: 0.8, // Adjust the scale factor as needed
+                        child: Switch(
+                          value: isEmergency,
+                          onChanged: (value) {
+                            setState(() {
+                              isEmergency = value;
+                              if (isEmergency) {
+                                _selectedDateTime = DateTime.now()
+                                    .add(const Duration(hours: 12));
+                              } else {
+                                _selectedDateTime = null;
+                              }
+                            });
+                            log("Emergency: $isEmergency");
+                          },
+                          activeTrackColor:
+                              const Color.fromARGB(255, 187, 49, 39),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+
+                const SizedBox(height: 7),
                 Row(
                   children: [
                     //Search Button
                     ElevatedButton(
-                        style: buttonStyle,
-                        onPressed: () async {
-                          _setLoadingState(true);
-                          await _getCurrentLocation()
-                              .then((value) => _setLoadingState(false));
-                          if (!mounted) return;
-                          _showModalBottomSheet(context);
-                        },
-                        child: _load
-                            ? const SizedBox(
-                                height: 30,
-                                width: 30,
-                                child: CircularProgressIndicator())
-                            : const Icon(
-                                Icons.search,
-                                size: 30,
-                              )),
+                      style: buttonStyle,
+                      onPressed: () async {
+                        _setLoadingState(true);
+                        await _getCurrentLocation()
+                            .then((value) => _setLoadingState(false));
+                        if (!mounted) return;
+                        _showModalBottomSheet(context);
+                      },
+                      child: _load
+                          ? const SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator())
+                          : const Icon(
+                              Icons.search,
+                              size: 30,
+                            ),
+                    ),
+
                     const SizedBox(width: 11),
                     Expanded(
                       child: TextFormField(
@@ -227,6 +274,7 @@ class _RequestFormState extends State<RequestForm> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 11),
                 TextFormField(
                   decoration: const InputDecoration(
@@ -309,65 +357,55 @@ class _RequestFormState extends State<RequestForm> {
                 ),
                 const SizedBox(height: 11),
                 //DateTime field
+                // Date field
                 Row(
                   children: [
-                    Flexible(
-                      flex: 3,
-                      //TODO: Fix bug where time isnt set in emergency
-                      child: DateTimeFormField(
-                        initialValue: _selectedDateTime,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 30)),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Please select a date and time';
-                          }
-                          if (value.isBefore(DateTime.now())) {
-                            return 'Please select a date and time in the future';
-                          }
-                          return null;
-                        },
-                        decoration: const InputDecoration(
-                          labelText: 'Expiration Date and Time',
-                          border: OutlineInputBorder(),
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                    if (!isEmergency) // Show the date field if emergency is off
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true,
+                          onTap: () => _selectDate(context),
+                          controller:
+                              TextEditingController(text: _selectedDate ?? ''),
+                          decoration: InputDecoration(
+                            labelText: 'Date',
+                            border: OutlineInputBorder(),
                           ),
+                          style: formEntryTextStyle,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a date';
+                            }
+                            return null;
+                          },
                         ),
-                        dateFormat: DateFormat('dd/mm/yyyy hh:mm a'),
-                        dateTextStyle: formEntryTextStyle,
-                        onDateSelected: (value) {
-                          setState(() {
-                            _selectedDateTime = value;
-                          });
-                        },
-                        enabled: !isEmergency,
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    Flexible(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          Text("Emergency", style: formEntryTextStyle),
-                          Switch(
-                            value: isEmergency,
-                            onChanged: (value) {
-                              setState(() {
-                                isEmergency = value;
-                                if (isEmergency) {
-                                  _selectedDateTime = DateTime.now()
-                                      .add(const Duration(hours: 12));
-                                }
-                              });
-                              log("Emergency: $isEmergency");
-                            },
+                    SizedBox(
+                      width: !isEmergency ? 16 : 0,
+                    ), // Add spacing between the fields
+                    if (!isEmergency) // Show the time field if emergency is off
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true,
+                          onTap: () => _selectTime(context),
+                          controller:
+                              TextEditingController(text: _selectedTime ?? ''),
+                          decoration: InputDecoration(
+                            labelText: 'Time',
+                            border: OutlineInputBorder(),
                           ),
-                        ],
+                          style: formEntryTextStyle,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a time';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
                   ],
                 ),
+
                 const SizedBox(height: 11),
                 TextFormField(
                   keyboardType: TextInputType.phone,
