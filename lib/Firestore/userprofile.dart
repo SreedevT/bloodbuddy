@@ -48,7 +48,7 @@ class DataBase {
 
   Future updateUserProfile(
       double weight,
-      String isWillingToDonate,
+      bool isWillingToDonate,
       DateTime? lastDonated,
       bool question1,
       bool question2,

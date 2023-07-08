@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:blood/Firestore/userprofile.dart';
-import 'package:blood/screens/mapscreen.dart';
 import 'package:blood/widgets/info_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
+import 'package:provider/provider.dart';
+
+import '../models/profile.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({Key? key}) : super(key: key);
@@ -40,18 +42,13 @@ class _UserProfileState extends State<UserProfile> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> items = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+  // List<String> items = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   List<String> willingToDonateOptions = ['Yes', 'No'];
 
-  String fname = '';
-  String lname = '';
-  DateTime dob = DateTime.now();
-  int age = 0;
-  String? selectedBloodGroup;
   // String? selectedWillingToDonateOption;
   DateTime? lastDonated;
 
-  TextEditingController ageController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   bool question1 = false;
   bool question2 = false;
@@ -61,38 +58,39 @@ class _UserProfileState extends State<UserProfile> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
   Map<String, dynamic>? data;
-  TextEditingController d = TextEditingController();
 
   @override
   void dispose() {
-    ageController.dispose();
+    _ageController.dispose();
     _weightController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
-    super.initState();
     user = _auth.currentUser;
     fetchUserProfile();
+
+    super.initState();
   }
 
   fetchUserProfile() async {
     try {
-      Map<String, dynamic> fetchedData =
-          await DataBase(uid: user!.uid).getUserProfile();
-      setState(() {
-        data = fetchedData;
-        // log("${data?['Is donor']}");
-        isWillingToDonate = data?['Is donor'];
-        question1 = data?['tattoo'];
-        question2 = data?['HIV_tested'];
-        question3 = data?['Covid_vaccine'];
+      await DataBase(uid: user!.uid).getUserProfile().then((data) {
+        // log("Data: $data");
+
+        Provider.of<Profile>(context, listen: false).setAllFieldsFromJson(data);
+        log("Profile: ${Provider.of<Profile>(context, listen: false).toJson()}");
       });
-      log('question1: $question1');
-      log('question2: $question2');
-      log('question3: $question3');
-      _weightController.text = data?['Weight'].toString() ?? 'loading...';
+      // setState(() {
+      //   data = fetchedData;
+      //   log("$data");
+      // });
+      // Provider.of<Profile>(context, listen: false).setProfile(data!);
+
+      // log('question1: $question1');
+      // log('question2: $question2');
+      // log('question3: $question3');
     } catch (e) {
       log(e.toString());
     }
@@ -110,270 +108,274 @@ class _UserProfileState extends State<UserProfile> {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 50),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      readOnly: true,
-                      controller: TextEditingController(
-                          text: data?['First Name'] ?? 'loading...'),
-                      decoration: inputDecoration.copyWith(
-                          labelText: 'First Name',
-                          labelStyle: const TextStyle(color: Colors.grey)),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: TextFormField(
-                      controller: TextEditingController(
-                          text: data?['Last Name'] ?? 'loading...'),
-                      readOnly: true,
-                      decoration: inputDecoration.copyWith(
-                          labelText: 'Last Name',
-                          labelStyle: const TextStyle(color: Colors.grey)),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: DateTimeFormField(
-                      initialValue:
-                          data?['Date of Birth'].toDate() ?? DateTime.now(),
-                      enabled: false,
-                      decoration: inputDecoration.copyWith(
-                        labelText: 'Date of Birth',
+        child: Consumer<Profile>(
+          builder: (context, data, child) => Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                const SizedBox(height: 50),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: TextEditingController(
+                            text: data.firstName ?? 'loading...'),
+                        decoration: inputDecoration.copyWith(
+                            labelText: 'First Name',
+                            labelStyle: const TextStyle(color: Colors.grey)),
                       ),
-                      mode: DateTimeFieldPickerMode.date,
                     ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: TextFormField(
-                      textAlign: TextAlign.center,
-                      controller: TextEditingController(
-                          text: data?['Age'].toString() ?? 'loading...'),
-                      decoration: inputDecoration.copyWith(
-                          labelText: 'Age',
-                          labelStyle: const TextStyle(color: Colors.grey)),
-                      readOnly: true,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _weightController,
-                onChanged: (val) {
-                  setState(() {});
-                },
-                keyboardType: TextInputType.number,
-                decoration: inputDecoration.copyWith(
-                  labelText: 'Weight',
-                  prefixIcon: const Icon(
-                    Icons.edit,
-                    color: Colors.green,
-                    size: 25,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your Weight';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                readOnly: true,
-                controller: TextEditingController(
-                    text: data?['Blood Group'] ?? 'loading...'),
-                decoration: inputDecoration.copyWith(
-                    labelText: 'Blood Group',
-                    labelStyle: const TextStyle(color: Colors.grey)),
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: inputDecoration.copyWith(
-                  labelText: 'Are you willing to donate',
-                  prefixIcon: const Icon(
-                    Icons.edit,
-                    color: Colors.green,
-                    size: 25,
-                  ),
-                ),
-                value: isWillingToDonate ? 'Yes' : 'No',
-                items: willingToDonateOptions
-                    .map(
-                      (item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item, style: const TextStyle(fontSize: 18)),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: TextFormField(
+                        controller: TextEditingController(
+                            text: data.lastName ?? 'loading...'),
+                        readOnly: true,
+                        decoration: inputDecoration.copyWith(
+                            labelText: 'Last Name',
+                            labelStyle: const TextStyle(color: Colors.grey)),
                       ),
-                    )
-                    .toList(),
-                onChanged: (item) {
-                  setState(() {
-                    isWillingToDonate = item == 'Yes' ? true : false;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select yes/no';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              DateTimeFormField(
-                initialValue: data?['Last Donated'],
-                onDateSelected: (DateTime? value) {
-                  setState(() {
-                    lastDonated = value; // Update the lastDonated variable
-                  });
-                },
-                decoration: inputDecoration.copyWith(
-                  labelText: 'Last Donated Date',
-                  prefixIcon: const Icon(
-                    Icons.edit,
-                    color: Colors.green,
-                    size: 25,
-                  ),
+                    ),
+                  ],
                 ),
-                mode: DateTimeFieldPickerMode.date,
-                autovalidateMode: AutovalidateMode.always,
-                lastDate: DateTime.now(),
-              ),
-              const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(
-                    Icons.question_answer,
-                    size: 40,
-                    color: Color.fromARGB(255, 198, 40, 40),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: DateTimeFormField(
+                        initialValue: data.dateOfBirth ?? DateTime.now(),
+                        enabled: false,
+                        decoration: inputDecoration.copyWith(
+                          labelText: 'Date of Birth',
+                        ),
+                        mode: DateTimeFieldPickerMode.date,
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        controller: _ageController
+                          ..text = data.age == null
+                              ? 'loading...'
+                              : data.age.toString(),
+                        decoration: inputDecoration.copyWith(
+                            labelText: 'Age',
+                            labelStyle: const TextStyle(color: Colors.grey)),
+                        readOnly: true,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  initialValue:  data.weight!.toString(),
+                  keyboardType: TextInputType.number,
+                  decoration: inputDecoration.copyWith(
+                    labelText: 'Weight',
+                    prefixIcon: const Icon(
+                      Icons.edit,
+                      color: Colors.green,
+                      size: 25,
+                    ),
                   ),
-                  Text(
-                    "\tWould you like to change\n  the answers?",
-                    style: TextStyle(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your Weight';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    if(value.isNotEmpty){
+                      data.weight = double.parse(value);
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  readOnly: true,
+                  controller: TextEditingController(
+                      text: data.bloodGroup ?? 'loading...'),
+                  decoration: inputDecoration.copyWith(
+                      labelText: 'Blood Group',
+                      labelStyle: const TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: inputDecoration.copyWith(
+                    labelText: 'Are you willing to donate',
+                    prefixIcon: const Icon(
+                      Icons.edit,
+                      color: Colors.green,
+                      size: 25,
+                    ),
+                  ),
+                  value: data.canDonate == null
+                      ? 'Yes'
+                      : data.canDonate!
+                          ? 'Yes'
+                          : 'No',
+                  items: willingToDonateOptions
+                      .map(
+                        (item) => DropdownMenuItem<String>(
+                          value: item,
+                          child:
+                              Text(item, style: const TextStyle(fontSize: 18)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (item) {
+                    setState(() {
+                      data.canDonate = item == 'Yes' ? true : false;
+                    });
+                    log("Can donate: ${data.canDonate}");
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select yes/no';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                DateTimeFormField(
+                  initialValue: data.lastDonated,
+                  onDateSelected: (DateTime? value) {
+                      data.lastDonated = value; // Update the lastDonated variable
+                  },
+                  decoration: inputDecoration.copyWith(
+                    labelText: 'Last Donated Date',
+                    prefixIcon: const Icon(
+                      Icons.edit,
+                      color: Colors.green,
+                      size: 25,
+                    ),
+                  ),
+                  mode: DateTimeFieldPickerMode.date,
+                  autovalidateMode: AutovalidateMode.always,
+                  lastDate: DateTime.now(),
+                ),
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.question_answer,
+                      size: 40,
                       color: Color.fromARGB(255, 198, 40, 40),
-                      fontSize: 18,
-                      fontFamily: "Argentum Sans",
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              QuestionCard(
-                question: "Did you get tattoo in past 12 months?",
-                onChanged: (value) {
-                  setState(() {
-                    question1 = value;
-                  });
-                },
-                initialValue: question1,
-              ),
-              QuestionCard(
-                question: "Have you ever tested positive for HIV?",
-                onChanged: (value) {
-                  setState(() {
-                    question2 = value;
-                  });
-                },
-                initialValue: question2,
-              ),
-              QuestionCard(
-                question: "Have you taken Covid-19 vaccine?",
-                onChanged: (value) {
-                  setState(() {
-                    question3 = value;
-                  });
-                },
-                initialValue: question3,
-              ),
-              const SizedBox(height: 20),
-              const InfoBox(
-                icon: Icons.info_outline,
-                text:
-                    "Information is collected to make meaningful requests. We don't share your sensitive information with anyone!",
-                textColor: Colors.grey,
-                backgroundColor: Colors.white,
-                borderColor: Colors.grey,
-                padding: 10,
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(10),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 201, 41, 41),
-                  borderRadius: BorderRadius.circular(9),
+                    Text(
+                      "\tWould you like to change\n  the answers?",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 198, 40, 40),
+                        fontSize: 18,
+                        fontFamily: "Argentum Sans",
+                      ),
+                    ),
+                  ],
                 ),
-                child: InkWell(
-                  onTap: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await DataBase(uid: user!.uid).updateUserProfile(
-                        double.tryParse(_weightController.text) ?? 0,
-                        isWillingToDonate ? 'Yes' : 'No',
-                        lastDonated,
-                        question1,
-                        question2,
-                        question3,
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Row(
-                            children: const [
-                              Icon(Icons.warning_amber),
-                              SizedBox(width: 10),
-                              Text(
-                                'Incomplete Form',
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 30),
+                QuestionCard(
+                  question: "Did you get tattoo in past 12 months?",
+                  onChanged: (value) {
+                    data.tattoo = value;
+                  },
+                  initialValue: data.tattoo ?? true,
+                ),
+                QuestionCard(
+                  question: "Have you ever tested positive for HIV?",
+                  onChanged: (value) {
+                      data.hivTested = value;
+                  },
+                  initialValue: data.hivTested ?? false,
+                ),
+                QuestionCard(
+                  question: "Have you taken Covid-19 vaccine?",
+                  onChanged: (value) {
+                      data.covidVaccine = value;
+                  },
+                  initialValue: data.covidVaccine ?? false,
+                ),
+                const SizedBox(height: 20),
+                const InfoBox(
+                  icon: Icons.info_outline,
+                  text:
+                      "Information is collected to make meaningful requests. We don't share your sensitive information with anyone!",
+                  textColor: Colors.grey,
+                  backgroundColor: Colors.white,
+                  borderColor: Colors.grey,
+                  padding: 10,
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 201, 41, 41),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: InkWell(
+                    onTap: () async {
+                      if (_formKey.currentState!.validate()) {
+                        log("Update Profile button pressed");
+                        await DataBase(uid: user!.uid).updateUserProfile(
+                          data.weight ?? 0.0,
+                          data.canDonate ?? true,
+                          data.lastDonated,
+                          data.tattoo ?? false,
+                          data.hivTested ?? false,
+                          data.covidVaccine ?? false,
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Row(
+                              children: const [
+                                Icon(Icons.warning_amber),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Incomplete Form',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
+                              ],
+                            ),
+                            content: const Text(
+                              'Please fill all the required fields.',
+                              style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('OK'),
                               ),
                             ],
                           ),
-                          content: const Text(
-                            'Please fill all the required fields.',
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
-                            ),
-                          ],
+                        );
+                      }
+                    },
+                    child: const Center(
+                      child: Text(
+                        'Update Profile',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    }
-                  },
-                  child: const Center(
-                    child: Text(
-                      'Update Profile',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
