@@ -3,33 +3,21 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 import '../Firestore/request.dart';
 import '../models/request.dart';
-import '../screens/my_requests_screen.dart';
 import '../utils/screen_utils.dart';
 
 class MyRequestCard extends StatefulWidget {
   final String reqId;
-  final String hospitalAddress;
-  final int units;
-  final String bloodGroup;
-  final String patientName;
-  final String status;
-  // final DateTime expiryDate;
+  final Request request;
   final Function onDelete;
+  //emergency, expiry 
 
-  //TODO in the final version, this card must take in a request object
   const MyRequestCard({
     Key? key,
     required this.reqId,
-    required this.hospitalAddress,
-    required this.units,
-    required this.bloodGroup,
-    required this.patientName,
-    required this.status,
-    // required this.expiryDate,
+    required this.request,
     required this.onDelete,
   }) : super(key: key);
 
@@ -43,9 +31,24 @@ class _MyRequestCardState extends State<MyRequestCard> {
   late String user;
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> subscription;
 
+  //Card variables
+  late final String hospitalAddress;
+  late final int units;
+  late final String bloodGroup;
+  late final String patientName;
+  late final String status;
+  late final DateTime expiryDate;
+
   @override
   void initState() {
     super.initState();
+    hospitalAddress = widget.request.hospitalName;
+    units = widget.request.units;
+    bloodGroup = widget.request.bloodGroup;
+    patientName = widget.request.patientName;
+    status = widget.request.status.name;
+    expiryDate = widget.request.expiryDate!;
+
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
       setState(() {
         unitsCollected = value;
@@ -97,7 +100,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.hospitalAddress,
+          hospitalAddress,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -105,7 +108,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Patient: ${widget.patientName}',
+          'Patient: $patientName',
           style: const TextStyle(
             fontSize: 16,
           ),
@@ -116,8 +119,8 @@ class _MyRequestCardState extends State<MyRequestCard> {
             Expanded(child: unitsCollectedInfo()),
             const SizedBox(width: 10),
             statusInfo(
-              status: Utils.capitalizeFirstLetter(widget.status),
-              color: widget.status == 'pending' ? Colors.yellow : Colors.green,
+              status: Utils.capitalizeFirstLetter(status),
+              color: status == 'pending' ? Colors.yellow : Colors.green,
             ),
             const SizedBox(width: 5),
           ],
@@ -126,11 +129,12 @@ class _MyRequestCardState extends State<MyRequestCard> {
     );
   }
 
-  Container statusInfo(
-      {required String status,
-      required MaterialColor color,
-      double? fontSize,
-      FontWeight? fontWeight}) {
+  Container statusInfo({
+    required String status,
+    required MaterialColor color,
+    double? fontSize,
+    FontWeight? fontWeight,
+  }) {
     const double defaultSize = 16;
     const FontWeight defaultWeight = FontWeight.bold;
 
@@ -167,7 +171,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
           ),
         ),
         Text(
-          '/${widget.units} units collected',
+          '/$units units collected',
           style: const TextStyle(
             fontSize: 16,
           ),
@@ -182,7 +186,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
       children: [
         // statusInfo(status: widget.bloodGroup, color: Colors.blueGrey, fontSize: 20),
         Text(
-          widget.bloodGroup,
+          bloodGroup,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         const SizedBox(height: 10),
