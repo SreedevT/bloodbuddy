@@ -18,7 +18,7 @@ class Request {
   final String area;
   // var requisitionForm; //? image/pdf of the requisition form
   // final DateTime expiryDate;
-  final int phone;
+  final String phone;
   //? emergency requests treated differenty
   // maybe shown in a different screen / different color / highlighted
   final bool isEmergency;
