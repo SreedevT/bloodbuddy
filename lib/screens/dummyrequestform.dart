@@ -1,4 +1,4 @@
-import 'dart:developer';
+/*import 'dart:developer';
 
 import 'package:blood/models/request.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -266,4 +266,4 @@ class _TestRequestFormState extends State<TestRequestForm> {
     log("Hospital name: ${addressList[0]}, ${addressList[1]}");
     return "${addressList[0]}, ${addressList[1]}";
   }
-}
+}*/

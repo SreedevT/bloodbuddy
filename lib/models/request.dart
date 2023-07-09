@@ -8,21 +8,22 @@ class Request {
   // each user can have multiple requests
   // we can identify the user by this ID
   final String id;
-
+  final String name;
+  final String patientName;
   final String hospitalName;
   final String bloodGroup;
   final int units;
   //? name of the patient for whom the request is made
-  final String patientName;
+  final DateTime? expiryDate;
   final String area;
   // var requisitionForm; //? image/pdf of the requisition form
   // final DateTime expiryDate;
-
+  final int phone;
   //? emergency requests treated differenty
   // maybe shown in a different screen / different color / highlighted
-  // final bool isEmergency;
+  final bool isEmergency;
   Status status;
-  final String name;
+
   //? position of the hospital
   final LatLng hospitalLocation;
 
@@ -80,8 +81,9 @@ class Request {
     required this.name,
     required this.patientName,
     required this.area,
-    // required this.expiryDate,
-    // this.isEmergency = false,
+    required this.expiryDate,
+    required this.phone,
+    this.isEmergency = false,
     this.status = Status.pending,
     required this.hospitalLocation,
   });
@@ -99,14 +101,17 @@ class Request {
       'units': units,
       'patientName': patientName,
       'area': area,
-      // 'expiryDate': expiryDate,
-      // 'isEmergency': isEmergency,
+      'expiryDate': expiryDate,
+      'Phone': phone,
+      'isEmergency': isEmergency,
       'status': status.name,
-      'position': GeoPoint(hospitalLocation.latitude, hospitalLocation.longitude),
+      'position':
+          GeoPoint(hospitalLocation.latitude, hospitalLocation.longitude),
     };
   }
 
   //? convert the map to a request object
+
   factory Request.fromMap(Map<String, dynamic> map) {
     return Request(
       id: map['id'],
@@ -116,13 +121,17 @@ class Request {
       units: map['units'],
       patientName: map['patientName'],
       area: map['area'],
-      //TODO Deal with time being timestamp
-      // expiryDate: map['expiryDate'],
-      // isEmergency: map['isEmergency'],
-      //! not sure if this will work
-      status:
-          Status.values.firstWhere((element) => element.name == map['status']),
-      hospitalLocation: LatLng(map['position'].latitude, map['position'].longitude),
+      // Convert Timestamp to DateTime
+      expiryDate: map['expiryDate'] != null
+          ? (map['expiryDate'] as Timestamp).toDate()
+          : null,
+      isEmergency: map['isEmergency'],
+      phone: map['Phone'],
+      status: Status.values.firstWhere(
+          (element) => element.name == map['status'],
+          orElse: () => Status.pending),
+      hospitalLocation:
+          LatLng(map['position'].latitude, map['position'].longitude),
     );
   }
 

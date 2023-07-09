@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../map_picker/osm_search_and_pick_mod.dart';
 import '../models/request.dart';
 
@@ -22,6 +21,7 @@ class _RequestFormState extends State<RequestForm> {
   late String pname;
   late int units;
   late String area;
+  late int phone;
   String? hospitalName;
   LatLong userLocation = LatLong(0, 0);
   LatLong hospitalLocation = LatLong(0, 0);
@@ -30,6 +30,7 @@ class _RequestFormState extends State<RequestForm> {
   String? _selectedDate;
   String? _selectedTime;
   DateTime? _selectedDateTime;
+  DateTime? expiryDate;
   User? user;
 
   final TextEditingController _requesterController = TextEditingController();
@@ -91,34 +92,97 @@ class _RequestFormState extends State<RequestForm> {
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // All fields are valid, submit the form
-      String requester = _requesterController.text;
-      String patientName = _patientNameController.text;
-      // int units = _unitsController.text;
-      String phone = _phoneController.text;
+  String? errorMessage;
+  void _submitForm() async {
+    setState(() {
+      errorMessage = null; // Clear any previous error message
+    });
 
-      log('Requester: $requester');
-      log("Patient's Name: $patientName");
-      log('Blood Type: $_selectedBloodType');
-      log('Units of Blood: $units');
-      log('Date: $_selectedDate');
-      log('Time: $_selectedTime');
-      log('Phone: $phone');
-      log('Uploaded File Name: $_uploadedFileName');
+    try {
+      if (_formKey.currentState!.validate()) {
+        // All fields are valid, submit the form
+        String requester = _requesterController.text;
+        String patientName = _patientNameController.text;
+        String phoneString = _phoneController.text;
 
-      Request(
-        id: user!.uid,
-        bloodGroup: _selectedBloodType!,
-        units: units,
-        patientName: pname,
-        name: name,
-        hospitalName: hospitalName!,
-        hospitalLocation:
-            LatLng(hospitalLocation.latitude, hospitalLocation.longitude),
-        area: area,
-      ).updateRequest();
+        log('Requester: $requester');
+        log("Patient's Name: $patientName");
+        log('Blood Type: $_selectedBloodType');
+        log('Units of Blood: $units');
+        log('Date: $_selectedDate');
+        log('Time: $_selectedTime');
+        log('Phone: $phoneString');
+        log('Uploaded File Name: $_uploadedFileName');
+
+        if (_selectedDate != null && _selectedTime != null) {
+          final DateFormat dateTimeFormat = DateFormat('dd/MM/yyyy hh:mm a');
+          final String combinedDateTimeString = '$_selectedDate $_selectedTime';
+          try {
+            _selectedDateTime = dateTimeFormat.parse(combinedDateTimeString);
+          } catch (e) {
+            throw FormatException('Invalid date or time format');
+          }
+        }
+
+        setState(() {
+          _load = true; // Show the loading indicator
+        });
+
+        // Validate phone number format using regular expression
+        RegExp phoneRegex = RegExp(r'^[0-9]{10}$');
+        if (!phoneRegex.hasMatch(phoneString)) {
+          throw FormatException('Invalid phone number format');
+        }
+
+        // Convert the phoneString to an integer
+        int phone = int.parse(phoneString);
+
+        Request request = Request(
+          id: user!.uid,
+          isEmergency: isEmergency,
+          name: requester,
+          patientName: patientName,
+          bloodGroup: _selectedBloodType!,
+          units: units,
+          area: area,
+          expiryDate: _selectedDateTime,
+          phone: phone,
+          hospitalName: hospitalName!,
+          hospitalLocation: LatLng(
+            hospitalLocation.latitude,
+            hospitalLocation.longitude,
+          ),
+        );
+
+        await request.updateRequest();
+
+        // Reset the form and clear the fields after successful submission
+        _formKey.currentState!.reset();
+        _requesterController.clear();
+        _patientNameController.clear();
+        _unitsController.clear();
+        _phoneController.clear();
+        _hospitalController.clear();
+        _selectedBloodType = null;
+        _selectedDate = null;
+        _selectedTime = null;
+        _selectedDateTime = null;
+        _uploadedFileName = null;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Form submitted successfully!'),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to submit form: $e';
+      });
+    } finally {
+      setState(() {
+        _load = false; // Hide the loading indicator
+      });
     }
   }
 
@@ -285,6 +349,7 @@ class _RequestFormState extends State<RequestForm> {
                     if (value == null || value.isEmpty) {
                       return "Please enter the bystander's name";
                     }
+                    name = value;
                     return null;
                   },
                 ),
@@ -299,6 +364,7 @@ class _RequestFormState extends State<RequestForm> {
                     if (value == null || value.isEmpty) {
                       return "Please enter the patient's name";
                     }
+                    pname = value;
                     return null;
                   },
                 ),
@@ -375,6 +441,7 @@ class _RequestFormState extends State<RequestForm> {
                             if (value == null || value.isEmpty) {
                               return 'Please select a date';
                             }
+                            _selectedDate = value;
                             return null;
                           },
                         ),
@@ -398,6 +465,7 @@ class _RequestFormState extends State<RequestForm> {
                             if (value == null || value.isEmpty) {
                               return 'Please select a time';
                             }
+                            _selectedTime = value;
                             return null;
                           },
                         ),
@@ -417,9 +485,19 @@ class _RequestFormState extends State<RequestForm> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a phone number';
                     }
+                    final sanitizedValue = value.replaceAll(
+                        RegExp(r'\D'), ''); // Remove non-numeric characters
+                    phone = int.tryParse(sanitizedValue) ??
+                        0; // Parse the sanitized value as an int
                     return null;
                   },
                 ),
+                if (errorMessage != null)
+                  Text(
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+
                 const SizedBox(height: 11),
                 ElevatedButton.icon(
                   onPressed: _uploadFile,
