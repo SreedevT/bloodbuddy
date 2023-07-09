@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../models/request.dart';
 import '../widgets/my_request_card.dart';
 import '../screens/interested_users_screen.dart';
 import '../screens/requestform.dart';
@@ -70,14 +71,15 @@ class _MyRequestListState extends State<MyRequestList> {
                 for (var doc in snapshot.data!.docs) {
                   var data = doc.data() as Map<String, dynamic>;
                   log("added: $data");
-                  //TODO add a delete button, a way to update request fields,
+                  Request request = Request.fromMap(data);
                   requests.add(MyRequestCard(
                     reqId: doc.id,
-                    hospitalAddress: data['hospitalName'],
-                    units: data['units'],
-                    bloodGroup: data['bloodGroup'],
-                    patientName: data['patientName'],
-                    status: data['status'],
+                    // hospitalAddress: data['hospitalName'],
+                    // units: data['units'],
+                    // bloodGroup: data['bloodGroup'],
+                    // patientName: data['patientName'],
+                    // status: data['status'],
+                    request: request,
                     onDelete: () {
                       //? This is a callback method
                       // when widget is deleted ,it calls this method
