@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../Firestore/request.dart';
 import '../models/request.dart';
@@ -12,7 +13,7 @@ class MyRequestCard extends StatefulWidget {
   final String reqId;
   final Request request;
   final Function onDelete;
-  //emergency, expiry 
+  //emergency, expiry
 
   const MyRequestCard({
     Key? key,
@@ -37,7 +38,8 @@ class _MyRequestCardState extends State<MyRequestCard> {
   late final String bloodGroup;
   late final String patientName;
   late final String status;
-  late final DateTime expiryDate;
+  late final String expiryDate;
+  late final String expiryTime;
 
   @override
   void initState() {
@@ -47,7 +49,8 @@ class _MyRequestCardState extends State<MyRequestCard> {
     bloodGroup = widget.request.bloodGroup;
     patientName = widget.request.patientName;
     status = widget.request.status.name;
-    expiryDate = widget.request.expiryDate!;
+    expiryDate = DateFormat('yyyy/MM/dd').format(widget.request.expiryDate!);
+    expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate!);
 
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
       setState(() {
@@ -96,6 +99,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
   }
 
   Column requestInfo() {
+    const double boxDim = 8;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,14 +110,36 @@ class _MyRequestCardState extends State<MyRequestCard> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: boxDim),
         Text(
           'Patient: $patientName',
           style: const TextStyle(
             fontSize: 16,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: boxDim),
+        Row(children: [
+          const Icon(Icons.calendar_today_rounded,
+              size: 18, color: Colors.deepPurple),
+          const SizedBox(width: boxDim),
+          Text(
+            expiryDate,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(width: boxDim * 2),
+          const Icon(Icons.access_time_rounded,
+              size: 18, color: Colors.deepPurple),
+          const SizedBox(width: boxDim),
+          Text(
+            expiryTime,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ]),
+        const SizedBox(height: boxDim),
         Row(
           children: [
             Expanded(child: unitsCollectedInfo()),
