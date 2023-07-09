@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 
 import '../models/profile.dart';
+import '../screens/interested_users_screen.dart';
+import '../utils/screen_utils.dart';
 
 class Listee extends StatefulWidget {
   final List<String> ids;
@@ -239,6 +241,9 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .collection("Interested")
             .doc(widget.userData['id'])
             .update({'isDonor': true});
+        if (!mounted) return;
+        Utils.reload(
+            page: InterestedUsers(reqid: widget.reqid), context: context);
       },
       child: Column(
         children: const [
@@ -269,6 +274,9 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .collection("Interested")
             .doc(widget.userData['id'])
             .update({'isDonor': false});
+        if (!mounted) return;
+        Utils.reload(
+            page: InterestedUsers(reqid: widget.reqid), context: context);
       },
       child: Column(
         children: const [
