@@ -54,23 +54,17 @@ class _DonorCardState extends State<DonorCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Align(
-            alignment: Alignment.topRight,
-            child: Stack(
-              children: [
-                Container(
-                  height: 30,
-                  width: 35,
-                  color: Colors.white,
-                ),
-                Text(" BB",
+              alignment: Alignment.topRight,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(2),
+                child: Text(" BB",
                     style: TextStyle(
                         color: Colors.red[800],
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic)),
-              ],
-            ),
-          ),
+              )),
           Row(
             children: [
               Image.asset('assets/images/thankshand.png', height: 90),

@@ -49,7 +49,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
     bloodGroup = widget.request.bloodGroup;
     patientName = widget.request.patientName;
     status = widget.request.status.name;
-    expiryDate = DateFormat('yyyy/MM/dd').format(widget.request.expiryDate!);
+    expiryDate = DateFormat('dd/mm/yyyy').format(widget.request.expiryDate!);
     expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate!);
 
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
@@ -146,7 +146,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
             const SizedBox(width: 10),
             statusInfo(
               status: Utils.capitalizeFirstLetter(status),
-              color: status == 'pending' ? Colors.yellow : Colors.green,
+              color: status == 'pending' ? Colors.red : Colors.green,
             ),
             const SizedBox(width: 5),
           ],
@@ -216,9 +216,9 @@ class _MyRequestCardState extends State<MyRequestCard> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         const SizedBox(height: 10),
-        //TODO: add edit functionality
+        //TODO: add share functionality
         circleButtonWithTooltip(
-            tooltipMessage: "Edit units", onPressed: () {}, icon: Icons.edit),
+            tooltipMessage: "Share", onPressed: () {}, icon: Icons.share),
 
         const SizedBox(height: 10),
         circleButtonWithTooltip(

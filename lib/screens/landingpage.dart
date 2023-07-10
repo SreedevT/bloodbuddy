@@ -69,15 +69,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               );
             },
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          ],
         ),
         drawer: drawer(context),
         body: Container(
