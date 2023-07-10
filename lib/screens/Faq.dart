@@ -18,18 +18,6 @@ class _FAQPageState extends State<FAQPage> {
           "FAQS",
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Search for anything',
-            onPressed: () {},
-          ),
-        ],
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
-        ),
       ),
       body: Container(
         decoration: const BoxDecoration(

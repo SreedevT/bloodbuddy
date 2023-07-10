@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -93,14 +92,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   height: 20,
                 ),
                 Container(
-                  height: 150,
+                  height: 50,
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.all(9.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.red[300],
+                    // color: Colors.red[300],
                   ),
-                  child: Text("See, whats hapening around you!")
+                  child:const  Text("See, whats happening in BLOOD BUDDY!",style:TextStyle(fontSize: 20,
+                      fontWeight: FontWeight.bold))
                 ),
                 StreamBuilder(
                   stream: query.snapshots(),
@@ -199,8 +199,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profile'),
+              leading: const Icon(Icons.help),
+              title: const Text('Help & Support',style: TextStyle(fontWeight: FontWeight.bold),),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, 'profile');
@@ -208,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+              title: const Text('Logout',style: TextStyle(fontWeight: FontWeight.bold),),
               onTap: () {
                 FirebaseAuth.instance.signOut();
                 Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => false);
@@ -233,7 +233,8 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot){
       return Card(
         color: Colors.grey[400],
         child: ListTile(
-          title: Text("${data['Name']} donated to ${data['patientName']}"),
+          leading: Icon(Icons.favorite,color: Colors.red[800],),
+          title: Text("${data['Name']} donated to ${data['patientName']} at ${data['hospitalName']}\n- BLOOD BUDDY"),
         ),
       );
     }
