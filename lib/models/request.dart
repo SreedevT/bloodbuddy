@@ -14,15 +14,15 @@ class Request {
   final String bloodGroup;
   final int units;
   //? name of the patient for whom the request is made
-  final DateTime? expiryDate;
+  final DateTime expiryDate;
   final String area;
   // var requisitionForm; //? image/pdf of the requisition form
-  // final DateTime expiryDate;
   final String phone;
   //? emergency requests treated differenty
   // maybe shown in a different screen / different color / highlighted
   final bool isEmergency;
   Status status;
+  
 
   //? position of the hospital
   final LatLng hospitalLocation;

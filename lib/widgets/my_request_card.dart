@@ -49,8 +49,8 @@ class _MyRequestCardState extends State<MyRequestCard> {
     bloodGroup = widget.request.bloodGroup;
     patientName = widget.request.patientName;
     status = widget.request.status.name;
-    expiryDate = DateFormat('dd/mm/yyyy').format(widget.request.expiryDate!);
-    expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate!);
+    expiryDate = DateFormat('dd/mm/yyyy').format(widget.request.expiryDate);
+    expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate);
 
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
       setState(() {

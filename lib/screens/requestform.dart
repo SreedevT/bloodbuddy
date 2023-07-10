@@ -146,7 +146,7 @@ class _RequestFormState extends State<RequestForm> {
           bloodGroup: _selectedBloodType!,
           units: units,
           area: area,
-          expiryDate: _selectedDateTime,
+          expiryDate: _selectedDateTime!,
           phone: phoneString,
           hospitalName: hospitalName!,
           hospitalLocation: LatLng(
