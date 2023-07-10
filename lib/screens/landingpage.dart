@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../widgets/donor_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,6 +17,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late final Query query;
+  late StreamSubscription queryListner;
 
   @override
   void initState() {
@@ -24,6 +29,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
     _animationController.forward();
+    getFeed();
+  }
+
+  Future getFeed() async{
+      query = FirebaseFirestore.instance.collection('Reqs').where('status',isEqualTo: 'accepted');
+      queryListner = query.snapshots().listen((feedValue){
+        for(var i in feedValue.docs){
+          log("Feed: ${i.data().toString()}");
+        }
+      });
   }
 
   @override
@@ -77,93 +92,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           color: Colors.white,
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const DonorCard(),
                 const SizedBox(
                   height: 20,
                 ),
                 Container(
-                  margin: const EdgeInsets.fromLTRB(0, 0, 80, 0),
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: const Text(
-                    'Recent Donation',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 10, 20),
-                  width: 350,
-                  height: 100,
+                  height: 150,
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.all(9.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(212, 231, 231, 231),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.red[300],
                   ),
-                  child: const Text(
-                    'Sony donated to shaf......................',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 5, 0, 0),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
+                  child: Text("See, whats hapening around you!")
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 10, 20),
-                  width: 350,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(212, 231, 231, 231),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Sony donated to shaf......................',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 5, 0, 0),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 1,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(150, 0, 0, 0),
-                  child: const InkWell(
-                    child: Text(
-                      'Click here for more donation Details',
-                      style: TextStyle(fontSize: 9),
-                    ),
-                  ),
-                ),
-                Image.asset(
-                  'assets/images/image2.jpg',
-                  width: 150,
-                  height: 100,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(50, 1, 50, 0),
-                  color: const Color.fromARGB(211, 255, 255, 255),
-                  child: const Text(
-                    'Thank you For donating to save a life',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 5, 0, 0),
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
+                StreamBuilder(
+                  stream: query.snapshots(),
+                  builder: (context,snapshots){
+                      if(snapshots.hasError){
+                        return const Center(child: Text('No Donations Yet'));
+                      }
+                       if(snapshots.hasData){
+                        // for(var i in snapshots.data!.docs){
+                        //   log("FEEED!!!!: ${i.data().toString()}");
+                        // }   
+                        return feedCards(snapshots.data!.docs);
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                )
               ],
             ),
           ),
@@ -229,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     TextSpan(
                       text: "\nEmpowering Blood Donation.",
                       style: TextStyle(
+                        fontFamily: 'normal',
                         fontWeight: FontWeight.normal,
                         fontSize: 15,
                       ),
@@ -238,10 +198,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
+              leading: const Icon(Icons.question_answer),
+              title: const Text('FAQS',style: TextStyle(fontWeight: FontWeight.bold),),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, 'faq');
               },
             ),
             ListTile(
@@ -265,4 +225,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
     );
   }
+}
+
+
+Widget feedCards(List<QueryDocumentSnapshot> snapshot){
+  return ListView.builder(
+    padding: const EdgeInsets.all(8.0),
+    shrinkWrap: true,
+    physics: const ClampingScrollPhysics(),
+    itemCount: snapshot.length,
+    itemBuilder: (context,index){
+      Map<String,dynamic> data= snapshot[index].data() as Map<String,dynamic>;
+      return Card(
+        color: Colors.grey[400],
+        child: ListTile(
+          title: Text("${data['Name']} donated to ${data['patientName']}"),
+        ),
+      );
+    }
+  );
 }
