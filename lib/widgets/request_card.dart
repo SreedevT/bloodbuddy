@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,6 +61,7 @@ class _RequestCardState extends State<RequestCard> {
       setState(() {
         // means the user has already shown interest
         _interested = snapshot.exists;
+        log(_interested.toString());
       });
     });
   }
@@ -180,7 +182,8 @@ class _RequestCardState extends State<RequestCard> {
             children: [
               Text(
                 widget.bloodGroup,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ],
           ),

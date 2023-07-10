@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:blood/Firestore/request.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,22 +21,46 @@ class _RequestPageState extends State<RequestPage> {
   final String? user = FirebaseAuth.instance.currentUser!.uid;
   late final Map<String, dynamic> profile;
   late List<RequestCard> requests = [];
-  late StreamSubscription queryListner;
+  StreamSubscription? queryListner;
 
   @override
   void initState() {
     super.initState();
-    DataBase(uid: user!).getUserProfile().then((value) => {
-          profile = value,
-          _getReq(),
-        });
+    DataBase(uid: user!).getUserProfile().then((value) {
+      profile = value;
+      log("Current Request: ${profile['Current Request']}");
+      profile['Current Request'] == null ? _getReq() : _getCurrentRequest();
+    });
+  }
+
+  ///Gets the Donors Current active request. This shows only the request
+  ///that has accepted the user as donor.
+  Future<Set<void>> _getCurrentRequest() {
+    return RequestQuery(reqId: profile['Current Request'])
+        .getRequest()
+        .then((value) => {
+              setState(() {
+                requests = [
+                  ...requests,
+                  RequestCard(
+                    reqId: profile['Current Request'],
+                    hospitalAddress: value['hospitalName'],
+                    units: value['units'],
+                    bloodGroup: value['bloodGroup'],
+                    patientName: value['patientName'],
+                  )
+                ];
+              })
+            });
   }
 
   @override
   void dispose() {
     //?Not canceling the subscription will lead to memory leak
     //Error stating setState() called after dispose()
-    queryListner.cancel();
+    if (profile['Current Request'] == null) {
+      queryListner!.cancel();
+    }
     super.dispose();
   }
 

@@ -26,6 +26,7 @@ class DataBase {
     bool question1,
     bool question2,
     bool question3,
+    String? currentRequestId,
   ) async {
     return await userProfile.doc(uid).set(
       {
@@ -42,6 +43,7 @@ class DataBase {
         'tattoo': question1,
         'HIV_tested': question2,
         'Covid_vaccine': question3,
+        'Current Request': currentRequestId,
       },
     );
   }
@@ -81,10 +83,18 @@ class DataBase {
   }
   // to update user location
 
-  Future updateUserLocation(String genArea) async {
+  Future<void> updateUserLocation(String genArea) async {
     return await userProfile.doc(uid).update(
       {
         'General Area': genArea,
+      },
+    );
+  }
+
+  Future<void> updateCurrentRequest(String? currentRequestId) async {
+    return await userProfile.doc(uid).update(
+      {
+        'Current Request': currentRequestId,
       },
     );
   }

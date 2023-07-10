@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 ///Get number of interested users given re
 class RequestQuery {
   String reqId;
@@ -27,9 +28,17 @@ class RequestQuery {
 
   Future<void> deleteRequest() async {
     log("Deleting request $reqId");
-    await request
-        .doc(reqId)
-        .delete();
+    await request.doc(reqId).delete();
   }
-  // return null;
+
+  Future<Map<String, dynamic>> getRequest() async {
+    try {
+      DocumentSnapshot snapshot = await request.doc(reqId).get();
+      log("Request from getRequest(): ${snapshot.data()}");
+      return snapshot.data()! as Map<String, dynamic>;
+    } catch (e) {
+      log("Error getting request: $e");
+      return {};
+    }
+  }
 }
