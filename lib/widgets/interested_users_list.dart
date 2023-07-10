@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:blood/screens/profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -170,98 +171,92 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTileCard(
-      // ignore: prefer_const_constructors
-      contentPadding: EdgeInsets.all(10),
-      baseColor: widget.userData['isDonor']
-          ? Colors.green[200]
-          : _donorsFilled
-              ? Colors.grey[200]
-              : Colors.cyan[200],
-      expandedColor: Colors.red[50],
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return IgnorePointer(
+      ignoring: _donorsFilled & !widget.userData['isDonor'],
+      child: ExpansionTileCard(
+        contentPadding: const EdgeInsets.all(10),
+        baseColor: widget.userData['isDonor']
+            ? Colors.green[200]
+            : _donorsFilled
+                ? Colors.grey[200]
+                : Colors.cyan[200],
+        expandedColor: Colors.red[50],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${widget.userData['First Name']} ${widget.userData['Last Name']}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "${widget.userData['Blood Group']}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        subtitle: Text(
+            "Age: ${widget.userData['Age']} | Place: ${widget.userData['General Area']}"),
         children: [
-          Text(
-            "${widget.userData['First Name']} ${widget.userData['Last Name']}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          const Divider(
+            thickness: 1.0,
+            height: 1.0,
           ),
-          Text(
-            "${widget.userData['Blood Group']}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceAround,
+            buttonHeight: 52.0,
+            buttonMinWidth: 90.0,
+            children: [
+              TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  log("Whatsapp pressed");
+                  sendWhatsappMsg(widget.userData);
+                },
+                child: Column(
+                  children: [
+                    SvgPicture.asset('assets/icons/whatsapp_icon.svg',
+                        height: 30),
+                    const SizedBox(height: 1.5),
+                    const Text('Chat'),
+                  ],
+                ),
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  log("Call pressed");
+                  callUser(widget.userData);
+                },
+                child: Column(
+                  children: const [
+                    Icon(Icons.call),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2.0),
+                    ),
+                    Text('Call'),
+                  ],
+                ),
+              ),
+              widget.userData['isDonor']
+                  ? removeDonorButton()
+                  : confirmDonorButton(),
+            ],
           ),
         ],
       ),
-      subtitle: Text(
-          "Age: ${widget.userData['Age']} | Place: ${widget.userData['General Area']}"),
-      children: [
-        const Divider(
-          thickness: 1.0,
-          height: 1.0,
-        ),
-        ButtonBar(
-          alignment: MainAxisAlignment.spaceAround,
-          buttonHeight: 52.0,
-          buttonMinWidth: 90.0,
-          children: [
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                ),
-              ),
-              onPressed: () {
-                log("Whatsapp pressed");
-                sendWhatsappMsg(widget.userData);
-              },
-              child: Column(
-                children: [
-                  SvgPicture.asset('assets/icons/whatsapp_icon.svg',
-                      height: 30),
-                  const SizedBox(height: 1.5),
-                  const Text('Chat'),
-                ],
-              ),
-            ),
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                ),
-              ),
-              onPressed: () {
-                log("Call pressed");
-                callUser(widget.userData);
-              },
-              child: Column(
-                children: const [
-                  Icon(Icons.call),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                  ),
-                  Text('Call'),
-                ],
-              ),
-            ),
-            confirmButton(),
-          ],
-        ),
-      ],
     );
-  }
-
-  Widget confirmButton() {
-    if (_donorsFilled && !widget.userData['isDonor']) {
-      return const SizedBox();
-    }
-
-    return widget.userData['isDonor']
-        ? removeDonorButton()
-        : confirmDonorButton();
   }
 
   TextButton confirmDonorButton() {
@@ -281,6 +276,8 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .collection("Interested")
             .doc(widget.userData['id'])
             .update({'isDonor': true});
+        //? User profile updated with the request id, No other requests will be shown to the user.
+        await DataBase(uid: widget.userData['id']).updateCurrentRequest(widget.reqid);
         if (!mounted) return;
         Utils.reload(
             page: InterestedUsers(reqid: widget.reqid), context: context);
@@ -314,6 +311,9 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .collection("Interested")
             .doc(widget.userData['id'])
             .update({'isDonor': false});
+        //? User profile updated with current request as null. User can see other requests.
+        //? Showing and hiding of requests done in donate screen.
+        await DataBase(uid: widget.userData['id']).updateCurrentRequest(null);
         if (!mounted) return;
         Utils.reload(
             page: InterestedUsers(reqid: widget.reqid), context: context);
