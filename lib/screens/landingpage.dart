@@ -18,7 +18,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late AnimationController _animationController;
   late Animation<double> _animation;
   late final Query query;
-  late StreamSubscription queryListner;
 
   @override
   void initState() {
@@ -34,11 +33,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Future getFeed() async{
       query = FirebaseFirestore.instance.collection('Reqs').where('status',isEqualTo: 'accepted');
-      queryListner = query.snapshots().listen((feedValue){
-        for(var i in feedValue.docs){
-          log("Feed: ${i.data().toString()}");
-        }
-      });
   }
 
   @override
@@ -115,9 +109,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         return const Center(child: Text('No Donations Yet'));
                       }
                        if(snapshots.hasData){
-                        // for(var i in snapshots.data!.docs){
-                        //   log("FEEED!!!!: ${i.data().toString()}");
-                        // }   
+                        for(var i in snapshots.data!.docs){
+                          log("FEEED!!!!: ${i.data().toString()}");
+                        }   
                         return feedCards(snapshots.data!.docs);
                     }
                     return const Center(child: CircularProgressIndicator());
