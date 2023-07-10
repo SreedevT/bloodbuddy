@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:share_plus/share_plus.dart';
 import '../Firestore/request.dart';
 import '../models/request.dart';
 import '../utils/screen_utils.dart';
@@ -218,7 +217,9 @@ class _MyRequestCardState extends State<MyRequestCard> {
         const SizedBox(height: 10),
         //TODO: add share functionality
         circleButtonWithTooltip(
-            tooltipMessage: "Share", onPressed: () {}, icon: Icons.share),
+            tooltipMessage: "Share", onPressed: () {
+              Share.share('Please help if you can !');
+            }, icon: Icons.share),
 
         const SizedBox(height: 10),
         circleButtonWithTooltip(
