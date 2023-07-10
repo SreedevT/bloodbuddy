@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 
+import '../Firestore/userprofile.dart';
 import '../models/profile.dart';
 import '../screens/interested_users_screen.dart';
 import '../utils/screen_utils.dart';
@@ -38,9 +39,8 @@ class _ListeeState extends State<Listee> {
     userDataList.clear();
     for (String id in widget.ids) {
       try {
-        //? Get data from user profile
-        Map<String, dynamic> data =
-            Provider.of<Profile>(context, listen: false).toJson();
+        //? Get data of interested user from user profile
+        Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
         log("Profile DATA: $data\n");
 
         //? Get data from interested subcollection
@@ -54,6 +54,9 @@ class _ListeeState extends State<Listee> {
           ..addAll({'id': id})
           ..addAll(interestedData)
           ..addAll(requestData);
+          //data.addAll({id})
+          //data.addAll(interestedData)
+          
 
         if (data.isNotEmpty) {
           log("USER DATA: $data");
@@ -84,6 +87,7 @@ class _ListeeState extends State<Listee> {
 
   ///Function for getting interesterd users phone number and time of interest
   Future<Map<String, dynamic>> getInterestedDoc(String uid) async {
+    log("UID: $uid");
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection("Reqs")
