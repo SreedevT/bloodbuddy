@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+///Get number of interested users given re
 class RequestQuery {
   String reqId;
   RequestQuery({required this.reqId});

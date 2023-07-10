@@ -2,12 +2,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 
+import '../Firestore/request.dart';
 import '../Firestore/userprofile.dart';
-import '../models/profile.dart';
 import '../screens/interested_users_screen.dart';
 import '../utils/screen_utils.dart';
 
@@ -25,11 +24,17 @@ class Listee extends StatefulWidget {
 class _ListeeState extends State<Listee> {
   List<Map<String, dynamic>> userDataList = [];
   // late Map<String, dynamic> userData;
+  int unitsCollected = 0;
 
   @override
   void initState() {
     super.initState();
     fetchData();
+    RequestQuery(reqId: widget.reqid).getUnitsCollected().then((value) {
+      setState(() {
+        unitsCollected = value;
+      });
+    });
   }
 
   ///Fetches data from interested user's profile, the interested subcollection and parent request
@@ -54,9 +59,8 @@ class _ListeeState extends State<Listee> {
           ..addAll({'id': id})
           ..addAll(interestedData)
           ..addAll(requestData);
-          //data.addAll({id})
-          //data.addAll(interestedData)
-          
+        //data.addAll({id})
+        //data.addAll(interestedData)
 
         if (data.isNotEmpty) {
           log("USER DATA: $data");
@@ -79,7 +83,10 @@ class _ListeeState extends State<Listee> {
         return Padding(
           padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
           //TODO: Maybe use stream or something. Update on card does not work realtime
-          child: InterestedUserCard(userData: userData, reqid: widget.reqid),
+          child: InterestedUserCard(
+              userData: userData,
+              reqid: widget.reqid,
+              unitsCollected: unitsCollected),
         );
       },
     );
@@ -120,6 +127,7 @@ class _ListeeState extends State<Listee> {
         return {
           'hospitalName': data['hospitalName'],
           'position': data['position'],
+          'units': data['units'],
         };
       }
     } catch (e) {
@@ -132,24 +140,44 @@ class _ListeeState extends State<Listee> {
 class InterestedUserCard extends StatefulWidget {
   final Map<String, dynamic> userData;
   final String reqid;
+  final int unitsCollected;
 
   const InterestedUserCard({
     Key? key,
     required this.userData,
     required this.reqid,
+    required this.unitsCollected,
   }) : super(key: key);
   @override
   State<InterestedUserCard> createState() => _InterestedUserCardState();
 }
 
 class _InterestedUserCardState extends State<InterestedUserCard> {
+  bool _donorsFilled = false;
+
+  @override
+  void initState() {
+    log("Units collected ${widget.unitsCollected}");
+    log("UNits required ${widget.userData['units']}");
+
+    widget.unitsCollected == widget.userData['units']
+        ? _donorsFilled = true
+        : _donorsFilled = false;
+
+    log("Donors filled: $_donorsFilled");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ExpansionTileCard(
       // ignore: prefer_const_constructors
       contentPadding: EdgeInsets.all(10),
-      baseColor:
-          widget.userData['isDonor'] ? Colors.green[200] : Colors.cyan[100],
+      baseColor: widget.userData['isDonor']
+          ? Colors.green[200]
+          : _donorsFilled
+              ? Colors.grey[200]
+              : Colors.cyan[200],
       expandedColor: Colors.red[50],
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,13 +247,21 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
                 ],
               ),
             ),
-            widget.userData['isDonor']
-                ? removeDonorButton()
-                : confirmDonorButton(),
+            confirmButton(),
           ],
         ),
       ],
     );
+  }
+
+  Widget confirmButton() {
+    if (_donorsFilled && !widget.userData['isDonor']) {
+      return const SizedBox();
+    }
+
+    return widget.userData['isDonor']
+        ? removeDonorButton()
+        : confirmDonorButton();
   }
 
   TextButton confirmDonorButton() {
