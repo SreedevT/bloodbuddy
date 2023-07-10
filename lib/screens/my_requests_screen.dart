@@ -28,6 +28,7 @@ class _MyRequestListState extends State<MyRequestList> {
         .collection('Reqs')
         .where('id', isEqualTo: uid);
     // _getMyReq();
+    setState(() {});
     super.initState();
   }
 

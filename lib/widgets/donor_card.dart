@@ -42,8 +42,8 @@ class _DonorCardState extends State<DonorCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 450.0,
-      height: 220.0,
+      // width: 450.0,
+      // height: 220.0,
       padding: const EdgeInsets.all(16.0),
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 25.0),
       decoration: BoxDecoration(
@@ -57,8 +57,8 @@ class _DonorCardState extends State<DonorCard> {
               alignment: Alignment.topRight,
               child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.all(2),
-                child: Text(" BB",
+                padding: const EdgeInsets.fromLTRB(4, 1, 4, 1),
+                child: Text("BB",
                     style: TextStyle(
                         color: Colors.red[800],
                         fontSize: 20,
@@ -129,9 +129,9 @@ class _DonorCardState extends State<DonorCard> {
               const SizedBox(
                 width: 10,
               ),
-              const Text(
-                '0A3E4r',
-                style: TextStyle(
+              Text(
+                "${data?['id'].substring(0,6) ?? 'loading...'}",
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w600),

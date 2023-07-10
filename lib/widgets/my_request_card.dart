@@ -41,6 +41,9 @@ class _MyRequestCardState extends State<MyRequestCard> {
   late final String expiryDate;
   late final String expiryTime;
 
+  //derived variables
+  bool _donorsFilled = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +58,10 @@ class _MyRequestCardState extends State<MyRequestCard> {
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
       setState(() {
         unitsCollected = value;
+
+        //Set whether donors are filled
+        _donorsFilled = unitsCollected == units;
+        log("Donors filled: $_donorsFilled");
       });
     });
     user = FirebaseAuth.instance.currentUser!.uid;
@@ -119,7 +126,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
         ),
         const SizedBox(height: boxDim),
         Row(children: [
-          const Icon(Icons.calendar_today_rounded,
+          const Icon(Icons.calendar_today_outlined,
               size: 18, color: Colors.deepPurple),
           const SizedBox(width: boxDim),
           Text(
@@ -145,8 +152,14 @@ class _MyRequestCardState extends State<MyRequestCard> {
             Expanded(child: unitsCollectedInfo()),
             const SizedBox(width: 10),
             statusInfo(
-              status: Utils.capitalizeFirstLetter(status),
-              color: status == 'pending' ? Colors.red : Colors.green,
+              status: Utils.capitalizeFirstLetter(
+                _donorsFilled ? 'Ready' : status,
+              ),
+              color: _donorsFilled
+                  ? Colors.cyan
+                  : status == 'pending'
+                      ? Colors.red
+                      : Colors.green,
             ),
             const SizedBox(width: 5),
           ],

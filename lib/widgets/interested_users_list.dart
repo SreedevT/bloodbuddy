@@ -26,16 +26,12 @@ class _ListeeState extends State<Listee> {
   List<Map<String, dynamic>> userDataList = [];
   // late Map<String, dynamic> userData;
   int unitsCollected = 0;
+  bool donorsFilled = false;
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    RequestQuery(reqId: widget.reqid).getUnitsCollected().then((value) {
-      setState(() {
-        unitsCollected = value;
-      });
-    });
   }
 
   ///Fetches data from interested user's profile, the interested subcollection and parent request
@@ -43,6 +39,14 @@ class _ListeeState extends State<Listee> {
   ///Returns a combined map with key values respecting firestore document structure
   void fetchData() async {
     userDataList.clear();
+    //Set units Collected
+    RequestQuery(reqId: widget.reqid).getUnitsCollected().then((value) {
+      setState(() {
+        unitsCollected = value;
+      });
+    });
+
+    //? Fill in the user data in a list
     for (String id in widget.ids) {
       try {
         //? Get data of interested user from user profile
@@ -73,23 +77,57 @@ class _ListeeState extends State<Listee> {
         log(e.toString());
       }
     }
+    //? Set wether donors are fulfilled
+    setState(() {
+      donorsFilled = unitsCollected == userDataList[0]['units'];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: userDataList.length,
-      itemBuilder: (BuildContext context, int index) {
-        Map<String, dynamic> userData = userDataList[index];
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          //TODO: Maybe use stream or something. Update on card does not work realtime
-          child: InterestedUserCard(
-              userData: userData,
-              reqid: widget.reqid,
-              unitsCollected: unitsCollected),
-        );
-      },
+    Color? buttonColor =
+        donorsFilled ? Colors.green.shade300 : Colors.grey.shade400;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Container(
+          margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+          padding: const EdgeInsets.all(10),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: buttonColor,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: const Center(
+            child: Text(
+              'Close Request',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: userDataList.length,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> userData = userDataList[index];
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                //TODO: Maybe use stream or something. Update on card does not work realtime
+                child: InterestedUserCard(
+                    userData: userData,
+                    reqid: widget.reqid,
+                    unitsCollected: unitsCollected),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -179,7 +217,7 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             ? Colors.green[200]
             : _donorsFilled
                 ? Colors.grey[200]
-                : Colors.cyan[200],
+                : Colors.cyan[100],
         expandedColor: Colors.red[50],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -277,7 +315,8 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .doc(widget.userData['id'])
             .update({'isDonor': true});
         //? User profile updated with the request id, No other requests will be shown to the user.
-        await DataBase(uid: widget.userData['id']).updateCurrentRequest(widget.reqid);
+        await DataBase(uid: widget.userData['id'])
+            .updateCurrentRequest(widget.reqid);
         if (!mounted) return;
         Utils.reload(
             page: InterestedUsers(reqid: widget.reqid), context: context);

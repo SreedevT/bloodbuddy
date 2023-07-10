@@ -33,6 +33,15 @@ class _InterestedUsersState extends State<InterestedUsers> {
       appBar: AppBar(
         title: const Text('Interested Users'),
         centerTitle: false,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.popAndPushNamed(
+              context,
+              'my_requests',
+            );
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
       body: FutureBuilder(
         future: interestedCollection.get(),
