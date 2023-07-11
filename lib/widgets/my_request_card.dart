@@ -259,11 +259,11 @@ class _MyRequestCardState extends State<MyRequestCard> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         const SizedBox(height: 10),
-        //TODO: add share functionality
         circleButtonWithTooltip(
             tooltipMessage: "Share",
-            onPressed: () {
-              Share.share('Please help if you can !');
+            onPressed: () { 
+              String data = "$patientName needs $units units of $bloodGroup blood at $hospitalAddress on $expiryDate at $expiryTime. Please help!";
+              Share.share(data);
             },
             icon: Icons.share),
 

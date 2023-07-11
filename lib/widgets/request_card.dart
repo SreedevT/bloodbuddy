@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class RequestCard extends StatefulWidget {
   final String reqId;
@@ -245,7 +246,10 @@ class _RequestCardState extends State<RequestCard> {
                     const SizedBox(height: 92),
                     circleButtonWithTooltip(
                       tooltipMessage: "Share",
-                      onPressed: () {},
+                      onPressed: () {
+                        Share.share(
+                            'Hey! I found a request for ${widget.bloodGroup} blood at ${widget.hospitalAddress} on the BloodBuddy app. Please check it out and do contact if possible!');
+                      },
                       icon: Icons.share,
                     ),
                   ],

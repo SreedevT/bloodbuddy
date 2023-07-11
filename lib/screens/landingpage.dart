@@ -95,16 +95,19 @@ class _HomeScreenState extends State<HomeScreen>
                   height: 20,
                 ),
                 Container(
-                    height: 50,
+                    height: 80,
                     width: MediaQuery.of(context).size.width,
                     margin: const EdgeInsets.all(9.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       // color: Colors.red[300],
                     ),
-                    child: const Text("See, whats happening in BLOOD BUDDY!",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold))),
+                    child: const Center(
+                      child:  Text('''See, whats happening 
+                              in BLOOD BUDDY!''',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    )),
                 StreamBuilder(
                     stream: query.snapshots(),
                     builder: (context, snapshots) {
@@ -245,7 +248,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
         return SizedBox(
             height: 100,
             child: Card(
-                elevation: 2,
+                elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   side: BorderSide(color: Colors.grey.shade200, width: 2),
@@ -257,8 +260,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                     title: AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
-                          //TODO Maybe change text to format 'patientName recived units of blood at hospitalName'
-                          "${data['Name']} donated to ${data['patientName']} at ${data['hospitalName']}",
+                          "${data['patientName']} recieved ${data['units']} units of blood at ${data['hospitalName']}",
                           textStyle: const TextStyle(
                             fontSize: 16,
                           ),
@@ -266,6 +268,13 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                         ),
                       ],
                       totalRepeatCount: 1,
+                    ),
+                    subtitle: const Text("\"Thankyou to all the donors!.\"",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic
+                      ),
                     ),
                   ),
                 )));
