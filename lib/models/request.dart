@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart';
 
-enum Status { pending, accepted }
+enum Status { pending, complete, expired, cancelled, ready}
 
 class Request {
   //? ID of the user making the request

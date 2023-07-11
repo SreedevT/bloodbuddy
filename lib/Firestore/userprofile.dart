@@ -98,4 +98,10 @@ class DataBase {
       },
     );
   }
+
+  Future<void> profileOnCloseRequest() async {
+    return await userProfile.doc(uid).update(
+      {'Current Request': null, 'Last Donated': DateTime.now()},
+    );
+  }
 }

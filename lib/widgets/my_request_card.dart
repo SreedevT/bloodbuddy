@@ -78,27 +78,30 @@ class _MyRequestCardState extends State<MyRequestCard> {
       opacity: _visible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 750),
       curve: Curves.easeIn,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                flex: 6,
-                child: requestInfo(),
-              ),
-              //Forces address to be 2 line most of the time, causes 1st column to take more space.
-              const SizedBox(width: 10),
-              Expanded(
-                child: sideActions(),
-              ),
-            ],
+      child: IgnorePointer(
+        ignoring: status == 'complete',
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  flex: 6,
+                  child: requestInfo(),
+                ),
+                //Forces address to be 2 line most of the time, causes 1st column to take more space.
+                const SizedBox(width: 10),
+                Expanded(
+                  child: sideActions(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -106,33 +109,63 @@ class _MyRequestCardState extends State<MyRequestCard> {
   }
 
   Column requestInfo() {
-    const double boxDim = 8;
+    const double boxDim = 10;
+    MaterialColor statusColor;
+    if (status == 'pending' && !_donorsFilled) {
+      statusColor = Colors.red;
+    } else if (status == 'complete') {
+      statusColor = Colors.green;
+    } else {
+      statusColor = Colors.cyan;
+    }
+
+    String? statusText;
+    if (status == 'pending' && !_donorsFilled) {
+      statusText = 'Pending';
+    } else if (status == 'complete') {
+      statusText = 'Complete';
+    } else if (_donorsFilled) {
+      statusText = 'Ready';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          children: [
+            const Icon(Icons.location_on_outlined,
+                size: 25, color: Colors.deepPurple),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                hospitalAddress,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: boxDim),
+        // Divider(thickness: 1),
         Text(
-          hospitalAddress,
+          'Patient Name: ${Utils.capitalizeFirstLetter(patientName)}',
           style: const TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: boxDim),
-        Text(
-          'Patient: $patientName',
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        const SizedBox(height: boxDim),
+        // Divider(thickness: 1),
         Row(children: [
           const Icon(Icons.calendar_today_outlined,
               size: 18, color: Colors.deepPurple),
           const SizedBox(width: boxDim),
           Text(
             expiryDate,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
+              color: Colors.grey.shade600,
             ),
           ),
           const SizedBox(width: boxDim * 2),
@@ -141,25 +174,21 @@ class _MyRequestCardState extends State<MyRequestCard> {
           const SizedBox(width: boxDim),
           Text(
             expiryTime,
-            style: const TextStyle(
+            style: TextStyle(
+              color: Colors.grey.shade600,
               fontSize: 16,
             ),
           ),
         ]),
+        // Divider(thickness: 1),
         const SizedBox(height: boxDim),
         Row(
           children: [
             Expanded(child: unitsCollectedInfo()),
             const SizedBox(width: 10),
             statusInfo(
-              status: Utils.capitalizeFirstLetter(
-                _donorsFilled ? 'Ready' : status,
-              ),
-              color: _donorsFilled
-                  ? Colors.cyan
-                  : status == 'pending'
-                      ? Colors.red
-                      : Colors.green,
+              status: Utils.capitalizeFirstLetter(statusText!),
+              color: statusColor,
             ),
             const SizedBox(width: 5),
           ],
@@ -180,17 +209,17 @@ class _MyRequestCardState extends State<MyRequestCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color.shade100,
+        color: color.shade50,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.shade700,
+          color: color.shade200,
           width: 1,
         ),
       ),
       child: Text(
         status,
         style: TextStyle(
-          color: color.shade900,
+          color: color.shade400,
           fontSize: fontSize ?? defaultSize,
           fontWeight: fontWeight ?? defaultWeight,
         ),
@@ -213,6 +242,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
           '/$units units collected',
           style: const TextStyle(
             fontSize: 16,
+            color: Colors.grey,
           ),
         ),
       ],
@@ -231,9 +261,11 @@ class _MyRequestCardState extends State<MyRequestCard> {
         const SizedBox(height: 10),
         //TODO: add share functionality
         circleButtonWithTooltip(
-            tooltipMessage: "Share", onPressed: () {
+            tooltipMessage: "Share",
+            onPressed: () {
               Share.share('Please help if you can !');
-            }, icon: Icons.share),
+            },
+            icon: Icons.share),
 
         const SizedBox(height: 10),
         circleButtonWithTooltip(

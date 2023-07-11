@@ -78,6 +78,7 @@ class _ListeeState extends State<Listee> {
       }
     }
     //? Set wether donors are fulfilled
+    //TODO May cause errors ignore if it works
     setState(() {
       donorsFilled = unitsCollected == userDataList[0]['units'];
     });
@@ -92,21 +93,24 @@ class _ListeeState extends State<Listee> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
-        Container(
-          margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
-          padding: const EdgeInsets.all(10),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: buttonColor,
-            borderRadius: BorderRadius.circular(9),
-          ),
-          child: const Center(
-            child: Text(
-              'Close Request',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        GestureDetector(
+          onTap: () => donorsFilled ? closeRequest() : closeRequestDialog(),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+            padding: const EdgeInsets.all(10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: buttonColor,
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: const Center(
+              child: Text(
+                'Close Request',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -129,6 +133,88 @@ class _ListeeState extends State<Listee> {
         ),
       ],
     );
+  }
+
+  void closeRequestDialog() {
+    log("Close request while not filled pressed");
+    const TextStyle alertTitle = TextStyle(
+      fontWeight: FontWeight.bold,
+    );
+    const TextStyle alertContent = TextStyle(
+      fontSize: 16,
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(
+                  Icons.warning_amber_outlined,
+                  size: 30,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text('Careful there!', style: alertTitle),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "You are trying to close a request that isn't complete yet.",
+                  style: alertContent,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text('Are you sure?', style: alertContent),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel")),
+              TextButton(
+                  onPressed: () {
+                    closeRequest();
+                    //?Remove Alert dialog
+                    Navigator.pop(context);
+                  },
+                  child: const Text("I'm Sure")),
+            ],
+          );
+        });
+  }
+
+  void closeRequest() async {
+    //? Update request status to complete
+    await FirebaseFirestore.instance
+        .collection("Reqs")
+        .doc(widget.reqid)
+        .update({'status': 'complete'});
+
+    //? Update profile of all donors
+    await FirebaseFirestore.instance
+        .collection("Reqs")
+        .doc(widget.reqid)
+        .collection('Interested')
+        .where('isDonor', isEqualTo: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        DataBase(uid: element.id).profileOnCloseRequest();
+      }
+    });
+    if (!mounted) return;
+    Navigator.pop(context);
+
+    //TODO SnackBar Message to show request closed
   }
 
   ///Function for getting interesterd users phone number and time of interest
@@ -217,7 +303,7 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             ? Colors.green[200]
             : _donorsFilled
                 ? Colors.grey[200]
-                : Colors.cyan[100],
+                : Color.fromARGB(255, 212, 232, 238),
         expandedColor: Colors.red[50],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
