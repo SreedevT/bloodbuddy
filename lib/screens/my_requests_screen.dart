@@ -26,7 +26,7 @@ class _MyRequestListState extends State<MyRequestList> {
   void initState() {
     query = FirebaseFirestore.instance
         .collection('Reqs')
-        .where('id', isEqualTo: uid);
+        .where('id', isEqualTo: uid).orderBy('timestamp', descending: true);
     // _getMyReq();
     setState(() {});
     super.initState();

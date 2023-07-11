@@ -44,10 +44,7 @@ class _RequestPageState extends State<RequestPage> {
                   ...requests,
                   RequestCard(
                     reqId: profile['Current Request'],
-                    hospitalAddress: value['hospitalName'],
-                    units: value['units'],
-                    bloodGroup: value['bloodGroup'],
-                    patientName: value['patientName'],
+                    request: Request.fromMap(value),
                   )
                 ];
               })
@@ -78,24 +75,16 @@ class _RequestPageState extends State<RequestPage> {
         switch (change.type) {
           case DocumentChangeType.added:
             log("Added City: ${change.doc.data()}");
+            final data = change.doc.data();
+            Request request = Request.fromMap(data!);
 
             //create blood request card
             setState(() {
-              // ! Request .add() will not cause a rebuild
-              // requests.add(RequestCard(
-              //   hospital: change.doc['hospitalName'],
-              //   units: change.doc['units'],
-              //   bloodGroup: change.doc['bloodGroup'],
-              //   name: change.doc['senderName'],
-              // ));
               requests = [
                 ...requests,
                 RequestCard(
                   reqId: change.doc.id,
-                  hospitalAddress: change.doc['hospitalName'],
-                  units: change.doc['units'],
-                  bloodGroup: change.doc['bloodGroup'],
-                  patientName: change.doc['patientName'],
+                  request: request,
                 )
               ];
             });
@@ -104,6 +93,8 @@ class _RequestPageState extends State<RequestPage> {
             break;
           case DocumentChangeType.modified:
             log("Modified City: ${change.doc.data()}");
+            final data = change.doc.data();
+            Request request = Request.fromMap(data!);
             setState(() {
               // find index of existing card
               int i = requests.indexWhere((element) {
@@ -112,10 +103,7 @@ class _RequestPageState extends State<RequestPage> {
               // replace the card with the modified one
               requests[i] = RequestCard(
                 reqId: change.doc.id,
-                hospitalAddress: change.doc['hospitalName'],
-                units: change.doc['units'],
-                bloodGroup: change.doc['bloodGroup'],
-                patientName: change.doc['patientName'],
+                request: request,
               );
               // Make new request list
               requests = [...requests];

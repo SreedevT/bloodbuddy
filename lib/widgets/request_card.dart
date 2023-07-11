@@ -2,22 +2,19 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../models/request.dart';
 
 class RequestCard extends StatefulWidget {
   final String reqId;
-  final String hospitalAddress;
-  final int units;
-  final String bloodGroup;
-  final String patientName;
-  // final DateTime expiryDate;
+
+  final Request request;
   const RequestCard({
     Key? key,
     required this.reqId,
-    required this.hospitalAddress,
-    required this.units,
-    required this.bloodGroup,
-    required this.patientName,
+    required this.request,
   }) : super(key: key);
 
   @override
@@ -32,9 +29,24 @@ class _RequestCardState extends State<RequestCard> {
   late String user;
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> subscription;
 
+  //Card variables
+  late final String hospitalAddress;
+  late final int units;
+  late final String bloodGroup;
+  late final String patientName;
+  late final String expiryDate;
+  late final String expiryTime;
+
   @override
   void initState() {
     super.initState();
+    hospitalAddress = widget.request.hospitalName;
+    units = widget.request.units;
+    bloodGroup = widget.request.bloodGroup;
+    patientName = widget.request.patientName;
+    expiryDate = DateFormat('dd/mm/yyyy').format(widget.request.expiryDate);
+    expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate);
+
     user = FirebaseAuth.instance.currentUser!.uid;
     Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
@@ -107,7 +119,7 @@ class _RequestCardState extends State<RequestCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Patient: ${widget.patientName}',
+                    Text('Patient: $patientName',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -116,7 +128,7 @@ class _RequestCardState extends State<RequestCard> {
                       height: 3,
                     ),
                     Text(
-                      widget.hospitalAddress,
+                      hospitalAddress,
                       style: const TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w500),
                     ),
@@ -134,7 +146,7 @@ class _RequestCardState extends State<RequestCard> {
                           ),
                         ),
                         Text(
-                          '/${widget.units} units needed',
+                          '/$units units needed',
                           style: const TextStyle(
                             fontSize: 16,
                           ),
@@ -150,7 +162,7 @@ class _RequestCardState extends State<RequestCard> {
                           size: 18, color: Colors.deepPurple),
                       const SizedBox(width: 8),
                       Text(
-                        'expiryDate',
+                        expiryDate,
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -160,7 +172,7 @@ class _RequestCardState extends State<RequestCard> {
                           size: 18, color: Colors.deepPurple),
                       const SizedBox(width: 8),
                       Text(
-                        'expiryTime',
+                        expiryTime,
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -233,7 +245,7 @@ class _RequestCardState extends State<RequestCard> {
                         radius: 30,
                         backgroundColor: Color.fromARGB(255, 241, 240, 240),
                         child: Text(
-                          widget.bloodGroup,
+                          bloodGroup,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -246,9 +258,10 @@ class _RequestCardState extends State<RequestCard> {
                     const SizedBox(height: 92),
                     circleButtonWithTooltip(
                       tooltipMessage: "Share",
+                      // TODO: Update message to include hospital location, bystander name and phone number
                       onPressed: () {
                         Share.share(
-                            'Hey! I found a request for ${widget.bloodGroup} blood at ${widget.hospitalAddress} on the BloodBuddy app. Please check it out and do contact if possible!');
+                            'Hey! I found a request for $bloodGroup blood at $hospitalAddress on the BloodBuddy app. Please check it out and do contact if possible!');
                       },
                       icon: Icons.share,
                     ),
