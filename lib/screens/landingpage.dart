@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked_card_carousel/stacked_card_carousel.dart';
 import '../widgets/donor_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,7 +14,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -30,8 +33,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     getFeed();
   }
 
-  Future getFeed() async{
-      query = FirebaseFirestore.instance.collection('Reqs').where('status',isEqualTo: 'accepted');
+  Future getFeed() async {
+    query = FirebaseFirestore.instance
+        .collection('Reqs')
+        .where('status', isEqualTo: 'complete');
   }
 
   @override
@@ -48,14 +53,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       Navigator.pushNamed(context, 'donate');
     }
     if (index == 2) {
-    Navigator.pushNamed(context, 'my_requests');
+      Navigator.pushNamed(context, 'my_requests');
     }
-    if(index == 3){
-      Navigator.pushNamed(context,'profile');
+    if (index == 3) {
+      Navigator.pushNamed(context, 'profile');
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -92,31 +95,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   height: 20,
                 ),
                 Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.all(9.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: Colors.red[300],
-                  ),
-                  child:const  Text("See, whats happening in BLOOD BUDDY!",style:TextStyle(fontSize: 20,
-                      fontWeight: FontWeight.bold))
-                ),
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.all(9.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // color: Colors.red[300],
+                    ),
+                    child: const Text("See, whats happening in BLOOD BUDDY!",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold))),
                 StreamBuilder(
-                  stream: query.snapshots(),
-                  builder: (context,snapshots){
-                      if(snapshots.hasError){
+                    stream: query.snapshots(),
+                    builder: (context, snapshots) {
+                      if (snapshots.hasError) {
                         return const Center(child: Text('No Donations Yet'));
                       }
-                       if(snapshots.hasData){
-                        for(var i in snapshots.data!.docs){
+                      if (snapshots.hasData) {
+                        for (var i in snapshots.data!.docs) {
                           log("FEEED!!!!: ${i.data().toString()}");
-                        }   
+                        }
                         return feedCards(snapshots.data!.docs);
-                    }
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                )
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    })
               ],
             ),
           ),
@@ -193,14 +195,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             ListTile(
               leading: const Icon(Icons.question_answer),
-              title: const Text('FAQS',style: TextStyle(fontWeight: FontWeight.bold),),
+              title: const Text(
+                'FAQS',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
                 Navigator.pushNamed(context, 'faq');
               },
             ),
             ListTile(
               leading: const Icon(Icons.help),
-              title: const Text('Help & Support',style: TextStyle(fontWeight: FontWeight.bold),),
+              title: const Text(
+                'Help & Support',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, 'profile');
@@ -208,10 +216,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Logout',style: TextStyle(fontWeight: FontWeight.bold),),
+              title: const Text(
+                'Logout',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, 'welcome', (route) => false);
               },
             ),
           ],
@@ -221,22 +233,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 }
 
-
-Widget feedCards(List<QueryDocumentSnapshot> snapshot){
+Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
   return ListView.builder(
-    padding: const EdgeInsets.all(8.0),
-    shrinkWrap: true,
-    physics: const ClampingScrollPhysics(),
-    itemCount: snapshot.length,
-    itemBuilder: (context,index){
-      Map<String,dynamic> data= snapshot[index].data() as Map<String,dynamic>;
-      return Card(
-        color: Colors.grey[400],
-        child: ListTile(
-          leading: Icon(Icons.favorite,color: Colors.red[800],),
-          title: Text("${data['Name']} donated to ${data['patientName']} at ${data['hospitalName']}\n- BLOOD BUDDY"),
-        ),
-      );
-    }
-  );
+      padding: const EdgeInsets.all(8.0),
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      itemCount: snapshot.length,
+      itemBuilder: (context, index) {
+        Map<String, dynamic> data =
+            snapshot[index].data() as Map<String, dynamic>;
+        return SizedBox(
+            height: 100,
+            child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(color: Colors.grey.shade200, width: 2),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: ListTile(
+                    leading: Icon(Icons.favorite, color: Colors.red[800]),
+                    title: AnimatedTextKit(
+                      animatedTexts: [
+                        TypewriterAnimatedText(
+                          //TODO Maybe change text to format 'patientName recived units of blood at hospitalName'
+                          "${data['Name']} donated to ${data['patientName']} at ${data['hospitalName']}",
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                          ),
+                          speed: const Duration(milliseconds: 100),
+                        ),
+                      ],
+                      totalRepeatCount: 1,
+                    ),
+                  ),
+                )));
+      });
 }
