@@ -135,7 +135,9 @@ class Request {
           orElse: () => Status.pending),
       hospitalLocation:
           LatLng(map['position'].latitude, map['position'].longitude),
-      completedTime: map['completedTime'],
+      completedTime: map['completedTime'] != null
+          ? (map['completedTime'] as Timestamp).toDate()
+          : null,
     );
   }
 

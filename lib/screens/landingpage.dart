@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:blood/widgets/info_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,7 @@ class _HomeScreenState extends State<HomeScreen>
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   late Animation<double> _animation;
-  late final Query query;
-
+  late final Query feedQuery;
 
   @override
   void initState() {
@@ -31,13 +31,12 @@ class _HomeScreenState extends State<HomeScreen>
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
     _animationController.forward();
-    getFeed();
-  }
 
-  Future getFeed() async {
-    query = FirebaseFirestore.instance
+    feedQuery = FirebaseFirestore.instance
         .collection('Reqs')
-        .where('status', isEqualTo: 'complete');
+        .where('status', isEqualTo: 'complete')
+        .orderBy('completedTime', descending: true)
+        .limit(5);
   }
 
   @override
@@ -104,16 +103,23 @@ class _HomeScreenState extends State<HomeScreen>
                       // color: Colors.red[300],
                     ),
                     child: const Center(
-                      child:  Text('''See, whats happening 
+                      child: Text('''See, whats happening 
                               in BLOOD BUDDY!''',
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                     )),
                 StreamBuilder(
-                    stream: query.snapshots(),
+                    stream: feedQuery.snapshots(),
                     builder: (context, snapshots) {
                       if (snapshots.hasError) {
-                        return const Center(child: Text('No Donations Yet'));
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: InfoBox(
+                            text: 'No Donations Yet',
+                            icon: Icons.error,
+                            backgroundColor: Color.fromRGBO(255, 205, 210, 1),
+                          ),
+                        );
                       }
                       if (snapshots.hasData) {
                         for (var i in snapshots.data!.docs) {
@@ -237,10 +243,9 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-
 Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
-    // ignore: no_leading_underscores_for_local_identifiers
-    PageController _controller = PageController();
+  // ignore: no_leading_underscores_for_local_identifiers
+  PageController _controller = PageController();
   return Container(
     padding: const EdgeInsets.all(8.0),
     height: 250,
@@ -248,6 +253,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
       children: [
         PageView.builder(
           controller: _controller,
+          scrollDirection: Axis.vertical,
           itemCount: snapshot.length,
           itemBuilder: (context, index) {
             Map<String, dynamic> data =
@@ -260,7 +266,8 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  side: const BorderSide(color: Color.fromARGB(255, 255, 205, 210), width: 1),
+                  side: const BorderSide(
+                      color: Color.fromARGB(255, 255, 205, 210), width: 1),
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -292,7 +299,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
             );
           },
         ),
-                Container(
+        Container(
           alignment: const Alignment(0.0, 0.75),
           child: SmoothPageIndicator(
             controller: _controller,
