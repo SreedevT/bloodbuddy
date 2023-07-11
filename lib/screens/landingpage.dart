@@ -239,6 +239,7 @@ class _HomeScreenState extends State<HomeScreen>
 
 
 Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
+    // ignore: no_leading_underscores_for_local_identifiers
     PageController _controller = PageController();
   return Container(
     padding: const EdgeInsets.all(8.0),
@@ -272,16 +273,16 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                           textStyle: const TextStyle(
                             fontSize: 16,
                           ),
-                          speed: const Duration(milliseconds: 100),
+                          speed: const Duration(milliseconds: 30),
                         ),
                       ],
                       totalRepeatCount: 1,
                     ),
                     subtitle: const Text(
-                      "\n\"Thank you to all the donors!\"",
+                      "\nThank you to all the donors!",
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: Color.fromARGB(255, 85, 46, 46),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
