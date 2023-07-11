@@ -4,7 +4,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:stacked_card_carousel/stacked_card_carousel.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../widgets/donor_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _animationController;
   late Animation<double> _animation;
   late final Query query;
+
 
   @override
   void initState() {
@@ -236,22 +237,29 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
+
 Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
-  return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemCount: snapshot.length,
-      itemBuilder: (context, index) {
-        Map<String, dynamic> data =
-            snapshot[index].data() as Map<String, dynamic>;
-        return SizedBox(
-            height: 100,
-            child: Card(
+    PageController _controller = PageController();
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    height: 250,
+    child: Stack(
+      children: [
+        PageView.builder(
+          controller: _controller,
+          itemCount: snapshot.length,
+          itemBuilder: (context, index) {
+            Map<String, dynamic> data =
+                snapshot[index].data() as Map<String, dynamic>;
+            return SizedBox(
+              height: 200,
+              child: Card(
+                color: Colors.pink[100],
+                shadowColor: Colors.purple[900],
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: Colors.grey.shade200, width: 2),
+                  side: const BorderSide(color: Color.fromARGB(255, 255, 205, 210), width: 1),
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -260,7 +268,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                     title: AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
-                          "${data['patientName']} recieved ${data['units']} units of blood at ${data['hospitalName']}",
+                          "${data['patientName']} received ${data['units']} units of blood at ${data['hospitalName']}",
                           textStyle: const TextStyle(
                             fontSize: 16,
                           ),
@@ -269,14 +277,34 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                       ],
                       totalRepeatCount: 1,
                     ),
-                    subtitle: const Text("\"Thankyou to all the donors!.\"",
+                    subtitle: const Text(
+                      "\n\"Thank you to all the donors!\"",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                   ),
-                )));
-      });
+                ),
+              ),
+            );
+          },
+        ),
+                Container(
+          alignment: const Alignment(0.0, 0.75),
+          child: SmoothPageIndicator(
+            controller: _controller,
+            count: snapshot.length,
+            effect: WormEffect(
+              dotColor: Colors.grey.shade300,
+              activeDotColor: Colors.black,
+              dotHeight: 5,
+              dotWidth: 5,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
