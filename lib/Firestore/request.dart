@@ -41,4 +41,12 @@ class RequestQuery {
       return {};
     }
   }
+
+  Future<void> requestOnCloseRequest() async {
+    log("Closing request $reqId");
+    await request.doc(reqId).update({
+      'status': 'complete',
+      'completedTime': DateTime.now(),
+    });
+  }
 }

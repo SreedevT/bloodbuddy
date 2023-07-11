@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart';
 
-enum Status { pending, complete, expired, cancelled, ready}
+enum Status { pending, complete, expired, cancelled, ready }
 
 class Request {
   //? ID of the user making the request
@@ -22,10 +22,10 @@ class Request {
   // maybe shown in a different screen / different color / highlighted
   final bool isEmergency;
   Status status;
-  
-
   //? position of the hospital
   final LatLng hospitalLocation;
+  //? completedTime not used in the object but in the database
+  final DateTime? completedTime;
 
   static List<String> getDonorBloodGroups(String bloodType) {
     switch (bloodType) {
@@ -86,6 +86,7 @@ class Request {
     this.isEmergency = false,
     this.status = Status.pending,
     required this.hospitalLocation,
+    this.completedTime,
   });
 
   final CollectionReference reqs =
@@ -107,6 +108,7 @@ class Request {
       'status': status.name,
       'position':
           GeoPoint(hospitalLocation.latitude, hospitalLocation.longitude),
+      'completedTime': completedTime,
     };
   }
 
@@ -133,6 +135,7 @@ class Request {
           orElse: () => Status.pending),
       hospitalLocation:
           LatLng(map['position'].latitude, map['position'].longitude),
+      completedTime: map['completedTime'],
     );
   }
 
@@ -143,6 +146,7 @@ class Request {
 //   }
 // }
 
+///Adds a new request to the database
   Future updateRequest() async {
     await reqs.doc().set(toMap());
   }
