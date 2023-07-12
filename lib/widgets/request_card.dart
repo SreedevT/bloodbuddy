@@ -232,7 +232,7 @@ class _RequestCardState extends State<RequestCard> {
                         ],
                       ),
                       child: CircleAvatar(
-                        radius: 20,
+                        radius: 22,
                         backgroundColor: const Color.fromARGB(255, 241, 240, 240),
                         child: Text(
                           bloodGroup,
