@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/request.dart';
 
@@ -18,7 +19,7 @@ Future<void> handleBackGroundMessage(RemoteMessage message) async {
 class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;
 
-  void handleMessage(RemoteMessage? message) {
+  Future<void> handleMessage(RemoteMessage? message) async {
     if (message == null) return;
 
     switch (message.data['msgType']) {
@@ -34,8 +35,16 @@ class FirebaseApi {
             builder: (context) => InterestedUsers(reqid: message.data['reqId']),
           ),
         );
-
         break;
+      case 'confirmed_donor':
+      Uri link = Uri.parse(message.data['mapsUrl']);
+        try {
+      await launchUrl(link, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      //To handle error and display error message
+      log("Maps Launch Failed: ${e.toString()}");
+    }
+       break;
       //default case
       default:
         navigatorKey.currentState?.pushNamed(
