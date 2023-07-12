@@ -135,7 +135,7 @@ class _RequestCardState extends State<RequestCard> {
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         )),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
                     Text(
@@ -143,7 +143,7 @@ class _RequestCardState extends State<RequestCard> {
                       style: const TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w500),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 6,
                     ),
                     Row(children: [
@@ -227,31 +227,33 @@ class _RequestCardState extends State<RequestCard> {
                             color: Colors.black.withOpacity(0.2),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
                       child: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Color.fromARGB(255, 241, 240, 240),
+                        radius: 22,
+                        backgroundColor: const Color.fromARGB(255, 241, 240, 240),
                         child: Text(
                           bloodGroup,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 16,
                             color: Color.fromARGB(255, 171, 61, 61),
                           ),
                         ),
                       ),
                     ),
-                    //TODO: Add share functionality
-                    const SizedBox(height: 92),
+                    const SizedBox(height: 10),
+                    circleButtonWithTooltip(tooltipMessage: "View requisition form", onPressed: (){
+                      Image.network(widget.request.fileUrl!);
+                    }, icon: Icons.remove_red_eye_outlined),
+                    const SizedBox(height: 10),
                     circleButtonWithTooltip(
                       tooltipMessage: "Share",
-                      // TODO: Update message to include hospital location, bystander name and phone number
                       onPressed: () {
                         Share.share(
-                            'Hey! I found a request for $bloodGroup blood at $hospitalAddress on the BloodBuddy app. Please check it out and do contact if possible!');
+                            'Hey! I found a request for $bloodGroup blood at $hospitalAddress for $patientName on the BloodBuddy app. Please check it out and do contact if possible!\nBystander name: ${widget.request.name}\nContact number ${widget.request.phone}');
                       },
                       icon: Icons.share,
                     ),

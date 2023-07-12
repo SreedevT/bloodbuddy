@@ -272,7 +272,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
             tooltipMessage: "Share",
             onPressed: () {
               String data =
-                  "$patientName needs $units units of $bloodGroup blood at $hospitalAddress on $expiryDate at $expiryTime. Please help!";
+                  "Hey! $patientName needs $units units of $bloodGroup blood at $hospitalAddress on $expiryDate at $expiryTime. \nPlease contact at ${widget.request.phone}!\nBystander name${widget.request.name} \nThis request was made using the BloodBuddy app.";
               Share.share(data);
             },
             icon: Icons.share),

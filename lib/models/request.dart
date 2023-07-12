@@ -7,6 +7,7 @@ class Request {
   //? ID of the user making the request
   // each user can have multiple requests
   // we can identify the user by this ID
+  final String? fileUrl;
   final String id;
   final String name;
   final String patientName;
@@ -83,6 +84,7 @@ class Request {
     required this.area,
     required this.expiryDate,
     required this.phone,
+    this.fileUrl = '',
     this.isEmergency = false,
     this.status = Status.pending,
     required this.hospitalLocation,
@@ -109,6 +111,7 @@ class Request {
       'position':
           GeoPoint(hospitalLocation.latitude, hospitalLocation.longitude),
       'completedTime': completedTime,
+      'fileUrl': fileUrl
     };
   }
 
@@ -138,6 +141,7 @@ class Request {
       completedTime: map['completedTime'] != null
           ? (map['completedTime'] as Timestamp).toDate()
           : null,
+      fileUrl: map['fileUrl'],
     );
   }
 
