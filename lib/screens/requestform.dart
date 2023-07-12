@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import '../map_picker/osm_search_and_pick_mod.dart';
 import '../models/request.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class RequestForm extends StatefulWidget {
   const RequestForm({super.key});
@@ -31,6 +33,7 @@ class _RequestFormState extends State<RequestForm> {
   DateTime? _selectedDateTime;
   DateTime? expiryDate;
   User? user;
+  String? fileurl;
 
   final TextEditingController _requesterController = TextEditingController();
   final TextEditingController _patientNameController = TextEditingController();
@@ -98,7 +101,14 @@ class _RequestFormState extends State<RequestForm> {
     setState(() {
       errorMessage = null; // Clear any previous error message
     });
-
+    if(fileurl == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please upload a file'),
+        ),
+      );
+      return;
+  }
     try {
       if (_formKey.currentState!.validate()) {
         // All fields are valid, submit the form
@@ -153,6 +163,7 @@ class _RequestFormState extends State<RequestForm> {
             hospitalLocation.latitude,
             hospitalLocation.longitude,
           ),
+          fileUrl: fileurl,
         );
 
         await request.updateRequest();
@@ -190,12 +201,23 @@ class _RequestFormState extends State<RequestForm> {
 
   void _uploadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
+    log(result!.files.single.path!);
+    if (result == null) {return null;}
+    String uniqueName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageReference = FirebaseStorage.instance.ref();
+    Reference refFile = storageReference.child('files');
+    Reference uploadFile = refFile.child(uniqueName);
+    try{
+    await uploadFile.putFile(File(result.files.single.path!));
+    fileurl = await uploadFile.getDownloadURL();
+    log("Fileurl: $fileurl!");
+    }
+    catch(e){
+      log(e.toString());
+    }
       setState(() {
         _uploadedFileName = result.files.single.name;
       });
-    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
