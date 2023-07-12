@@ -99,11 +99,12 @@ class _HomeScreenState extends State<HomeScreen>
                 Container(
                     height: 50,
                     padding: const EdgeInsets.all(8.0),
+                    margin: const EdgeInsets.all(8),
                     width: MediaQuery.of(context).size.width,
                     // margin: const EdgeInsets.all(9.0),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      // color: Colors.red[300],
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey,
                     ),
                     child: const Text("Recent Donations...",
                           style: TextStyle(
@@ -267,7 +268,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   side: const BorderSide(
-                      color: Colors.red, width: 1),
+                      color: Colors.black, width: 2),
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -279,6 +280,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                           "${data['patientName']} received ${data['units']} units of ${data['bloodGroup']} blood at ${data['hospitalName']}",
                           textStyle: const TextStyle(
                             fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                           speed: const Duration(milliseconds: 30),
                         ),
