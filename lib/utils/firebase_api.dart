@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:blood/Firestore/userprofile.dart';
 import 'package:blood/main.dart';
+import 'package:blood/screens/screens.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,10 +21,29 @@ class FirebaseApi {
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
 
-    navigatorKey.currentState?.pushNamed(
-      'donate',
-      arguments: message,
-    );
+    switch (message.data['msgType']) {
+      case 'nearby_req':
+        navigatorKey.currentState?.pushNamed(
+          'donate',
+          arguments: message,
+        );
+        break;
+      case 'new_donor':
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => InterestedUsers(reqid: message.data['reqId']),
+          ),
+        );
+
+        break;
+      //default case
+      default:
+        navigatorKey.currentState?.pushNamed(
+          'home',
+          arguments: message,
+        );
+        break;
+    }
   }
 
   Future initPushNotifications() async {
