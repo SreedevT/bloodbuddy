@@ -276,7 +276,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                     title: AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
-                          "${data['patientName']} received ${data['units']} units of blood at ${data['hospitalName']}",
+                          "${data['patientName']} received ${data['units']} units of ${data['bloodGroup']} blood at ${data['hospitalName']}",
                           textStyle: const TextStyle(
                             fontSize: 16,
                           ),
