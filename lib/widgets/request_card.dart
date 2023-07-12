@@ -246,7 +246,12 @@ class _RequestCardState extends State<RequestCard> {
                     ),
                     const SizedBox(height: 10),
                     circleButtonWithTooltip(tooltipMessage: "View requisition form", onPressed: (){
-                      Image.network(widget.request.fileUrl!);
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              child: Image.network(widget.request.fileUrl!),
+                            ),
+                          );
                     }, icon: Icons.remove_red_eye_outlined),
                     const SizedBox(height: 10),
                     circleButtonWithTooltip(

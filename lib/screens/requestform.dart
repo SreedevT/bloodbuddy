@@ -101,7 +101,7 @@ class _RequestFormState extends State<RequestForm> {
     setState(() {
       errorMessage = null; // Clear any previous error message
     });
-    if(fileurl == null){
+    if(fileurl == null ){
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please upload a file'),
@@ -200,9 +200,16 @@ class _RequestFormState extends State<RequestForm> {
   }
 
   void _uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    log(result!.files.single.path!);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
     if (result == null) {return null;}
+    log(result.files.single.path!);
+    String filePath = result.files.single.path!;
+    String fileName = result.files.single.name;
+    String fileExtension = fileName.split('.').last.toLowerCase();
+    List<String> supportExtensions = ['jpg', 'jpeg', 'png', 'svg','webp'];
+    if(!supportExtensions.contains(fileExtension)){
+      return null;
+    }
     String uniqueName = DateTime.now().millisecondsSinceEpoch.toString();
     Reference storageReference = FirebaseStorage.instance.ref();
     Reference refFile = storageReference.child('files');
@@ -371,7 +378,7 @@ class _RequestFormState extends State<RequestForm> {
         color: Colors.white,
       ),
       label: const Text(
-        'Upload Requisition Form',
+        'Upload Requisition Form\n\t\t\t\tImage file only',
         style: TextStyle(
           color: Colors.white,
           fontSize: 15,
