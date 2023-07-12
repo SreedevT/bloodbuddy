@@ -68,10 +68,18 @@ class _RequestPageState extends State<RequestPage> {
         .collection('Reqs')
         .where('bloodGroup',
             whereIn: Request.getRecipientBloodGroups(profile['Blood Group']))
-        .where('area', isEqualTo: profile['General Area']);
+        .where('area', isEqualTo: profile['General Area'])
+        .orderBy('expiryDate', descending: false)
+        .where('expiryDate', isGreaterThan: DateTime.now());
 
     queryListner = query.snapshots().listen((event) {
       for (var change in event.docChanges) {
+        //? This removes the request that belongs to the user
+        //TODO: uncomment when developing
+        if (change.doc.data()!['id'] == user) {
+          continue;
+        }
+        
         switch (change.type) {
           case DocumentChangeType.added:
             log("Added City: ${change.doc.data()}");
@@ -138,9 +146,11 @@ class _RequestPageState extends State<RequestPage> {
         decoration: const BoxDecoration(
           color: Color.fromARGB(255, 231, 231, 231),
         ),
-        child: ListView(
-          children: requests,
-        ),
+        child: requests.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                children: requests,
+              ),
       ),
     );
   }
