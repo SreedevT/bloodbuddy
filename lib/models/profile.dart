@@ -14,6 +14,7 @@ class Profile extends ChangeNotifier {
   bool? hivTested;
   bool? covidVaccine;
   String? area;
+  String? mesgToken;
 
   void setAllFieldsFromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -29,6 +30,7 @@ class Profile extends ChangeNotifier {
     hivTested = json['HIV_tested'];
     covidVaccine = json['Covid_vaccine'];
     area = json['General Area'];
+    mesgToken = json['mesgToken'];
   }
 
   Profile({
@@ -45,6 +47,7 @@ class Profile extends ChangeNotifier {
     this.hivTested,
     this.covidVaccine,
     this.area,
+    this.mesgToken,
   });
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +64,7 @@ class Profile extends ChangeNotifier {
         'HIV_tested': hivTested,
         'Covid_vaccine': covidVaccine,
         'General Area': area,
+        'mesgToken': mesgToken,
       };
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -78,6 +82,7 @@ class Profile extends ChangeNotifier {
       hivTested: json['HIV_tested'],
       covidVaccine: json['Covid_vaccine'],
       area: json['General Area'],
+      mesgToken: json['mesgToken'],
     );
   }
 }

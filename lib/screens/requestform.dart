@@ -158,17 +158,17 @@ class _RequestFormState extends State<RequestForm> {
         await request.updateRequest();
 
         // Reset the form and clear the fields after successful submission
-        _formKey.currentState!.reset();
-        _requesterController.clear();
-        _patientNameController.clear();
-        _unitsController.clear();
-        _phoneController.clear();
-        _hospitalController.clear();
-        _selectedBloodType = null;
-        _selectedDate = null;
-        _selectedTime = null;
-        _selectedDateTime = null;
-        _uploadedFileName = null;
+        // _formKey.currentState!.reset();
+        // _requesterController.clear();
+        // _patientNameController.clear();
+        // _unitsController.clear();
+        // _phoneController.clear();
+        // _hospitalController.clear();
+        // _selectedBloodType = null;
+        // _selectedDate = null;
+        // _selectedTime = null;
+        // _selectedDateTime = null;
+        // _uploadedFileName = null;
 
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
