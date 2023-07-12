@@ -91,21 +91,11 @@ class _HomeScreenState extends State<HomeScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const DonorCard(),
-                const Divider(
-                  color: Colors.grey,
-                  endIndent: 10.0,
-                  indent: 10.0,
-                ),
                 Container(
                     height: 50,
                     padding: const EdgeInsets.all(8.0),
-                    margin: const EdgeInsets.all(8),
                     width: MediaQuery.of(context).size.width,
                     // margin: const EdgeInsets.all(9.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey,
-                    ),
                     child: const Text("Recent Donations...",
                           style: TextStyle(
                             fontFamily: 'Argentum Sans',
@@ -113,8 +103,8 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     const Divider(
                   color: Colors.grey,
-                  endIndent: 10.0,
-                  indent: 10.0,
+                  endIndent: 12.0,
+                  indent: 12.0,
                 ),
                 const SizedBox(height: 20,),
                 StreamBuilder(
@@ -262,7 +252,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
             return SizedBox(
               height: 200,
               child: Card(
-                color: Colors.grey,
+                color: Colors.red[100],
                 shadowColor: Colors.purple[900],
                 elevation: 4,
                 shape: RoundedRectangleBorder(
