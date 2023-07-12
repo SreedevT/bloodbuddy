@@ -263,7 +263,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: ListTile(
-                    leading: Icon(Icons.bloodtype, color: Colors.red[800]),
+                    // leading: Icon(Icons.bloodtype, color: Colors.red[800]),
                     title: AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
@@ -283,6 +283,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                         fontSize: 13,
                         color: Color.fromARGB(255, 198, 40, 40),
                         fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
                   ),
@@ -292,17 +293,8 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
           },
         ),
         Container(
-          alignment: const Alignment(0.0, 0.75),
-          child: SmoothPageIndicator(
-            controller: _controller,
-            count: snapshot.length,
-            effect: WormEffect(
-              dotColor: Colors.grey.shade300,
-              activeDotColor: Colors.black,
-              dotHeight: 5,
-              dotWidth: 5,
-            ),
-          ),
+          alignment: const Alignment(0.9, 0.75),
+          child: const Icon(Icons.arrow_circle_down, color: Colors.black, size: 30.0),
         ),
       ],
     ),
