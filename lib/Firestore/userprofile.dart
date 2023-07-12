@@ -104,4 +104,10 @@ class DataBase {
       {'Current Request': null, 'Last Donated': DateTime.now()},
     );
   }
+
+  Future<void> setNotificationToken(String? mesgToken) async {
+    return await userProfile.doc(uid).update(
+      {'mesgToken': mesgToken},
+    );
+  }
 }

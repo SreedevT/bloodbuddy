@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
+import '../utils/firebase_api.dart';
 
 class DonorCard extends StatefulWidget {
   const DonorCard({
@@ -21,7 +22,7 @@ class _DonorCardState extends State<DonorCard> {
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser!.uid;
-    fetchUserProfile();
+    FirebaseApi().initNotification().then((value) => fetchUserProfile());
   }
 
   fetchUserProfile() async {
@@ -130,7 +131,7 @@ class _DonorCardState extends State<DonorCard> {
                 width: 10,
               ),
               Text(
-                "${data?['id'].substring(0,6) ?? 'loading...'}",
+                "${data?['id'].substring(0, 6) ?? 'loading...'}",
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
