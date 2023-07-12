@@ -11,6 +11,8 @@ import '../authentication/authentication.dart';
 import '../models/profile.dart';
 import '../screens/screens.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Future.delayed(const Duration(seconds: 1, microseconds: 500));
@@ -42,6 +44,7 @@ Future<void> main() async {
             iconTheme: IconThemeData(color: Colors.white),
           ),
         ),
+        navigatorKey: navigatorKey,
         initialRoute: user != null ? 'home' : 'initial_screen',
         // initialRoute: 'personal_info',
         debugShowCheckedModeBanner: false,
