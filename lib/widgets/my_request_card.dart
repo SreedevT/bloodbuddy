@@ -133,14 +133,30 @@ class _MyRequestCardState extends State<MyRequestCard> {
       children: [
         Row(
           children: [
-            const Icon(Icons.location_on_outlined,
-                size: 25, color: Colors.deepPurple),
+            Icon(Icons.person_outline,
+                size: 25, color: Colors.deepPurple.shade300),
+            SizedBox(width: 8),
+            Text(
+              'Patient: ${Utils.capitalizeFirstLetter(patientName)}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: boxDim),
+        // Divider(thickness: 1),
+        Row(
+          children: [
+            Icon(Icons.location_on_outlined,
+                size: 25, color: Colors.deepPurple.shade300),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 hospitalAddress,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -149,17 +165,10 @@ class _MyRequestCardState extends State<MyRequestCard> {
         ),
         const SizedBox(height: boxDim),
         // Divider(thickness: 1),
-        Text(
-          'Patient Name: ${Utils.capitalizeFirstLetter(patientName)}',
-          style: const TextStyle(
-            fontSize: 18,
-          ),
-        ),
-        const SizedBox(height: boxDim),
-        // Divider(thickness: 1),
         Row(children: [
-          const Icon(Icons.calendar_today_outlined,
-              size: 18, color: Colors.deepPurple),
+          const SizedBox(width: 3),
+          Icon(Icons.calendar_today_outlined,
+              size: 18, color: Colors.deepPurple.shade300),
           const SizedBox(width: boxDim),
           Text(
             expiryDate,
@@ -169,8 +178,8 @@ class _MyRequestCardState extends State<MyRequestCard> {
             ),
           ),
           const SizedBox(width: boxDim * 2),
-          const Icon(Icons.access_time_rounded,
-              size: 18, color: Colors.deepPurple),
+          Icon(Icons.access_time_rounded,
+              size: 18, color: Colors.deepPurple.shade300),
           const SizedBox(width: boxDim),
           Text(
             expiryTime,
@@ -261,8 +270,9 @@ class _MyRequestCardState extends State<MyRequestCard> {
         const SizedBox(height: 10),
         circleButtonWithTooltip(
             tooltipMessage: "Share",
-            onPressed: () { 
-              String data = "$patientName needs $units units of $bloodGroup blood at $hospitalAddress on $expiryDate at $expiryTime. Please help!";
+            onPressed: () {
+              String data =
+                  "$patientName needs $units units of $bloodGroup blood at $hospitalAddress on $expiryDate at $expiryTime. Please help!";
               Share.share(data);
             },
             icon: Icons.share),

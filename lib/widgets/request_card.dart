@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../Firestore/request.dart';
 import '../models/request.dart';
+import '../utils/screen_utils.dart';
 
 class RequestCard extends StatefulWidget {
   final String reqId;
@@ -26,6 +28,7 @@ class _RequestCardState extends State<RequestCard> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _visible = false;
   bool _interested = false;
+  int? unitsCollected = 0;
   late String user;
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>> subscription;
 
@@ -44,8 +47,14 @@ class _RequestCardState extends State<RequestCard> {
     units = widget.request.units;
     bloodGroup = widget.request.bloodGroup;
     patientName = widget.request.patientName;
-    expiryDate = DateFormat('dd/mm/yyyy').format(widget.request.expiryDate);
+    expiryDate = DateFormat('dd/MM/yyyy').format(widget.request.expiryDate);
     expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate);
+
+    RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
+      setState(() {
+        unitsCollected = value;
+      });
+    });
 
     user = FirebaseAuth.instance.currentUser!.uid;
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -100,6 +109,7 @@ class _RequestCardState extends State<RequestCard> {
 
   @override
   Widget build(BuildContext context) {
+    double boxDim = 10;
     return AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 500),
@@ -119,12 +129,13 @@ class _RequestCardState extends State<RequestCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Patient: $patientName',
+                    Text(
+                        'Patient:  ${Utils.capitalizeFirstLetter(patientName)}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         )),
-                    const SizedBox(
+                    SizedBox(
                       height: 3,
                     ),
                     Text(
@@ -132,48 +143,28 @@ class _RequestCardState extends State<RequestCard> {
                       style: const TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w500),
                     ),
-                    const SizedBox(
-                      height: 3,
+                    SizedBox(
+                      height: 6,
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          '0', //$unitsCollected
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '/$units units needed',
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    const SizedBox(height: 4),
                     Row(children: [
-                      const Icon(Icons.calendar_today_rounded,
-                          size: 18, color: Colors.deepPurple),
-                      const SizedBox(width: 8),
+                      Icon(Icons.calendar_today_outlined,
+                          size: 18, color: Colors.deepPurple.shade300),
+                      SizedBox(width: boxDim),
                       Text(
                         expiryDate,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
+                          color: Colors.grey.shade600,
                         ),
                       ),
-                      const SizedBox(width: 8 * 2),
-                      const Icon(Icons.access_time_rounded,
-                          size: 18, color: Colors.deepPurple),
-                      const SizedBox(width: 8),
+                      SizedBox(width: boxDim * 2),
+                      Icon(Icons.access_time_rounded,
+                          size: 18, color: Colors.deepPurple.shade300),
+                      SizedBox(width: boxDim),
                       Text(
                         expiryTime,
-                        style: const TextStyle(
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
                           fontSize: 16,
                         ),
                       ),
@@ -181,6 +172,8 @@ class _RequestCardState extends State<RequestCard> {
                     const SizedBox(
                       height: 6,
                     ),
+                    unitsCollectedInfo(),
+                    SizedBox(height: boxDim),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -196,12 +189,9 @@ class _RequestCardState extends State<RequestCard> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                               side: BorderSide(
-                                  color: Colors.grey.shade400, width: 2),
+                                  color: Colors.grey.shade400, width: 1),
                             ),
-                            elevation:
-                                3, // Adjust the elevation value as needed
-                            shadowColor: Colors.black.withOpacity(
-                                1), // Adjust the shadow color and opacity
+                            elevation: 3 // Adjust the elevation value as needed// Adjust the shadow color and opacity
                           ),
                         ),
 
@@ -272,6 +262,28 @@ class _RequestCardState extends State<RequestCard> {
           ),
         ),
       ),
+    );
+  }
+
+  Row unitsCollectedInfo() {
+    return Row(
+      children: [
+        Text(
+          '$unitsCollected',
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          '/$units units collected',
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 
