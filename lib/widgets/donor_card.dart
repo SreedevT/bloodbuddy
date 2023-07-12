@@ -45,7 +45,7 @@ class _DonorCardState extends State<DonorCard> {
       // width: 450.0,
       // height: 220.0,
       padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 25.0),
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
       decoration: BoxDecoration(
           color: Colors.red[800],
           borderRadius: BorderRadius.circular(20),

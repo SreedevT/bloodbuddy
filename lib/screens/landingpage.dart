@@ -91,23 +91,31 @@ class _HomeScreenState extends State<HomeScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const DonorCard(),
-                const SizedBox(
-                  height: 20,
+                const Divider(
+                  color: Colors.grey,
+                  endIndent: 10.0,
+                  indent: 10.0,
                 ),
                 Container(
-                    height: 80,
+                    height: 50,
+                    padding: const EdgeInsets.all(8.0),
                     width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.all(9.0),
+                    // margin: const EdgeInsets.all(9.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       // color: Colors.red[300],
                     ),
-                    child: const Center(
-                      child: Text('''See, whats happening 
-                              in BLOOD BUDDY!''',
+                    child: const Text("Recent Donations...",
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                    )),
+                            fontFamily: 'Argentum Sans',
+                              fontSize: 25, fontWeight: FontWeight.bold)),
+                    ),
+                    const Divider(
+                  color: Colors.grey,
+                  endIndent: 10.0,
+                  indent: 10.0,
+                ),
+                const SizedBox(height: 20,),
                 StreamBuilder(
                     stream: feedQuery.snapshots(),
                     builder: (context, snapshots) {
@@ -141,19 +149,11 @@ class _HomeScreenState extends State<HomeScreen>
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(
-                AssetImage("assets/images/donation.png"),
-                color: Colors.red,
-                size: 24,
-              ),
+              icon: Icon( Icons.favorite_border_outlined),
               label: 'Donation',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(
-                AssetImage("assets/images/blood.png"),
-                color: Colors.red,
-                size: 24,
-              ),
+              icon: Icon(Icons.bloodtype_outlined),
               label: 'Request',
             ),
             BottomNavigationBarItem(
@@ -261,18 +261,18 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
             return SizedBox(
               height: 200,
               child: Card(
-                color: Colors.pink[100],
+                color: Colors.grey,
                 shadowColor: Colors.purple[900],
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   side: const BorderSide(
-                      color: Color.fromARGB(255, 255, 205, 210), width: 1),
+                      color: Colors.red, width: 1),
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: ListTile(
-                    leading: Icon(Icons.favorite, color: Colors.red[800]),
+                    leading: Icon(Icons.bloodtype, color: Colors.red[800]),
                     title: AnimatedTextKit(
                       animatedTexts: [
                         TypewriterAnimatedText(
@@ -289,7 +289,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
                       "\nThank you to all the donors!",
                       style: TextStyle(
                         fontSize: 13,
-                        color: Color.fromARGB(255, 85, 46, 46),
+                        color: Color.fromARGB(255, 198, 40, 40),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
