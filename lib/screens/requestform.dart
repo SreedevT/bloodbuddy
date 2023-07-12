@@ -104,7 +104,7 @@ class _RequestFormState extends State<RequestForm> {
     if(fileurl == null ){
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please upload a file'),
+          content: Text('Please upload a suitable image file(jpg/jpeg,png)'),
         ),
       );
       return;
@@ -203,7 +203,6 @@ class _RequestFormState extends State<RequestForm> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
     if (result == null) {return null;}
     log(result.files.single.path!);
-    String filePath = result.files.single.path!;
     String fileName = result.files.single.name;
     String fileExtension = fileName.split('.').last.toLowerCase();
     List<String> supportExtensions = ['jpg', 'jpeg', 'png', 'svg','webp'];
