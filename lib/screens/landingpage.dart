@@ -221,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'profile');
+                Navigator.pushNamed(context, 'help_support');
               },
             ),
             ListTile(

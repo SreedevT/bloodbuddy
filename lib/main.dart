@@ -1,3 +1,4 @@
+import 'package:blood/screens/help.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,7 @@ Future<void> main() async {
           'faq': (context) => const FAQPage(),
           'profile': (context) => const UserProfile(),
           'donate_test': (context) => const TestBloodRequestList(),
+          'help_support':(context) => const HelpAndSupport(),
         },
       ),
     ),
