@@ -44,7 +44,7 @@ class FirebaseApi {
       //To handle error and display error message
       log("Maps Launch Failed: ${e.toString()}");
     }
-       break;
+      break;
       //default case
       default:
         navigatorKey.currentState?.pushNamed(

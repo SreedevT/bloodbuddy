@@ -5,8 +5,11 @@ import 'package:blood/Firestore/request.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../Firestore/userprofile.dart';
+import '../models/profile.dart';
 import '../models/request.dart';
+import '../widgets/info_text.dart';
 import '../widgets/request_card.dart';
 
 class RequestPage extends StatefulWidget {
@@ -19,13 +22,21 @@ class RequestPage extends StatefulWidget {
 class _RequestPageState extends State<RequestPage> {
   final db = FirebaseFirestore.instance;
   final String? user = FirebaseAuth.instance.currentUser!.uid;
-  late final Map<String, dynamic> profile;
+  Map<String, dynamic> profile = {};
+  late final Map<String,dynamic> eligibility;
   late List<RequestCard> requests = [];
   StreamSubscription? queryListner;
 
   @override
   void initState() {
     super.initState();
+    log("Donate screen profile: ${Provider.of<Profile>(context, listen: false).toJson()}");
+    eligibility = Provider.of<Profile>(context, listen: false)
+        .checkDonorEligibilityFunction();
+    log("Eligibility: $eligibility");
+    if (eligibility['eligible'] == false) {
+      return;
+    }
     DataBase(uid: user!).getUserProfile().then((value) {
       profile = value;
       log("Current Request: ${profile['Current Request']}");
@@ -55,7 +66,7 @@ class _RequestPageState extends State<RequestPage> {
   void dispose() {
     //?Not canceling the subscription will lead to memory leak
     //Error stating setState() called after dispose()
-    if (profile['Current Request'] == null) {
+    if (profile['Current Request'] == null && eligibility['eligible'] == true) {
       queryListner!.cancel();
     }
     super.dispose();
@@ -79,7 +90,7 @@ class _RequestPageState extends State<RequestPage> {
         if (change.doc.data()!['id'] == user) {
           continue;
         }
-        
+
         switch (change.type) {
           case DocumentChangeType.added:
             log("Added City: ${change.doc.data()}");
@@ -146,10 +157,23 @@ class _RequestPageState extends State<RequestPage> {
         decoration: const BoxDecoration(
           color: Color.fromARGB(255, 231, 231, 231),
         ),
-        child: requests.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView(
-                children: requests,
+        child: eligibility['eligible']
+            ? requests.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView(
+                    children: requests,
+                  )
+            : Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InfoBox(
+                    icon: Icons.info_outline,
+                    text: eligibility['message'],
+                    backgroundColor: const Color.fromARGB(255, 232, 245, 245),
+                    padding: 30,
+                    borderColor: Colors.white,
+                  ),
+                ),
               ),
       ),
     );

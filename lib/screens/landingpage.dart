@@ -5,7 +5,9 @@ import 'package:blood/widgets/info_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../models/profile.dart';
 import '../widgets/donor_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,6 +27,20 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance
+        .collection("User Profile")
+        .doc(uid)
+        .snapshots()
+        .listen((event) {
+      if (event.data() != null) {
+        Provider.of<Profile>(context, listen: false)
+            .setAllFieldsFromJson(event.data()!);
+        log("Profile Updated");
+        log("Profile: ${Provider.of<Profile>(context, listen: false).toJson()}");
+      }
+    });
+
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -92,21 +108,24 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 const DonorCard(),
                 Container(
-                    height: 50,
-                    padding: const EdgeInsets.all(8.0),
-                    width: MediaQuery.of(context).size.width,
-                    // margin: const EdgeInsets.all(9.0),
-                    child: const Text("Recent Donations...",
-                          style: TextStyle(
-                            fontFamily: 'Argentum Sans',
-                              fontSize: 25, fontWeight: FontWeight.bold)),
-                    ),
-                    const Divider(
+                  height: 50,
+                  padding: const EdgeInsets.all(8.0),
+                  width: MediaQuery.of(context).size.width,
+                  // margin: const EdgeInsets.all(9.0),
+                  child: const Text("Recent Donations...",
+                      style: TextStyle(
+                          fontFamily: 'Argentum Sans',
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold)),
+                ),
+                const Divider(
                   color: Colors.grey,
                   endIndent: 12.0,
                   indent: 12.0,
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 StreamBuilder(
                     stream: feedQuery.snapshots(),
                     builder: (context, snapshots) {
@@ -140,8 +159,8 @@ class _HomeScreenState extends State<HomeScreen>
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon( Icons.favorite_border_outlined),
-              label: 'Donation',
+              icon: Icon(Icons.favorite_border_outlined),
+              label: 'Donate',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bloodtype_outlined),
@@ -238,8 +257,8 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
   // ignore: no_leading_underscores_for_local_identifiers
   PageController _controller = PageController();
   return Container(
-    padding: const EdgeInsets.all(8.0),
-    height: 250,
+    padding: const EdgeInsets.fromLTRB(8.0, 3, 8, 5),
+    height: 190,
     child: Stack(
       children: [
         PageView.builder(
@@ -250,40 +269,42 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
             Map<String, dynamic> data =
                 snapshot[index].data() as Map<String, dynamic>;
             return SizedBox(
-              height: 200,
+              height: 190,
               child: Card(
-                color: Colors.red[100],
+                color: Colors.red[50],
                 shadowColor: Colors.purple[900],
-                elevation: 4,
+                elevation: 1,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   side: const BorderSide(
-                      color: Colors.black, width: 2),
+                      color: Color.fromARGB(255, 255, 205, 210), width: 1),
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: ListTile(
-                    // leading: Icon(Icons.bloodtype, color: Colors.red[800]),
-                    title: AnimatedTextKit(
-                      animatedTexts: [
-                        TypewriterAnimatedText(
-                          "${data['patientName']} received ${data['units']} units of ${data['bloodGroup']} blood at ${data['hospitalName']}",
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: ListTile(
+                      leading: Icon(Icons.favorite, color: Colors.red[800]),
+                      contentPadding: const EdgeInsets.only(left: 10),
+                      title: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            "${data['patientName']} received ${data['units']} units of blood at ${data['hospitalName']}",
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                            ),
+                            speed: const Duration(milliseconds: 30),
                           ),
-                          speed: const Duration(milliseconds: 30),
+                        ],
+                        totalRepeatCount: 1,
+                      ),
+                      subtitle: const Text(
+                        "\nThank you to all the donors!",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color.fromARGB(255, 85, 46, 46),
+                          fontStyle: FontStyle.italic,
                         ),
-                      ],
-                      totalRepeatCount: 1,
-                    ),
-                    subtitle: const Text(
-                      "\nThank you to all the donors!",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Color.fromARGB(255, 198, 40, 40),
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold
                       ),
                     ),
                   ),
@@ -293,8 +314,20 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
           },
         ),
         Container(
-          alignment: const Alignment(0.9, 0.75),
-          child: const Icon(Icons.arrow_circle_down, color: Colors.black, size: 30.0),
+          alignment: const Alignment(0.9, 0),
+          child: RotatedBox(
+            quarterTurns: 1,
+            child: SmoothPageIndicator(
+              controller: _controller,
+              count: snapshot.length,
+              effect: WormEffect(
+                dotColor: Colors.grey.shade400,
+                activeDotColor: Colors.black,
+                dotHeight: 5,
+                dotWidth: 5,
+              ),
+            ),
+          ),
         ),
       ],
     ),
