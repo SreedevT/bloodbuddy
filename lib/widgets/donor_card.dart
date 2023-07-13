@@ -22,6 +22,7 @@ class _DonorCardState extends State<DonorCard> {
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseApi().initPushNotifications();
     FirebaseApi().initNotification().then((value) => fetchUserProfile());
   }
 

@@ -29,7 +29,6 @@ Future<void> main() async {
   final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
 
-  FirebaseApi().initPushNotifications();
   runApp(
     MultiProvider(
       providers: [
