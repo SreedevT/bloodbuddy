@@ -61,7 +61,8 @@ class _RequestFormState extends State<RequestForm> {
     fontWeight: FontWeight.w500,
   );
 
-  final int _emergencyExpiryTime = 12;
+  final int 
+  _emergencyExpiryTime = 12;
   bool _load = false;
   void _setLoadingState(bool load) {
     setState(() {
@@ -169,17 +170,21 @@ class _RequestFormState extends State<RequestForm> {
         await request.updateRequest();
 
         // Reset the form and clear the fields after successful submission
-        // _formKey.currentState!.reset();
-        // _requesterController.clear();
-        // _patientNameController.clear();
-        // _unitsController.clear();
-        // _phoneController.clear();
-        // _hospitalController.clear();
-        // _selectedBloodType = null;
-        // _selectedDate = null;
-        // _selectedTime = null;
-        // _selectedDateTime = null;
-        // _uploadedFileName = null;
+        _formKey.currentState!.reset();
+        _requesterController.clear();
+        _patientNameController.clear();
+        _unitsController.clear();
+        _phoneController.clear();
+        _hospitalController.clear();
+        _selectedBloodType = null;
+        _selectedDate = null;
+        _selectedTime = null;
+        _selectedDateTime = null;
+        _uploadedFileName = null;
+
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
 
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

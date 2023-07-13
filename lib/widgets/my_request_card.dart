@@ -52,7 +52,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
     bloodGroup = widget.request.bloodGroup;
     patientName = widget.request.patientName;
     status = widget.request.status.name;
-    expiryDate = DateFormat('dd/mm/yyyy').format(widget.request.expiryDate);
+    expiryDate = DateFormat('dd/MM/yyyy').format(widget.request.expiryDate);
     expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate);
 
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
@@ -272,7 +272,13 @@ class _MyRequestCardState extends State<MyRequestCard> {
             tooltipMessage: "Share",
             onPressed: () {
               String data =
-                  "Hey! $patientName needs $units units of $bloodGroup blood at $hospitalAddress on $expiryDate at $expiryTime. \nPlease contact at ${widget.request.phone}!\nBystander name${widget.request.name} \nThis request was made using the BloodBuddy app.";
+                  """Hey! $patientName needs $units units of $bloodGroup blood at $hospitalAddress by $expiryDate at $expiryTime.
+                  
+Please contact at: ${widget.request.phone}!
+
+Bystander name: ${widget.request.name}
+
+This request was made using the BloodBuddy app.""";
               Share.share(data);
             },
             icon: Icons.share),
