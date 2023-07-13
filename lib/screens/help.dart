@@ -28,7 +28,7 @@ class HelpAndSupport extends StatelessWidget {
                   builder: (_) => const AlertDialog(
                     title: Text("Contact Information"),
                     content: Text(
-                      "For any support or inquiries, please contact us at:\n\nE-mail: bloodbuddy@gmail.com",
+                      "For any support or enquiries, please contact us at:\n\nE-mail: bloodbuddy@gmail.com",
                     ),
                   ),
                 );
