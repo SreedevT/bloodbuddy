@@ -1,13 +1,14 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../map_picker/osm_search_and_pick_mod.dart';
 import '../models/request.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class RequestForm extends StatefulWidget {
   const RequestForm({super.key});
@@ -30,7 +31,9 @@ class _RequestFormState extends State<RequestForm> {
   String? _selectedDate;
   String? _selectedTime;
   DateTime? _selectedDateTime;
+  DateTime? expiryDate;
   User? user;
+  String? fileurl;
 
   final TextEditingController _requesterController = TextEditingController();
   final TextEditingController _patientNameController = TextEditingController();
@@ -58,6 +61,8 @@ class _RequestFormState extends State<RequestForm> {
     fontWeight: FontWeight.w500,
   );
 
+  final int 
+  _emergencyExpiryTime = 12;
   bool _load = false;
   void _setLoadingState(bool load) {
     setState(() {
@@ -91,45 +96,139 @@ class _RequestFormState extends State<RequestForm> {
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // All fields are valid, submit the form
-      String requester = _requesterController.text;
-      String patientName = _patientNameController.text;
-      // int units = _unitsController.text;
-      String phone = _phoneController.text;
+  String? errorMessage;
 
-      log('Requester: $requester');
-      log("Patient's Name: $patientName");
-      log('Blood Type: $_selectedBloodType');
-      log('Units of Blood: $units');
-      log('Date: $_selectedDate');
-      log('Time: $_selectedTime');
-      log('Phone: $phone');
-      log('Uploaded File Name: $_uploadedFileName');
+  void _submitForm() async {
+    setState(() {
+      errorMessage = null; // Clear any previous error message
+    });
+    if(fileurl == null ){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please upload a suitable image file(jpg/jpeg,png)'),
+        ),
+      );
+      return;
+  }
+    try {
+      if (_formKey.currentState!.validate()) {
+        // All fields are valid, submit the form
+        String requester = _requesterController.text;
+        String patientName = _patientNameController.text;
+        String phoneString = _phoneController.text
+          ..replaceAll(RegExp(r'\D'), ''); // Remove all non-digit characters
 
-      Request(
-        id: user!.uid,
-        bloodGroup: _selectedBloodType!,
-        units: units,
-        patientName: pname,
-        name: name,
-        hospitalName: hospitalName!,
-        hospitalLocation:
-            LatLng(hospitalLocation.latitude, hospitalLocation.longitude),
-        area: area,
-      ).updateRequest();
+        log('Requester: $requester');
+        log("Patient's Name: $patientName");
+        log('Blood Type: $_selectedBloodType');
+        log('Units of Blood: $units');
+        log('Date: $_selectedDate');
+        log('Time: $_selectedTime');
+        log('Phone: $phoneString');
+        log('Uploaded File Name: $_uploadedFileName');
+
+        if (_selectedDate != null && _selectedTime != null) {
+          final DateFormat dateTimeFormat = DateFormat('dd/MM/yyyy hh:mm a');
+          final String combinedDateTimeString = '$_selectedDate $_selectedTime';
+          try {
+            _selectedDateTime = dateTimeFormat.parse(combinedDateTimeString);
+          } catch (e) {
+            throw const FormatException('Invalid date or time format');
+          }
+        }
+
+        setState(() {
+          _load = true; // Show the loading indicator
+        });
+
+        // Validate phone number format using regular expression
+        RegExp phoneRegex = RegExp(r'^[0-9]{10}$');
+        if (!phoneRegex.hasMatch(phoneString)) {
+          throw const FormatException('Invalid phone number format');
+        } else {
+          phoneString = '+91$phoneString'; // Add the country code IN
+        }
+
+        Request request = Request(
+          id: user!.uid,
+          isEmergency: isEmergency,
+          name: requester,
+          patientName: patientName,
+          bloodGroup: _selectedBloodType!,
+          units: units,
+          area: area,
+          expiryDate: _selectedDateTime!,
+          phone: phoneString,
+          hospitalName: hospitalName!,
+          hospitalLocation: LatLng(
+            hospitalLocation.latitude,
+            hospitalLocation.longitude,
+          ),
+          fileUrl: fileurl,
+        );
+
+        await request.updateRequest();
+
+        // Reset the form and clear the fields after successful submission
+        _formKey.currentState!.reset();
+        _requesterController.clear();
+        _patientNameController.clear();
+        _unitsController.clear();
+        _phoneController.clear();
+        _hospitalController.clear();
+        _selectedBloodType = null;
+        _selectedDate = null;
+        _selectedTime = null;
+        _selectedDateTime = null;
+        _uploadedFileName = null;
+
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Form submitted successfully!'),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to submit form: $e';
+      });
+    } finally {
+      setState(() {
+        _load = false; // Hide the loading indicator
+      });
     }
   }
 
   void _uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+    if (result == null) {return null;}
+    log(result.files.single.path!);
+    String fileName = result.files.single.name;
+    String fileExtension = fileName.split('.').last.toLowerCase();
+    List<String> supportExtensions = ['jpg', 'jpeg', 'png', 'svg','webp'];
+    if(!supportExtensions.contains(fileExtension)){
+      return null;
+    }
+    String uniqueName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageReference = FirebaseStorage.instance.ref();
+    Reference refFile = storageReference.child('files');
+    Reference uploadFile = refFile.child(uniqueName);
+    try{
+    await uploadFile.putFile(File(result.files.single.path!));
+    fileurl = await uploadFile.getDownloadURL();
+    log("Fileurl: $fileurl!");
+    }
+    catch(e){
+      log(e.toString());
+    }
       setState(() {
         _uploadedFileName = result.files.single.name;
       });
-    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -189,168 +288,24 @@ class _RequestFormState extends State<RequestForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: const Text(
-                        'Emergency ',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 50,
-                      height: 30,
-                      child: Transform.scale(
-                        scale: 0.8, // Adjust the scale factor as needed
-                        child: Switch(
-                          value: isEmergency,
-                          onChanged: (value) {
-                            setState(() {
-                              isEmergency = value;
-                              if (isEmergency) {
-                                _selectedDateTime = DateTime.now()
-                                    .add(const Duration(hours: 12));
-                              } else {
-                                _selectedDateTime = null;
-                              }
-                            });
-                            log("Emergency: $isEmergency");
-                          },
-                          activeTrackColor:
-                              const Color.fromARGB(255, 187, 49, 39),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                emergencyButton(),
 
                 const SizedBox(height: 7),
-                Row(
-                  children: [
-                    //Search Button
-                    ElevatedButton(
-                      style: buttonStyle,
-                      onPressed: () async {
-                        _setLoadingState(true);
-                        await _getCurrentLocation()
-                            .then((value) => _setLoadingState(false));
-                        if (!mounted) return;
-                        _showModalBottomSheet(context);
-                      },
-                      child: _load
-                          ? const SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator())
-                          : const Icon(
-                              Icons.search,
-                              size: 30,
-                            ),
-                    ),
-
-                    const SizedBox(width: 11),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _hospitalController,
-                        enabled: _hospitalController.text.isNotEmpty,
-                        decoration: const InputDecoration(
-                          labelText: 'Search Hospital',
-                          border: OutlineInputBorder(),
-                        ),
-                        style: formEntryTextStyle,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select current hospital location';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                hospitalFeild(context),
 
                 const SizedBox(height: 11),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Bystander's name",
-                    border: OutlineInputBorder(),
-                  ),
-                  style: formEntryTextStyle,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter the bystander's name";
-                    }
-                    return null;
-                  },
-                ),
+                bustanderNameField(),
                 const SizedBox(height: 11),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Patient's Name",
-                    border: OutlineInputBorder(),
-                  ),
-                  style: formEntryTextStyle,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter the patient's name";
-                    }
-                    return null;
-                  },
-                ),
+                patientNameField(),
                 const SizedBox(height: 11),
                 Row(
                   children: [
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedBloodType,
-                        decoration: const InputDecoration(
-                          labelText: 'Blood Type',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: _bloodTypes.map((type) {
-                          return DropdownMenuItem<String>(
-                            value: type,
-                            child: Text(type),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _selectedBloodType = value;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select a blood type';
-                          }
-                          return null;
-                        },
-                      ),
+                      child: bloodTypeField(),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Units of Blood',
-                          border: OutlineInputBorder(),
-                        ),
-                        style: formEntryTextStyle,
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              int.tryParse(value) == null ||
-                              int.tryParse(value)! > 10) {
-                            return 'Please enter the units of blood';
-                          }
-                          units = int.parse(value);
-                          return null;
-                        },
-                      ),
+                      child: unitsField(),
                     ),
                   ],
                 ),
@@ -361,85 +316,29 @@ class _RequestFormState extends State<RequestForm> {
                   children: [
                     if (!isEmergency) // Show the date field if emergency is off
                       Expanded(
-                        child: TextFormField(
-                          readOnly: true,
-                          onTap: () => _selectDate(context),
-                          controller:
-                              TextEditingController(text: _selectedDate ?? ''),
-                          decoration: const InputDecoration(
-                            labelText: 'Date',
-                            border: OutlineInputBorder(),
-                          ),
-                          style: formEntryTextStyle,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select a date';
-                            }
-                            return null;
-                          },
-                        ),
+                        child: dateField(context),
                       ),
                     SizedBox(
                       width: !isEmergency ? 16 : 0,
                     ), // Add spacing between the fields
                     if (!isEmergency) // Show the time field if emergency is off
                       Expanded(
-                        child: TextFormField(
-                          readOnly: true,
-                          onTap: () => _selectTime(context),
-                          controller:
-                              TextEditingController(text: _selectedTime ?? ''),
-                          decoration: const InputDecoration(
-                            labelText: 'Time',
-                            border: OutlineInputBorder(),
-                          ),
-                          style: formEntryTextStyle,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select a time';
-                            }
-                            return null;
-                          },
-                        ),
+                        child: timeField(context),
                       ),
                   ],
                 ),
 
                 const SizedBox(height: 11),
-                TextFormField(
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone',
-                    border: OutlineInputBorder(),
+                phoneField(),
+                //Show form submission errors
+                if (errorMessage != null)
+                  Text(
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                  style: formEntryTextStyle,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a phone number';
-                    }
-                    return null;
-                  },
-                ),
+
                 const SizedBox(height: 11),
-                ElevatedButton.icon(
-                  onPressed: _uploadFile,
-                  icon: const Icon(
-                    Icons.file_upload,
-                    color: Colors.white,
-                  ),
-                  label: const Text(
-                    'Upload Requisition Form',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 198, 40, 40)),
-                  ),
-                ),
+                fileUploadButton(),
                 const SizedBox(height: 11),
                 if (_uploadedFileName != null)
                   Text(
@@ -447,27 +346,286 @@ class _RequestFormState extends State<RequestForm> {
                     style: const TextStyle(fontSize: 16),
                   ),
                 const SizedBox(height: 5),
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 198, 40, 40),
-                    ), // Change the button color to blue
-                  ),
-                  child: const Text(
-                    'SUBMIT',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                submitButton(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  ElevatedButton submitButton() {
+    return ElevatedButton(
+      onPressed: _submitForm,
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(
+          const Color.fromARGB(255, 198, 40, 40),
+        ), // Change the button color to blue
+      ),
+      child: const Text(
+        'SUBMIT',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton fileUploadButton() {
+    return ElevatedButton.icon(
+      onPressed: _uploadFile,
+      icon: const Icon(
+        Icons.file_upload,
+        color: Colors.white,
+      ),
+      label: const Text(
+        'Upload Requisition Form\n\t\t\t\tImage file only',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(
+            const Color.fromARGB(255, 198, 40, 40)),
+      ),
+    );
+  }
+
+  TextFormField phoneField() {
+    return TextFormField(
+      controller: _phoneController,
+      keyboardType: TextInputType.phone,
+      decoration: const InputDecoration(
+        labelText: 'Phone',
+        border: OutlineInputBorder(),
+      ),
+      style: formEntryTextStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a phone number';
+        }
+        return null;
+      },
+    );
+  }
+
+  TextFormField timeField(BuildContext context) {
+    return TextFormField(
+      readOnly: true,
+      onTap: () => _selectTime(context),
+      controller: TextEditingController(text: _selectedTime ?? ''),
+      decoration: const InputDecoration(
+        labelText: 'Time',
+        border: OutlineInputBorder(),
+      ),
+      style: formEntryTextStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select a time';
+        }
+        _selectedTime = value;
+        return null;
+      },
+    );
+  }
+
+  TextFormField dateField(BuildContext context) {
+    return TextFormField(
+      readOnly: true,
+      onTap: () => _selectDate(context),
+      controller: TextEditingController(text: _selectedDate ?? ''),
+      decoration: const InputDecoration(
+        labelText: 'Date',
+        border: OutlineInputBorder(),
+      ),
+      style: formEntryTextStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select a date';
+        }
+        _selectedDate = value;
+        return null;
+      },
+    );
+  }
+
+  TextFormField unitsField() {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      decoration: const InputDecoration(
+        labelText: 'Units of Blood',
+        border: OutlineInputBorder(),
+      ),
+      style: formEntryTextStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty || int.tryParse(value) == null) {
+          return 'Please enter the units of blood';
+        }
+        if (int.tryParse(value)! > 10) {
+          return 'Units must be less than 10';
+        }
+        units = int.parse(value);
+        return null;
+      },
+    );
+  }
+
+  DropdownButtonFormField<String> bloodTypeField() {
+    return DropdownButtonFormField<String>(
+      value: _selectedBloodType,
+      decoration: const InputDecoration(
+        labelText: 'Blood Type',
+        border: OutlineInputBorder(),
+      ),
+      items: _bloodTypes.map((type) {
+        return DropdownMenuItem<String>(
+          value: type,
+          child: Text(type),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          _selectedBloodType = value;
+        });
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select a blood type';
+        }
+        return null;
+      },
+    );
+  }
+
+  TextFormField patientNameField() {
+    return TextFormField(
+      controller: _patientNameController,
+      decoration: const InputDecoration(
+        labelText: "Patient's Name",
+        border: OutlineInputBorder(),
+      ),
+      style: formEntryTextStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter the patient's name";
+        }
+        pname = value;
+        return null;
+      },
+    );
+  }
+
+  TextFormField bustanderNameField() {
+    return TextFormField(
+      controller: _requesterController,
+      decoration: const InputDecoration(
+        labelText: "Bystander's name",
+        border: OutlineInputBorder(),
+      ),
+      style: formEntryTextStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter the bystander's name";
+        }
+        name = value;
+        return null;
+      },
+    );
+  }
+
+  Row hospitalFeild(BuildContext context) {
+    return Row(
+      children: [
+        //Search Button
+        ElevatedButton(
+          style: buttonStyle,
+          onPressed: () async {
+            _setLoadingState(true);
+            await _getCurrentLocation()
+                .then((value) => _setLoadingState(false));
+            if (!mounted) return;
+            _showModalBottomSheet(context);
+          },
+          child: _load
+              ? const SizedBox(
+                  height: 30, width: 30, child: CircularProgressIndicator())
+              : const Icon(
+                  Icons.search,
+                  size: 30,
+                ),
+        ),
+
+        const SizedBox(width: 11),
+        Expanded(
+          child: TextFormField(
+            controller: _hospitalController,
+            enabled: _hospitalController.text.isNotEmpty,
+            decoration: const InputDecoration(
+              labelText: 'Search Hospital',
+              border: OutlineInputBorder(),
+            ),
+            style: formEntryTextStyle,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select current hospital location';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row emergencyButton() {
+    return Row(
+      children: [
+        Tooltip(
+          triggerMode: TooltipTriggerMode.tap,
+          message:
+              "Emergency requests will expire in $_emergencyExpiryTime hours",
+          child: const Icon(Icons.info_outline_rounded),
+        ),
+        Container(
+          padding: const EdgeInsets.only(left: 5),
+          child: const Text(
+            'Emergency ',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 50,
+          height: 30,
+          child: Transform.scale(
+            scale: 0.8, // Adjust the scale factor as needed
+            child: Switch(
+              value: isEmergency,
+              onChanged: (value) {
+                setState(() {
+                  isEmergency = value;
+                  if (isEmergency) {
+                    _selectedDateTime = DateTime.now()
+                        .add(Duration(hours: _emergencyExpiryTime));
+                  } else {
+                    _selectedDateTime = null;
+                  }
+                });
+                log("Emergency: $isEmergency");
+              },
+              activeTrackColor: const Color.fromARGB(255, 187, 49, 39),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

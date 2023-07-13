@@ -1,12 +1,13 @@
 import 'dart:developer';
+import 'package:blood/screens/profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 
-import '../models/profile.dart';
+import '../Firestore/request.dart';
+import '../Firestore/userprofile.dart';
 import '../screens/interested_users_screen.dart';
 import '../utils/screen_utils.dart';
 
@@ -24,6 +25,8 @@ class Listee extends StatefulWidget {
 class _ListeeState extends State<Listee> {
   List<Map<String, dynamic>> userDataList = [];
   // late Map<String, dynamic> userData;
+  int unitsCollected = 0;
+  bool donorsFilled = false;
 
   @override
   void initState() {
@@ -36,11 +39,18 @@ class _ListeeState extends State<Listee> {
   ///Returns a combined map with key values respecting firestore document structure
   void fetchData() async {
     userDataList.clear();
+    //Set units Collected
+    RequestQuery(reqId: widget.reqid).getUnitsCollected().then((value) {
+      setState(() {
+        unitsCollected = value;
+      });
+    });
+
+    //? Fill in the user data in a list
     for (String id in widget.ids) {
       try {
-        //? Get data from user profile
-        Map<String, dynamic> data =
-            Provider.of<Profile>(context, listen: false).toJson();
+        //? Get data of interested user from user profile
+        Map<String, dynamic> data = await DataBase(uid: id).getUserProfile();
         log("Profile DATA: $data\n");
 
         //? Get data from interested subcollection
@@ -54,6 +64,8 @@ class _ListeeState extends State<Listee> {
           ..addAll({'id': id})
           ..addAll(interestedData)
           ..addAll(requestData);
+        //data.addAll({id})
+        //data.addAll(interestedData)
 
         if (data.isNotEmpty) {
           log("USER DATA: $data");
@@ -65,25 +77,149 @@ class _ListeeState extends State<Listee> {
         log(e.toString());
       }
     }
+    //? Set wether donors are fulfilled
+    //TODO May cause errors ignore if it works
+    setState(() {
+      donorsFilled = unitsCollected == userDataList[0]['units'];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: userDataList.length,
-      itemBuilder: (BuildContext context, int index) {
-        Map<String, dynamic> userData = userDataList[index];
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          //TODO: Maybe use stream or something. Update on card does not work realtime
-          child: InterestedUserCard(userData: userData, reqid: widget.reqid),
-        );
-      },
+    Color? buttonColor =
+        donorsFilled ? Colors.green.shade300 : Colors.grey.shade400;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: () => donorsFilled ? closeRequest() : closeRequestDialog(),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+            padding: const EdgeInsets.all(10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: buttonColor,
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: const Center(
+              child: Text(
+                'Close Request',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: userDataList.length,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> userData = userDataList[index];
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                //TODO: Maybe use stream or something. Update on card does not work realtime
+                child: InterestedUserCard(
+                    userData: userData,
+                    reqid: widget.reqid,
+                    unitsCollected: unitsCollected),
+              );
+            },
+          ),
+        ),
+      ],
     );
+  }
+
+  void closeRequestDialog() {
+    log("Close request while not filled pressed");
+    const TextStyle alertTitle = TextStyle(
+      fontWeight: FontWeight.bold,
+    );
+    const TextStyle alertContent = TextStyle(
+      fontSize: 16,
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(
+                  Icons.warning_amber_outlined,
+                  size: 30,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text('Careful there!', style: alertTitle),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "You are trying to close a request that isn't complete yet.",
+                  style: alertContent,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text('Are you sure?', style: alertContent),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel")),
+              TextButton(
+                  onPressed: () {
+                    closeRequest();
+                    //?Remove Alert dialog
+                    Navigator.pop(context);
+                  },
+                  child: const Text("I'm Sure")),
+            ],
+          );
+        });
+  }
+
+  void closeRequest() async {
+    //? Update request status to complete
+    await FirebaseFirestore.instance
+        .collection("Reqs")
+        .doc(widget.reqid)
+        .update({'status': 'complete'});
+
+    //? Update profile of all donors
+    await FirebaseFirestore.instance
+        .collection("Reqs")
+        .doc(widget.reqid)
+        .collection('Interested')
+        .where('isDonor', isEqualTo: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        DataBase(uid: element.id).profileOnCloseRequest();
+      }
+    });
+    if (!mounted) return;
+    Navigator.pop(context);
+
+    //TODO SnackBar Message to show request closed
   }
 
   ///Function for getting interesterd users phone number and time of interest
   Future<Map<String, dynamic>> getInterestedDoc(String uid) async {
+    log("UID: $uid");
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection("Reqs")
@@ -116,6 +252,7 @@ class _ListeeState extends State<Listee> {
         return {
           'hospitalName': data['hospitalName'],
           'position': data['position'],
+          'units': data['units'],
         };
       }
     } catch (e) {
@@ -128,99 +265,121 @@ class _ListeeState extends State<Listee> {
 class InterestedUserCard extends StatefulWidget {
   final Map<String, dynamic> userData;
   final String reqid;
+  final int unitsCollected;
 
   const InterestedUserCard({
     Key? key,
     required this.userData,
     required this.reqid,
+    required this.unitsCollected,
   }) : super(key: key);
   @override
   State<InterestedUserCard> createState() => _InterestedUserCardState();
 }
 
 class _InterestedUserCardState extends State<InterestedUserCard> {
+  bool _donorsFilled = false;
+
+  @override
+  void initState() {
+    log("Units collected ${widget.unitsCollected}");
+    log("UNits required ${widget.userData['units']}");
+
+    widget.unitsCollected == widget.userData['units']
+        ? _donorsFilled = true
+        : _donorsFilled = false;
+
+    log("Donors filled: $_donorsFilled");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ExpansionTileCard(
-      // ignore: prefer_const_constructors
-      contentPadding: EdgeInsets.all(10),
-      baseColor:
-          widget.userData['isDonor'] ? Colors.green[200] : Colors.cyan[100],
-      expandedColor: Colors.red[50],
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return IgnorePointer(
+      ignoring: _donorsFilled & !widget.userData['isDonor'],
+      child: ExpansionTileCard(
+        contentPadding: const EdgeInsets.all(10),
+        baseColor: widget.userData['isDonor']
+            ? Colors.green[200]
+            : _donorsFilled
+                ? Colors.grey[200]
+                : Color.fromARGB(255, 212, 232, 238),
+        expandedColor: Colors.red[50],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${widget.userData['First Name']} ${widget.userData['Last Name']}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "${widget.userData['Blood Group']}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        subtitle: Text(
+            "Age: ${widget.userData['Age']} | Place: ${widget.userData['General Area']}"),
         children: [
-          Text(
-            "${widget.userData['First Name']} ${widget.userData['Last Name']}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          const Divider(
+            thickness: 1.0,
+            height: 1.0,
           ),
-          Text(
-            "${widget.userData['Blood Group']}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceAround,
+            buttonHeight: 52.0,
+            buttonMinWidth: 90.0,
+            children: [
+              TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  log("Whatsapp pressed");
+                  sendWhatsappMsg(widget.userData);
+                },
+                child: Column(
+                  children: [
+                    SvgPicture.asset('assets/icons/whatsapp_icon.svg',
+                        height: 30),
+                    const SizedBox(height: 1.5),
+                    const Text('Chat'),
+                  ],
+                ),
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  log("Call pressed");
+                  callUser(widget.userData);
+                },
+                child: Column(
+                  children: const [
+                    Icon(Icons.call),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2.0),
+                    ),
+                    Text('Call'),
+                  ],
+                ),
+              ),
+              widget.userData['isDonor']
+                  ? removeDonorButton()
+                  : confirmDonorButton(),
+            ],
           ),
         ],
       ),
-      subtitle: Text(
-          "Age: ${widget.userData['Age']} | Place: ${widget.userData['General Area']}"),
-      children: [
-        const Divider(
-          thickness: 1.0,
-          height: 1.0,
-        ),
-        ButtonBar(
-          alignment: MainAxisAlignment.spaceAround,
-          buttonHeight: 52.0,
-          buttonMinWidth: 90.0,
-          children: [
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                ),
-              ),
-              onPressed: () {
-                log("Whatsapp pressed");
-                sendWhatsappMsg(widget.userData);
-              },
-              child: Column(
-                children: [
-                  SvgPicture.asset('assets/icons/whatsapp_icon.svg',
-                      height: 30),
-                  const SizedBox(height: 1.5),
-                  const Text('Chat'),
-                ],
-              ),
-            ),
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                ),
-              ),
-              onPressed: () {
-                log("Call pressed");
-                callUser(widget.userData);
-              },
-              child: Column(
-                children: const [
-                  Icon(Icons.call),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                  ),
-                  Text('Call'),
-                ],
-              ),
-            ),
-            widget.userData['isDonor']
-                ? removeDonorButton()
-                : confirmDonorButton(),
-          ],
-        ),
-      ],
     );
   }
 
@@ -241,6 +400,9 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .collection("Interested")
             .doc(widget.userData['id'])
             .update({'isDonor': true});
+        //? User profile updated with the request id, No other requests will be shown to the user.
+        await DataBase(uid: widget.userData['id'])
+            .updateCurrentRequest(widget.reqid);
         if (!mounted) return;
         Utils.reload(
             page: InterestedUsers(reqid: widget.reqid), context: context);
@@ -274,6 +436,9 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             .collection("Interested")
             .doc(widget.userData['id'])
             .update({'isDonor': false});
+        //? User profile updated with current request as null. User can see other requests.
+        //? Showing and hiding of requests done in donate screen.
+        await DataBase(uid: widget.userData['id']).updateCurrentRequest(null);
         if (!mounted) return;
         Utils.reload(
             page: InterestedUsers(reqid: widget.reqid), context: context);

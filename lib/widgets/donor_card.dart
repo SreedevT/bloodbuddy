@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
+import '../utils/firebase_api.dart';
 
 class DonorCard extends StatefulWidget {
   const DonorCard({
@@ -21,7 +22,8 @@ class _DonorCardState extends State<DonorCard> {
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser!.uid;
-    fetchUserProfile();
+    FirebaseApi().initPushNotifications();
+    FirebaseApi().initNotification().then((value) => fetchUserProfile());
   }
 
   fetchUserProfile() async {
@@ -42,10 +44,10 @@ class _DonorCardState extends State<DonorCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 450.0,
-      height: 220.0,
+      // width: 450.0,
+      // height: 220.0,
       padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 25.0),
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
       decoration: BoxDecoration(
           color: Colors.red[800],
           borderRadius: BorderRadius.circular(20),
@@ -54,23 +56,17 @@ class _DonorCardState extends State<DonorCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Align(
-            alignment: Alignment.topRight,
-            child: Stack(
-              children: [
-                Container(
-                  height: 30,
-                  width: 35,
-                  color: Colors.white,
-                ),
-                Text(" BB",
+              alignment: Alignment.topRight,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.fromLTRB(4, 1, 4, 1),
+                child: Text("BB",
                     style: TextStyle(
                         color: Colors.red[800],
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic)),
-              ],
-            ),
-          ),
+              )),
           Row(
             children: [
               Image.asset('assets/images/thankshand.png', height: 90),
@@ -104,7 +100,7 @@ class _DonorCardState extends State<DonorCard> {
                     fontWeight: FontWeight.w300),
               ),
               Text(
-                'Donor No',
+                'Donor No.',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -135,9 +131,9 @@ class _DonorCardState extends State<DonorCard> {
               const SizedBox(
                 width: 10,
               ),
-              const Text(
-                '0A3E4r',
-                style: TextStyle(
+              Text(
+                "${data?['id'].substring(0, 6) ?? 'loading...'}",
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w600),

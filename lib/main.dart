@@ -1,3 +1,8 @@
+import 'dart:developer';
+
+import 'package:blood/screens/help.dart';
+import 'package:blood/utils/firebase_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +15,8 @@ import '../authentication/authentication.dart';
 import '../models/profile.dart';
 import '../screens/screens.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Future.delayed(const Duration(seconds: 1, microseconds: 500));
@@ -21,6 +28,7 @@ Future<void> main() async {
   );
   final FirebaseAuth auth = FirebaseAuth.instance;
   User? user = auth.currentUser;
+
   runApp(
     MultiProvider(
       providers: [
@@ -41,6 +49,7 @@ Future<void> main() async {
             iconTheme: IconThemeData(color: Colors.white),
           ),
         ),
+        navigatorKey: navigatorKey,
         initialRoute: user != null ? 'home' : 'initial_screen',
         // initialRoute: 'personal_info',
         debugShowCheckedModeBanner: false,
@@ -53,13 +62,13 @@ Future<void> main() async {
           'personal_info': (context) => const SignUpScreen(),
           'initial_screen': (context) => const InitialScreen(),
           'donate': (context) => const RequestPage(),
-          'reqform': (context) => const TestRequestForm(),
+          //'reqform': (context) => const TestRequestForm(),
           'my_requests': (context) => const MyRequestList(),
           'test_profile': (context) => const TestHomeScreen(),
           'req_form': (context) => const RequestForm(),
-          'faq':(context) => const FAQPage(),
+          'faq': (context) => const FAQPage(),
           'profile': (context) => const UserProfile(),
-          'donate_test': (context) => const TestBloodRequestList(),
+          'help_support': (context) => const HelpAndSupport(),
         },
       ),
     ),

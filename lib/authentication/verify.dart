@@ -122,9 +122,9 @@ class _MyVerifyState extends State<MyVerify> {
             const SizedBox(
               height: 25,
             ),
-            const Text(
-              "Enter the OTP",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              "Enter the OTP sent to ${MyPhone.phoneNumber}",
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 10,

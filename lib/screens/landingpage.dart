@@ -1,6 +1,14 @@
+import 'dart:async';
+import 'dart:developer';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:blood/widgets/info_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../models/profile.dart';
 import '../widgets/donor_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,20 +18,42 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late final Query feedQuery;
 
   @override
   void initState() {
     super.initState();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance
+        .collection("User Profile")
+        .doc(uid)
+        .snapshots()
+        .listen((event) {
+      if (event.data() != null) {
+        Provider.of<Profile>(context, listen: false)
+            .setAllFieldsFromJson(event.data()!);
+        log("Profile Updated");
+        log("Profile: ${Provider.of<Profile>(context, listen: false).toJson()}");
+      }
+    });
+
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
     _animationController.forward();
+
+    feedQuery = FirebaseFirestore.instance
+        .collection('Reqs')
+        .where('status', isEqualTo: 'complete')
+        .orderBy('completedTime', descending: true)
+        .limit(5);
   }
 
   @override
@@ -40,14 +70,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       Navigator.pushNamed(context, 'donate');
     }
     if (index == 2) {
-    Navigator.pushNamed(context, 'my_requests');
+      Navigator.pushNamed(context, 'my_requests');
     }
-    if(index == 3){
-      Navigator.pushNamed(context,'profile');
+    if (index == 3) {
+      Navigator.pushNamed(context, 'profile');
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +98,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             },
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.white,
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
+            const Text("Home ",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300)),
+            SvgPicture.asset(
+              'assets/donblood2.svg',
+              height: 25,
             ),
+            const SizedBox(
+              width: 10,
+            )
           ],
         ),
         drawer: drawer(context),
@@ -86,93 +119,49 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           color: Colors.white,
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const DonorCard(),
+                Container(
+                  height: 50,
+                  padding: const EdgeInsets.all(8.0),
+                  width: MediaQuery.of(context).size.width,
+                  // margin: const EdgeInsets.all(9.0),
+                  child: const Text("Recent Donations...",
+                      style: TextStyle(
+                          fontFamily: 'Argentum Sans',
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold)),
+                ),
+                const Divider(
+                  color: Colors.grey,
+                  endIndent: 12.0,
+                  indent: 12.0,
+                ),
                 const SizedBox(
                   height: 20,
                 ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(0, 0, 80, 0),
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: const Text(
-                    'Recent Donation',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 10, 20),
-                  width: 350,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(212, 231, 231, 231),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Sony donated to shaf......................',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 5, 0, 0),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 10, 20),
-                  width: 350,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(212, 231, 231, 231),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Sony donated to shaf......................',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 5, 0, 0),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 1,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(150, 0, 0, 0),
-                  child: const InkWell(
-                    child: Text(
-                      'Click here for more donation Details',
-                      style: TextStyle(fontSize: 9),
-                    ),
-                  ),
-                ),
-                Image.asset(
-                  'assets/images/image2.jpg',
-                  width: 150,
-                  height: 100,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(50, 1, 50, 0),
-                  color: const Color.fromARGB(211, 255, 255, 255),
-                  child: const Text(
-                    'Thank you For donating to save a life',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 5, 0, 0),
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
+                StreamBuilder(
+                    stream: feedQuery.snapshots(),
+                    builder: (context, snapshots) {
+                      if (snapshots.hasError) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: InfoBox(
+                            text: 'No Donations Yet',
+                            icon: Icons.error,
+                            backgroundColor: Color.fromRGBO(255, 205, 210, 1),
+                          ),
+                        );
+                      }
+                      if (snapshots.hasData) {
+                        for (var i in snapshots.data!.docs) {
+                          log("FEEED!!!!: ${i.data().toString()}");
+                        }
+                        return feedCards(snapshots.data!.docs);
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    }),
               ],
             ),
           ),
@@ -185,19 +174,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(
-                AssetImage("assets/images/donation.png"),
-                color: Colors.red,
-                size: 24,
-              ),
-              label: 'Donation',
+              icon: Icon(Icons.favorite_border_outlined),
+              label: 'Donate',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(
-                AssetImage("assets/images/blood.png"),
-                color: Colors.red,
-                size: 24,
-              ),
+              icon: Icon(Icons.bloodtype_outlined),
               label: 'Request',
             ),
             BottomNavigationBarItem(
@@ -238,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     TextSpan(
                       text: "\nEmpowering Blood Donation.",
                       style: TextStyle(
+                        fontFamily: 'normal',
                         fontWeight: FontWeight.normal,
                         fontSize: 15,
                       ),
@@ -247,26 +229,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
+              leading: const Icon(Icons.question_answer),
+              title: const Text(
+                'FAQS',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, 'faq');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profile'),
+              leading: const Icon(Icons.help),
+              title: const Text(
+                'Help & Support',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'profile');
+                Navigator.pushNamed(context, 'help_support');
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+              title: const Text(
+                'Logout',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, 'welcome', (route) => false);
               },
             ),
           ],
@@ -274,4 +266,85 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
     );
   }
+}
+
+Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
+  // ignore: no_leading_underscores_for_local_identifiers
+  PageController _controller = PageController();
+  return Container(
+    padding: const EdgeInsets.fromLTRB(8.0, 3, 8, 5),
+    height: 190,
+    child: Stack(
+      children: [
+        PageView.builder(
+          controller: _controller,
+          scrollDirection: Axis.vertical,
+          itemCount: snapshot.length,
+          itemBuilder: (context, index) {
+            Map<String, dynamic> data =
+                snapshot[index].data() as Map<String, dynamic>;
+            return SizedBox(
+              height: 190,
+              child: Card(
+                color: Colors.red[50],
+                shadowColor: Colors.purple[900],
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: const BorderSide(
+                      color: Color.fromARGB(255, 255, 205, 210), width: 1),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: ListTile(
+                      leading: Icon(Icons.favorite, color: Colors.red[800]),
+                      contentPadding: const EdgeInsets.only(left: 10),
+                      title: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            "${data['patientName']} received ${data['units']} units of blood at ${data['hospitalName']}",
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                            ),
+                            speed: const Duration(milliseconds: 30),
+                          ),
+                        ],
+                        totalRepeatCount: 1,
+                      ),
+                      subtitle: const Text(
+                        "\nThank you to all the donors!",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color.fromARGB(255, 85, 46, 46),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        Container(
+          alignment: const Alignment(0.9, 0),
+          child: RotatedBox(
+            quarterTurns: 1,
+            child: SmoothPageIndicator(
+              controller: _controller,
+              count: snapshot.length,
+              effect: WormEffect(
+                dotColor: Colors.grey.shade400,
+                activeDotColor: Colors.black,
+                dotHeight: 5,
+                dotWidth: 5,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
