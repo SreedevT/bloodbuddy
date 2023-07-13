@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../models/profile.dart';
 import '../widgets/donor_card.dart';
@@ -96,6 +97,15 @@ class _HomeScreenState extends State<HomeScreen>
               );
             },
           ),
+          actions: [
+            const Text("Home ", style: TextStyle(
+              color: Colors.white,
+              fontSize: 20, fontWeight: FontWeight.w300)),
+            SvgPicture.asset('assets/donblood2.svg',
+        height: 25,),
+            const SizedBox(width: 10,)
+
+          ],
         ),
         drawer: drawer(context),
         body: Container(
