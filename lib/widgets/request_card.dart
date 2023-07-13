@@ -123,166 +123,163 @@ class _RequestCardState extends State<RequestCard> {
         ),
         color: isEmergency ? Colors.red[50] : Colors.white,
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-        child: Stack(children: [
-          const EmergencyTriangleBadge(),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                          'Patient:  ${Utils.capitalizeFirstLetter(patientName)}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          )),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      Text(
-                        hospitalAddress,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        'Patient:  ${Utils.capitalizeFirstLetter(patientName)}',
                         style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      Row(children: [
-                        Icon(Icons.calendar_today_outlined,
-                            size: 18, color: Colors.deepPurple.shade300),
-                        SizedBox(width: boxDim),
-                        Text(
-                          expiryDate,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        SizedBox(width: boxDim * 2),
-                        Icon(Icons.access_time_rounded,
-                            size: 18, color: Colors.deepPurple.shade300),
-                        SizedBox(width: boxDim),
-                        Text(
-                          expiryTime,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ]),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      unitsCollectedInfo(),
-                      SizedBox(height: boxDim),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: updateInterest,
-                            icon: _interested
-                                ? const Icon(Icons.check_circle_outline)
-                                : const Icon(Icons.add_circle_outline),
-                            label: _interested
-                                ? const Text("Added")
-                                : const Text("Accept"),
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                      color: Colors.grey.shade400, width: 1),
-                                ),
-                                elevation:
-                                    3 // Adjust the elevation value as needed// Adjust the shadow color and opacity
-                                ),
-                          ),
-
-                          // ElevatedButton(
-                          //   style: ElevatedButton.styleFrom(
-                          //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(8),
-                          //       side: const BorderSide(color: Colors.red, width: 2),
-                          //     ),
-                          //   ),
-                          //   onPressed: () {},
-                          //   child: Row(
-                          //     children: [
-                          //       const Text("Accept"),
-                          //     ],
-                          //   ),
-                          // ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 22,
-                          backgroundColor:
-                              const Color.fromARGB(255, 241, 240, 240),
-                          child: Text(
-                            bloodGroup,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 171, 61, 61),
-                            ),
-                          ),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                    Text(
+                      hospitalAddress,
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    Row(children: [
+                      Icon(Icons.calendar_today_outlined,
+                          size: 18, color: Colors.deepPurple.shade300),
+                      SizedBox(width: boxDim),
+                      Text(
+                        expiryDate,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      circleButtonWithTooltip(
-                          tooltipMessage: "View requisition form",
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                child: Image.network(widget.request.fileUrl!),
+                      SizedBox(width: boxDim * 2),
+                      Icon(Icons.access_time_rounded,
+                          size: 18, color: Colors.deepPurple.shade300),
+                      SizedBox(width: boxDim),
+                      Text(
+                        expiryTime,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ]),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    unitsCollectedInfo(),
+                    SizedBox(height: boxDim),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: updateInterest,
+                          icon: _interested
+                              ? const Icon(Icons.check_circle_outline)
+                              : const Icon(Icons.add_circle_outline),
+                          label: _interested
+                              ? const Text("Added")
+                              : const Text("Accept"),
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(
+                                    color: Colors.grey.shade400, width: 1),
                               ),
-                            );
-                          },
-                          icon: Icons.remove_red_eye_outlined),
-                      const SizedBox(height: 10),
-                      circleButtonWithTooltip(
-                        tooltipMessage: "Share",
+                              elevation:
+                                  3 // Adjust the elevation value as needed// Adjust the shadow color and opacity
+                              ),
+                        ),
+
+                        // ElevatedButton(
+                        //   style: ElevatedButton.styleFrom(
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       side: const BorderSide(color: Colors.red, width: 2),
+                        //     ),
+                        //   ),
+                        //   onPressed: () {},
+                        //   child: Row(
+                        //     children: [
+                        //       const Text("Accept"),
+                        //     ],
+                        //   ),
+                        // ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor:
+                            const Color.fromARGB(255, 241, 240, 240),
+                        child: Text(
+                          bloodGroup,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 171, 61, 61),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    circleButtonWithTooltip(
+                        tooltipMessage: "View requisition form",
                         onPressed: () {
-                          Share.share(
-                              '''Hey! I found a request for $bloodGroup blood at $hospitalAddress for $patientName on the BloodBuddy app. Please check it out and do contact if possible!
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              child: Image.network(widget.request.fileUrl!),
+                            ),
+                          );
+                        },
+                        icon: Icons.remove_red_eye_outlined),
+                    const SizedBox(height: 10),
+                    circleButtonWithTooltip(
+                      tooltipMessage: "Share",
+                      onPressed: () {
+                        Share.share(
+                            '''Hey! I found a request for $bloodGroup blood at $hospitalAddress for $patientName on the BloodBuddy app. Please check it out and do contact if possible!
 
 Bystander name: ${widget.request.name}
 
 Contact number: ${widget.request.phone}''');
-                        },
-                        icon: Icons.share,
-                      ),
-                    ],
-                  ),
+                      },
+                      icon: Icons.share,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ]),
+        ),
       ),
     );
   }

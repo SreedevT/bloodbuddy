@@ -69,7 +69,6 @@ Future<void> main() async {
           'req_form': (context) => const RequestForm(),
           'faq': (context) => const FAQPage(),
           'profile': (context) => const UserProfile(),
-          'donate_test': (context) => const TestBloodRequestList(),
           'help_support': (context) => const HelpAndSupport(),
         },
       ),

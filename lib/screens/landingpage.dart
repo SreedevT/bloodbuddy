@@ -98,13 +98,18 @@ class _HomeScreenState extends State<HomeScreen>
             },
           ),
           actions: [
-            const Text("Home ", style: TextStyle(
-              color: Colors.white,
-              fontSize: 20, fontWeight: FontWeight.w300)),
-            SvgPicture.asset('assets/donblood2.svg',
-        height: 25,),
-            const SizedBox(width: 10,)
-
+            const Text("Home ",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300)),
+            SvgPicture.asset(
+              'assets/donblood2.svg',
+              height: 25,
+            ),
+            const SizedBox(
+              width: 10,
+            )
           ],
         ),
         drawer: drawer(context),
@@ -156,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen>
                         return feedCards(snapshots.data!.docs);
                       }
                       return const Center(child: CircularProgressIndicator());
-                    })
+                    }),
               ],
             ),
           ),

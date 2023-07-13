@@ -99,7 +99,7 @@ class _DonorCardState extends State<DonorCard> {
                     fontWeight: FontWeight.w300),
               ),
               Text(
-                'Donor No',
+                'Donor No.',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
