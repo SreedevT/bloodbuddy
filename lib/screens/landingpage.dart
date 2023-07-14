@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:blood/widgets/info_text.dart';
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     feedQuery = FirebaseFirestore.instance
         .collection('Reqs')
-        .where('status', isEqualTo: 'complete')
+        .where('completedTime', isNull: false)
         .orderBy('completedTime', descending: true)
         .limit(5);
   }

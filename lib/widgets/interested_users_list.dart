@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:blood/screens/profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -78,7 +77,6 @@ class _ListeeState extends State<Listee> {
       }
     }
     //? Set wether donors are fulfilled
-    //TODO May cause errors ignore if it works
     setState(() {
       donorsFilled = unitsCollected == userDataList[0]['units'];
     });
@@ -122,7 +120,6 @@ class _ListeeState extends State<Listee> {
               Map<String, dynamic> userData = userDataList[index];
               return Padding(
                 padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                //TODO: Maybe use stream or something. Update on card does not work realtime
                 child: InterestedUserCard(
                     userData: userData,
                     reqid: widget.reqid,
@@ -197,7 +194,10 @@ class _ListeeState extends State<Listee> {
     await FirebaseFirestore.instance
         .collection("Reqs")
         .doc(widget.reqid)
-        .update({'status': 'complete'});
+        .update({
+      'status': 'complete',
+      "completedTime": DateTime.now(),
+    });
 
     //? Update profile of all donors
     await FirebaseFirestore.instance
@@ -303,7 +303,7 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
             ? Colors.green[200]
             : _donorsFilled
                 ? Colors.grey[200]
-                : Color.fromARGB(255, 212, 232, 238),
+                : const Color.fromARGB(255, 212, 232, 238),
         expandedColor: Colors.red[50],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -456,7 +456,6 @@ class _InterestedUserCardState extends State<InterestedUserCard> {
   }
 
   void sendWhatsappMsg(Map<String, dynamic> userData) async {
-    //TODO maybe reword msg template
     //? Solution from: https://stackoverflow.com/questions/55892495/how-to-send-a-message-directly-from-my-flutter-app-to-whatsapp-using-urllauncher
     String phone = userData['phone'].toString().replaceAll('+', '');
     String msg = '''Hello ${userData['First Name']}, 

@@ -127,7 +127,6 @@ class _OpenStreetMapSearchAndPickState
     _mapController.mapEventStream.listen((event) async {
       if (event is MapEventMoveEnd) {
         var client = http.Client();
-        //TODO: May be useful
         String url =
             'https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.center.latitude}&lon=${event.center.longitude}&zoom=18&addressdetails=1';
 

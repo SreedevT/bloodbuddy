@@ -121,6 +121,9 @@ class _DonorCardState extends State<DonorCard> {
                     fontSize: 14,
                     fontWeight: FontWeight.w600),
               ),
+              const SizedBox(
+                width: 10,
+              ),
               Text(
                 '  ${data?['Blood Group'] ?? 'loading...'}',
                 style: const TextStyle(

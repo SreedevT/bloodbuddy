@@ -135,7 +135,7 @@ class _MyRequestCardState extends State<MyRequestCard> {
           children: [
             Icon(Icons.person_outline,
                 size: 25, color: Colors.deepPurple.shade300),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               'Patient: ${Utils.capitalizeFirstLetter(patientName)}',
               style: const TextStyle(
@@ -315,7 +315,10 @@ This request was made using the BloodBuddy app.""";
         ));
   }
 
+  ///Deletes the request from the database
   Future<void> deleteRequest() async {
+    //TODO: Add confirmation dialog
+    //TODO: Make currentRequest field of comfirmed users null
     RequestQuery(reqId: widget.reqId).deleteRequest();
 
     widget.onDelete();

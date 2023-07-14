@@ -127,10 +127,7 @@ class Request {
       patientName: map['patientName'],
       area: map['area'],
       // Convert Timestamp to DateTime
-      //TODO This should not be null but handled by setting a default value
-      expiryDate: map['expiryDate'] != null
-          ? (map['expiryDate'] as Timestamp).toDate()
-          : DateTime(2000, 1, 1),
+      expiryDate: map['expiryDate'].toDate(),
       isEmergency: map['isEmergency'],
       phone: map['Phone'],
       status: Status.values.firstWhere(

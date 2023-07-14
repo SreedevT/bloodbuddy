@@ -23,7 +23,7 @@ class _RequestPageState extends State<RequestPage> {
   final db = FirebaseFirestore.instance;
   final String? user = FirebaseAuth.instance.currentUser!.uid;
   Map<String, dynamic> profile = {};
-  late final Map<String,dynamic> eligibility;
+  late final Map<String, dynamic> eligibility;
   late List<RequestCard> requests = [];
   StreamSubscription? queryListner;
 
@@ -73,20 +73,18 @@ class _RequestPageState extends State<RequestPage> {
   }
 
   Future _getReq() async {
-    //TODO maybe filter out requests that belong to user.
-    //although requester can also donate blood to the patient and that can be counted as donation.
     final query = db
         .collection('Reqs')
         .where('bloodGroup',
             whereIn: Request.getRecipientBloodGroups(profile['Blood Group']))
         .where('area', isEqualTo: profile['General Area'])
+        .where('completedTime', isNull: true)
         .orderBy('expiryDate', descending: false)
         .where('expiryDate', isGreaterThan: DateTime.now());
 
     queryListner = query.snapshots().listen((event) {
       for (var change in event.docChanges) {
         //? This removes the request that belongs to the user
-        //TODO: uncomment when developing
         if (change.doc.data()!['id'] == user) {
           continue;
         }
@@ -159,6 +157,8 @@ class _RequestPageState extends State<RequestPage> {
         ),
         child: eligibility['eligible']
             ? requests.isEmpty
+            //TODO: if there are no requests Indicator will remain.
+            //Rebuild using stream builder may fix this
                 ? const Center(child: CircularProgressIndicator())
                 : ListView(
                     children: requests,
