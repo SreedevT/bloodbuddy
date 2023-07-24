@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,13 @@ import '../utils/screen_utils.dart';
 
 class RequestCard extends StatefulWidget {
   final String reqId;
-
   final Request request;
+  final bool eligible;
   const RequestCard({
     Key? key,
     required this.reqId,
     required this.request,
+    this.eligible = true,
   }) : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class _RequestCardState extends State<RequestCard> {
   late final String expiryDate;
   late final String expiryTime;
   late final bool isEmergency;
+  late final bool eligible;
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _RequestCardState extends State<RequestCard> {
     expiryDate = DateFormat('dd/MM/yyyy').format(widget.request.expiryDate);
     expiryTime = DateFormat('hh:mm a').format(widget.request.expiryDate);
     isEmergency = widget.request.isEmergency;
+    eligible = widget.eligible;
 
     RequestQuery(reqId: widget.reqId).getUnitsCollected().then((value) {
       setState(() {
@@ -179,6 +183,7 @@ class _RequestCardState extends State<RequestCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        eligible ?
                         ElevatedButton.icon(
                           onPressed: updateInterest,
                           icon: _interested
@@ -193,25 +198,9 @@ class _RequestCardState extends State<RequestCard> {
                                 side: BorderSide(
                                     color: Colors.grey.shade400, width: 1),
                               ),
-                              elevation:
-                                  3 // Adjust the elevation value as needed// Adjust the shadow color and opacity
-                              ),
-                        ),
-
-                        // ElevatedButton(
-                        //   style: ElevatedButton.styleFrom(
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(8),
-                        //       side: const BorderSide(color: Colors.red, width: 2),
-                        //     ),
-                        //   ),
-                        //   onPressed: () {},
-                        //   child: Row(
-                        //     children: [
-                        //       const Text("Accept"),
-                        //     ],
-                        //   ),
-                        // ),
+                              elevation: 3),
+                        )
+                        : const SizedBox(),
                       ],
                     )
                   ],

@@ -30,13 +30,8 @@ class _RequestPageState extends State<RequestPage> {
   @override
   void initState() {
     super.initState();
-    log("Donate screen profile: ${Provider.of<Profile>(context, listen: false).toJson()}");
     eligibility = Provider.of<Profile>(context, listen: false)
         .checkDonorEligibilityFunction();
-    log("Eligibility: $eligibility");
-    if (eligibility['eligible'] == false) {
-      return;
-    }
     DataBase(uid: user!).getUserProfile().then((value) {
       profile = value;
       log("Current Request: ${profile['Current Request']}");
@@ -102,6 +97,7 @@ class _RequestPageState extends State<RequestPage> {
                 RequestCard(
                   reqId: change.doc.id,
                   request: request,
+                  eligible: eligibility['eligible'],
                 )
               ];
             });
@@ -121,6 +117,7 @@ class _RequestPageState extends State<RequestPage> {
               requests[i] = RequestCard(
                 reqId: change.doc.id,
                 request: request,
+                eligible: eligibility['eligible'],
               );
               // Make new request list
               requests = [...requests];
@@ -155,26 +152,35 @@ class _RequestPageState extends State<RequestPage> {
         decoration: const BoxDecoration(
           color: Color.fromARGB(255, 231, 231, 231),
         ),
-        child: eligibility['eligible']
-            ? requests.isEmpty
-            //TODO: if there are no requests Indicator will remain.
-            //Rebuild using stream builder may fix this
-                ? const Center(child: CircularProgressIndicator())
-                : ListView(
-                    children: requests,
-                  )
-            : Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InfoBox(
-                    icon: Icons.info_outline,
-                    text: eligibility['message'],
-                    backgroundColor: const Color.fromARGB(255, 232, 245, 245),
-                    padding: 30,
-                    borderColor: Colors.white,
+        child: Column(
+          children: [
+            eligibility['eligible']
+                ? const SizedBox()
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      child: InfoBox(
+                        icon: Icons.error_outline_outlined,
+                        text: """${eligibility['message']} You can still share the request with others.""""",
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 214, 214),
+                        padding: 10,
+                        borderColor: Colors.grey,
+                      ),
+                    ),
                   ),
+
+            requests.isEmpty
+                //TODO: if there are no requests Indicator will remain.
+                //Rebuild using stream builder may fix this
+                ? const Center(child: Text('No Requests Yet.'))
+                : Expanded(
+                  child: ListView(
+                      children: requests,
+                    ),
                 ),
-              ),
+          ],
+        ),
       ),
     );
   }
