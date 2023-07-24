@@ -154,9 +154,6 @@ class _HomeScreenState extends State<HomeScreen>
                         );
                       }
                       if (snapshots.hasData) {
-                        for (var i in snapshots.data!.docs) {
-                          log("FEEED!!!!: ${i.data().toString()}");
-                        }
                         return feedCards(snapshots.data!.docs);
                       }
                       return const Center(child: CircularProgressIndicator());
@@ -276,6 +273,7 @@ Widget feedCards(List<QueryDocumentSnapshot> snapshot) {
     child: Stack(
       children: [
         PageView.builder(
+          key: UniqueKey(),
           controller: _controller,
           scrollDirection: Axis.vertical,
           itemCount: snapshot.length,
