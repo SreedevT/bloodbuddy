@@ -76,6 +76,10 @@ class _UserProfileState extends State<UserProfile> {
           ' Your Profile',
         ),
         centerTitle: false,
+        actions: [
+          Consumer<Profile>(
+              builder: (context, data, child) => saveButton(data, context))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -281,74 +285,79 @@ class _UserProfileState extends State<UserProfile> {
                   padding: 10,
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 201, 41, 41),
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                  child: InkWell(
-                    onTap: () async {
-                      if (_formKey.currentState!.validate()) {
-                        log("Update Profile button pressed");
-                        await DataBase(uid: user!.uid).updateUserProfile(
-                          data.weight ?? 0.0,
-                          data.canDonate ?? true,
-                          data.lastDonated,
-                          data.tattoo ?? false,
-                          data.hivTested ?? false,
-                          data.covidVaccine ?? false,
-                        );
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Row(
-                              children: const [
-                                Icon(Icons.warning_amber),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Incomplete Form',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            content: const Text(
-                              'Please fill all the required fields.',
-                              style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                    child: const Center(
-                      child: Text(
-                        'Update Profile',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget saveButton(Profile data, BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      decoration: BoxDecoration(
+        color: Colors.green.shade300,
+        borderRadius: BorderRadius.circular(9),
+      ),
+      child: InkWell(
+        onTap: () async {
+          if (_formKey.currentState!.validate()) {
+            log("Update Profile button pressed");
+            await DataBase(uid: user!.uid).updateUserProfile(
+              data.weight ?? 0.0,
+              data.canDonate ?? true,
+              data.lastDonated,
+              data.tattoo ?? false,
+              data.hivTested ?? false,
+              data.covidVaccine ?? false,
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Row(
+                  children: const [
+                    Icon(Icons.warning_amber),
+                    SizedBox(width: 10),
+                    Text(
+                      'Incomplete Form',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                content: const Text(
+                  'Please fill all the required fields.',
+                  style: TextStyle(
+                      color: Colors.black87, fontWeight: FontWeight.w500),
+                ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        child: Row(
+          children: const [
+            Icon(Icons.save, color: Colors.white, size: 18),
+            SizedBox(width: 5),
+            Text(
+              'Save',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
         ),
       ),
     );
