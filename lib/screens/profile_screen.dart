@@ -34,18 +34,11 @@ class _UserProfileState extends State<UserProfile> {
       ),
       borderRadius: BorderRadius.circular(28.0),
     ),
-    // prefixIcon: const Icon(
-    //   Icons.person,
-    //   size: 25,
-    // ),
   );
 
   final _formKey = GlobalKey<FormState>();
 
-  // List<String> items = ['A+', 'B+', 'A-', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   List<String> willingToDonateOptions = ['Yes', 'No'];
-
-  // String? selectedWillingToDonateOption;
   DateTime? lastDonated;
 
   final TextEditingController _weightController = TextEditingController();
@@ -300,6 +293,7 @@ class _UserProfileState extends State<UserProfile> {
       decoration: BoxDecoration(
         color: Colors.green.shade300,
         borderRadius: BorderRadius.circular(9),
+        border: Border.all(color: Colors.white, width: 0.5),
       ),
       child: InkWell(
         onTap: () async {
@@ -354,7 +348,7 @@ class _UserProfileState extends State<UserProfile> {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
           ],
