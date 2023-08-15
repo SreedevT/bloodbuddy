@@ -109,7 +109,7 @@ class _FAQPageState extends State<FAQPage> {
       {required String question, required String answer}) {
     return ExpansionTileCard(
       baseColor: Colors.white,
-      initialPadding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+      initialPadding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       title: Row(
         children: [
           Container(
