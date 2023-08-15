@@ -5,6 +5,7 @@ import 'package:blood/Firestore/request.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../Firestore/userprofile.dart';
 import '../models/profile.dart';
@@ -26,6 +27,7 @@ class _RequestPageState extends State<RequestPage> {
   late final Map<String, dynamic> eligibility;
   late List<RequestCard> requests = [];
   StreamSubscription? queryListner;
+  double _no_req_opacity = 0;
 
   @override
   void initState() {
@@ -36,6 +38,12 @@ class _RequestPageState extends State<RequestPage> {
       profile = value;
       log("Current Request: ${profile['Current Request']}");
       profile['Current Request'] == null ? _getReq() : _getCurrentRequest();
+    });
+
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() {
+        _no_req_opacity = 1;
+      });
     });
   }
 
@@ -161,7 +169,9 @@ class _RequestPageState extends State<RequestPage> {
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                       child: InfoBox(
                         icon: Icons.error_outline_outlined,
-                        text: """${eligibility['message']} You can still share the request with others.""""",
+                        text:
+                            """${eligibility['message']} You can still share the request with others."""
+                            "",
                         backgroundColor:
                             const Color.fromARGB(255, 255, 214, 214),
                         padding: 10,
@@ -169,19 +179,37 @@ class _RequestPageState extends State<RequestPage> {
                       ),
                     ),
                   ),
-
             requests.isEmpty
                 //TODO: if there are no requests Indicator will remain.
                 //Rebuild using stream builder may fix this
-                ? const Center(child: Text('No Requests Yet.'))
+                ? noRequests()
                 : Expanded(
-                  child: ListView(
+                    child: ListView(
                       children: requests,
                     ),
-                ),
+                  ),
           ],
         ),
       ),
+    );
+  }
+
+  Column noRequests() {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Lottie.asset(
+            'assets/lottie/no-requests-yet.json',
+            repeat: false,
+          ),
+        ),
+        AnimatedOpacity(
+          opacity: _no_req_opacity,
+          duration: const Duration(milliseconds: 500),
+          child: Text("No Requests Yet", style: Theme.of(context).textTheme.headlineSmall),
+        ),
+      ],
     );
   }
 }
