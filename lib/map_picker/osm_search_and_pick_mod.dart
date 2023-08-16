@@ -85,7 +85,7 @@ class _OpenStreetMapSearchAndPickState
     String url =
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1';
 
-    var response = await client.post(Uri.parse(url));
+    var response = await client.get(Uri.parse(url));
     var decodedResponse =
         jsonDecode(utf8.decode(response.bodyBytes)) as Map<dynamic, dynamic>;
 
@@ -107,7 +107,7 @@ class _OpenStreetMapSearchAndPickState
     String url =
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1';
 
-    var response = await client.post(Uri.parse(url));
+    var response = await client.get(Uri.parse(url));
     var decodedResponse =
         jsonDecode(utf8.decode(response.bodyBytes)) as Map<dynamic, dynamic>;
 
@@ -130,18 +130,18 @@ class _OpenStreetMapSearchAndPickState
         String url =
             'https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.center.latitude}&lon=${event.center.longitude}&zoom=18&addressdetails=1';
 
-        var response = await client.post(Uri.parse(url));
+        var response = await client.get(Uri.parse(url));
         var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes))
             as Map<dynamic, dynamic>;
 
         _searchController.text = decodedResponse['display_name'];
 
         setState(() {});
-        await fetchHospitals(event.center.latitude, event.center.longitude, 5)
-            .then((value) {
-          OpenStreetMapSearchAndPick.hospitals = value;
-          log("SetNamePosInit: ${value.toString()}");
-        });
+        // await fetchHospitals(event.center.latitude, event.center.longitude, 5)
+        //     .then((value) {
+        //   OpenStreetMapSearchAndPick.hospitals = value;
+        //   log("SetNamePosInit: ${value.toString()}");
+        // });
         // if (!mounted) return;
       }
     });
@@ -312,10 +312,13 @@ class _OpenStreetMapSearchAndPickState
                             if (kDebugMode) {
                               print(url);
                             }
-                            var response = await client.post(Uri.parse(url));
+                            var response = await client.get(Uri.parse(url));
+
                             var decodedResponse =
                                 jsonDecode(utf8.decode(response.bodyBytes))
-                                    as List<dynamic>;
+                            as List<dynamic>;
+                            log("Search query: ${decodedResponse.toString()}");
+
                             if (kDebugMode) {
                               print(decodedResponse);
                             }
@@ -390,13 +393,13 @@ class _OpenStreetMapSearchAndPickState
         _mapController.center.latitude, _mapController.center.longitude);
     var client = http.Client();
     String url =
-        'https://nominatim.openstreetmap.org/reverse?format=json&lat=${_mapController.center.latitude}&lon=${_mapController.center.longitude}&zoom=18&addressdetails=1';
+        'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${_mapController.center.latitude}&lon=${_mapController.center.longitude}&zoom=18&addressdetails=1';
 
-    var response = await client.post(Uri.parse(url));
+    var response = await client.get(Uri.parse(url));
     var decodedResponse =
         jsonDecode(utf8.decode(response.bodyBytes)) as Map<dynamic, dynamic>;
-    String displayName = decodedResponse['display_name'];
     log("Reverse query: ${decodedResponse.toString()}");
+    String displayName = decodedResponse['display_name'];
     String area = _getGeneralArea(decodedResponse);
     return PickedData(center, displayName, area);
   }
